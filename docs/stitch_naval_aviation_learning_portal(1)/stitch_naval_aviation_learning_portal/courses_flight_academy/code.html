@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Courses - Naval Aviation</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#ebe7e6",
+                    "tertiary-fixed-dim": "#cac6c3",
+                    "on-surface": "#1c1b1b",
+                    "on-secondary-fixed": "#002020",
+                    "brand-peach": "#ffb084",
+                    "primary-fixed-dim": "#c9c6c5",
+                    "secondary-container": "#c4e6e6",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#474646",
+                    "surface-card": "#f5f0e0",
+                    "inverse-on-surface": "#f4f0ef",
+                    "surface-bright": "#fdf8f8",
+                    "surface-soft": "#faf5e8",
+                    "surface-container": "#f1edec",
+                    "brand-teal": "#1a3a3a",
+                    "inverse-primary": "#c9c6c5",
+                    "brand-ochre": "#e8b94a",
+                    "on-background": "#1c1b1b",
+                    "tertiary": "#000000",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#484645",
+                    "brand-lavender": "#b8a4ed",
+                    "surface-container-highest": "#e5e2e1",
+                    "tertiary-container": "#1d1b1a",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#c4c7c7",
+                    "on-tertiary-fixed": "#1d1b1a",
+                    "outline": "#747878",
+                    "secondary-fixed-dim": "#abcdcc",
+                    "primary": "#000000",
+                    "brand-mint": "#a4d4c5",
+                    "background": "#fdf8f8",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#5f5e5e",
+                    "ink": "#0a0a0a",
+                    "surface-strong": "#ebe6d6",
+                    "on-secondary-fixed-variant": "#2d4c4c",
+                    "on-secondary-container": "#496868",
+                    "secondary": "#446464",
+                    "inverse-surface": "#313030",
+                    "primary-fixed": "#e5e2e1",
+                    "surface-variant": "#e5e2e1",
+                    "tertiary-fixed": "#e6e1df",
+                    "warning": "#f59e0b",
+                    "canvas": "#fffaf0",
+                    "on-primary-container": "#858383",
+                    "success": "#22c55e",
+                    "brand-pink": "#ff4d8b",
+                    "on-tertiary-container": "#868381",
+                    "surface-dim": "#ddd9d8",
+                    "on-secondary": "#ffffff",
+                    "body": "#3a3a3a",
+                    "surface": "#fdf8f8",
+                    "secondary-fixed": "#c7e9e8",
+                    "on-surface-variant": "#444748",
+                    "hairline": "#e5e5e5",
+                    "on-primary-fixed": "#1c1b1b",
+                    "surface-container-low": "#f7f3f2",
+                    "brand-coral": "#ff6b5a",
+                    "primary-container": "#1c1b1b",
+                    "error": "#ef4444"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "8px",
+                    "section": "96px",
+                    "xl": "32px",
+                    "sm": "12px",
+                    "base": "4px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "caption-uppercase": [
+                            "Inter"
+                    ],
+                    "title-lg": [
+                            "Inter"
+                    ],
+                    "display-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "button": [
+                            "Inter"
+                    ],
+                    "display-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "title-md": [
+                            "Inter"
+                    ],
+                    "display-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "display-xl": [
+                            "Plus Jakarta Sans"
+                    ]
+            },
+            "fontSize": {
+                    "caption-uppercase": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "letterSpacing": "1.5px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "title-lg": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "letterSpacing": "-0.3px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-md": [
+                            "40px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-1px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "button": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "letterSpacing": "0px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-sm": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.15",
+                                    "letterSpacing": "-0.5px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "title-md": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "letterSpacing": "0px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "56px",
+                            {
+                                    "lineHeight": "1.05",
+                                    "letterSpacing": "-2px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.55",
+                                    "letterSpacing": "0px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display-xl": [
+                            "72px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "letterSpacing": "-2.5px",
+                                    "fontWeight": "500"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-canvas text-body font-body-md text-body-md h-screen flex overflow-hidden">
+<!-- SideNavBar (from JSON) -->
+<aside class="h-full w-64 border-r border-hairline bg-surface-card flex flex-col p-4 space-y-2 flex-shrink-0 z-10 hidden md:flex">
+<div class="mb-8 px-4 py-4 flex items-center space-x-3">
+<div class="w-10 h-10 bg-brand-ochre rounded-xl flex items-center justify-center text-ink">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-ink">Naval Academy</h2>
+<p class="font-caption-uppercase text-caption-uppercase text-surface-tint">Flight Command</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Inactive -->
+<a class="flex items-center space-x-3 px-4 py-3 rounded-xl text-surface-tint hover:bg-surface-container-highest hover:translate-x-1 transition-transform group" href="#">
+<span class="material-symbols-outlined group-hover:text-ink">dashboard</span>
+<span class="font-button text-button group-hover:text-ink">Overview</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center space-x-3 px-4 py-3 rounded-xl text-surface-tint hover:bg-surface-container-highest hover:translate-x-1 transition-transform group" href="#">
+<span class="material-symbols-outlined group-hover:text-ink">flight_takeoff</span>
+<span class="font-button text-button group-hover:text-ink">Flight Deck</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center space-x-3 px-4 py-3 rounded-xl text-surface-tint hover:bg-surface-container-highest hover:translate-x-1 transition-transform group" href="#">
+<span class="material-symbols-outlined group-hover:text-ink">analytics</span>
+<span class="font-button text-button group-hover:text-ink">Nav Analytics</span>
+</a>
+<!-- Active (Mapping Courses to Briefing Room conceptually) -->
+<a class="flex items-center space-x-3 px-4 py-3 bg-ink text-surface-container-lowest rounded-xl shadow-inner scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">forum</span>
+<span class="font-button text-button">Briefing Room</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center space-x-3 px-4 py-3 rounded-xl text-surface-tint hover:bg-surface-container-highest hover:translate-x-1 transition-transform group" href="#">
+<span class="material-symbols-outlined group-hover:text-ink">settings</span>
+<span class="font-button text-button group-hover:text-ink">Maintenance</span>
+</a>
+</nav>
+<div class="mt-auto pt-4">
+<button class="w-full bg-ink text-surface-container-lowest font-button text-button h-[44px] rounded-xl hover:bg-surface-tint transition-colors flex items-center justify-center space-x-2">
+<span class="material-symbols-outlined">add</span>
+<span>New Mission</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col h-full overflow-y-auto relative">
+<!-- Header Section -->
+<header class="w-full max-w-container-max mx-auto px-8 pt-16 pb-8">
+<h1 class="font-display-lg text-display-lg text-ink mb-4">Flight Curriculum</h1>
+<p class="font-body-md text-body-md text-surface-tint max-w-2xl">Master the skies with our comprehensive training modules. Select a course below to begin your briefing.</p>
+</header>
+<!-- Filters Section -->
+<section class="w-full max-w-container-max mx-auto px-8 pb-12">
+<div class="flex space-x-4">
+<button class="px-6 py-2 rounded-full bg-ink text-surface-container-lowest font-button text-button shadow-sm transition-transform hover:scale-105">Beginner</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-lowest border border-hairline text-ink font-button text-button hover:bg-surface-container-highest transition-colors">Advanced</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-lowest border border-hairline text-ink font-button text-button hover:bg-surface-container-highest transition-colors">Specialized</button>
+</div>
+</section>
+<!-- Course Grid -->
+<section class="w-full max-w-container-max mx-auto px-8 pb-section flex-1">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1: Pink -->
+<article class="bg-brand-pink rounded-[24px] p-xl flex flex-col justify-between min-h-[380px] shadow-sm hover:-translate-y-1 transition-transform duration-300">
+<div>
+<div class="flex justify-between items-start mb-6">
+<span class="px-3 py-1 bg-surface-container-lowest/30 rounded-full font-caption-uppercase text-caption-uppercase text-ink">Module 1</span>
+<span class="material-symbols-outlined text-ink opacity-50">air</span>
+</div>
+<h3 class="font-display-sm text-display-sm text-ink mb-2">Aerodynamics</h3>
+<p class="font-body-md text-body-md text-ink/80">Principles of lift, drag, and thrust in modern tactical aircraft.</p>
+</div>
+<!-- UI Fragment: Flight Path -->
+<div class="bg-surface-container-lowest/20 rounded-xl p-4 my-6 border border-ink/10 h-24 relative overflow-hidden">
+<div class="absolute bottom-4 left-4 right-4 h-0.5 bg-ink/20 rounded-full"></div>
+<svg class="absolute inset-0 w-full h-full text-ink" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M 10 80 Q 40 80, 50 50 T 90 20" fill="none" stroke="currentColor" stroke-dasharray="4 4" stroke-width="2"></path>
+<circle cx="90" cy="20" fill="currentColor" r="4"></circle>
+</svg>
+</div>
+<button class="w-full bg-surface-container-lowest text-ink font-button text-button h-[44px] rounded-xl hover:bg-white transition-colors">Enter Briefing</button>
+</article>
+<!-- Card 2: Teal (Needs light text) -->
+<article class="bg-brand-teal rounded-[24px] p-xl flex flex-col justify-between min-h-[380px] shadow-sm hover:-translate-y-1 transition-transform duration-300">
+<div>
+<div class="flex justify-between items-start mb-6">
+<span class="px-3 py-1 bg-surface-container-lowest/20 rounded-full font-caption-uppercase text-caption-uppercase text-surface-container-lowest">Module 2</span>
+<span class="material-symbols-outlined text-surface-container-lowest opacity-50">explore</span>
+</div>
+<h3 class="font-display-sm text-display-sm text-surface-container-lowest mb-2">Navigation Essentials</h3>
+<p class="font-body-md text-body-md text-surface-container-lowest/80">Instrument flight rules and advanced coordinate plotting.</p>
+</div>
+<!-- UI Fragment: Compass/Radar -->
+<div class="bg-surface-container-lowest/10 rounded-xl p-4 my-6 border border-surface-container-lowest/10 h-24 flex items-center justify-center relative">
+<div class="w-16 h-16 rounded-full border border-surface-container-lowest/30 flex items-center justify-center relative">
+<div class="w-8 h-8 rounded-full border border-surface-container-lowest/20"></div>
+<div class="absolute w-full h-[1px] bg-surface-container-lowest/20"></div>
+<div class="absolute h-full w-[1px] bg-surface-container-lowest/20"></div>
+<div class="absolute top-1/2 left-1/2 w-8 h-[2px] bg-brand-mint origin-left transform -rotate-45"></div>
+</div>
+</div>
+<button class="w-full bg-surface-container-lowest text-ink font-button text-button h-[44px] rounded-xl hover:bg-white transition-colors">Enter Briefing</button>
+</article>
+<!-- Card 3: Lavender -->
+<article class="bg-brand-lavender rounded-[24px] p-xl flex flex-col justify-between min-h-[380px] shadow-sm hover:-translate-y-1 transition-transform duration-300">
+<div>
+<div class="flex justify-between items-start mb-6">
+<span class="px-3 py-1 bg-surface-container-lowest/40 rounded-full font-caption-uppercase text-caption-uppercase text-ink">Module 3</span>
+<span class="material-symbols-outlined text-ink opacity-50">settings</span>
+</div>
+<h3 class="font-display-sm text-display-sm text-ink mb-2">Jet Engines 101</h3>
+<p class="font-body-md text-body-md text-ink/80">Turbofan mechanics, maintenance, and emergency procedures.</p>
+</div>
+<!-- UI Fragment: Engine Schematic -->
+<div class="bg-surface-container-lowest/30 rounded-xl p-4 my-6 border border-ink/10 h-24 flex items-center justify-center space-x-2">
+<div class="h-12 w-4 rounded-full border-2 border-ink/40"></div>
+<div class="h-16 w-6 rounded-full border-2 border-ink/60"></div>
+<div class="h-12 w-4 rounded-full border-2 border-ink/40"></div>
+<div class="h-8 w-24 bg-ink/10 rounded-full border border-ink/20 ml-2"></div>
+</div>
+<button class="w-full bg-surface-container-lowest text-ink font-button text-button h-[44px] rounded-xl hover:bg-white transition-colors">Enter Briefing</button>
+</article>
+<!-- Card 4: Peach -->
+<article class="bg-brand-peach rounded-[24px] p-xl flex flex-col justify-between min-h-[380px] shadow-sm hover:-translate-y-1 transition-transform duration-300">
+<div>
+<div class="flex justify-between items-start mb-6">
+<span class="px-3 py-1 bg-surface-container-lowest/30 rounded-full font-caption-uppercase text-caption-uppercase text-ink">Module 4</span>
+<span class="material-symbols-outlined text-ink opacity-50">group_work</span>
+</div>
+<h3 class="font-display-sm text-display-sm text-ink mb-2">Tactical Formations</h3>
+<p class="font-body-md text-body-md text-ink/80">Squadron maneuvering and coordinated air combat tactics.</p>
+</div>
+<!-- UI Fragment: Formation Dots -->
+<div class="bg-surface-container-lowest/30 rounded-xl p-4 my-6 border border-ink/10 h-24 flex items-center justify-center relative">
+<div class="absolute w-3 h-3 bg-ink rounded-full top-6 left-1/2 -translate-x-1/2"></div>
+<div class="absolute w-3 h-3 bg-ink/60 rounded-full bottom-6 left-10"></div>
+<div class="absolute w-3 h-3 bg-ink/60 rounded-full bottom-6 right-10"></div>
+<svg class="absolute inset-0 w-full h-full text-ink/20" viewbox="0 0 100 100">
+<path d="M 50 30 L 25 70 M 50 30 L 75 70" fill="none" stroke="currentColor" stroke-dasharray="2 2" stroke-width="2"></path>
+</svg>
+</div>
+<button class="w-full bg-surface-container-lowest text-ink font-button text-button h-[44px] rounded-xl hover:bg-white transition-colors">Enter Briefing</button>
+</article>
+<!-- Card 5: Ochre -->
+<article class="bg-brand-ochre rounded-[24px] p-xl flex flex-col justify-between min-h-[380px] shadow-sm hover:-translate-y-1 transition-transform duration-300">
+<div>
+<div class="flex justify-between items-start mb-6">
+<span class="px-3 py-1 bg-surface-container-lowest/30 rounded-full font-caption-uppercase text-caption-uppercase text-ink">Module 5</span>
+<span class="material-symbols-outlined text-ink opacity-50">thunderstorm</span>
+</div>
+<h3 class="font-display-sm text-display-sm text-ink mb-2">Aviation Meteorology</h3>
+<p class="font-body-md text-body-md text-ink/80">Reading weather patterns and navigating adverse atmospheric conditions.</p>
+</div>
+<!-- UI Fragment: Weather Log -->
+<div class="bg-surface-container-lowest/30 rounded-xl p-4 my-6 border border-ink/10 h-24 flex flex-col justify-center space-y-2">
+<div class="flex justify-between items-center bg-surface-container-lowest/50 p-2 rounded-lg">
+<span class="w-8 h-2 bg-ink/20 rounded-full"></span>
+<span class="w-16 h-2 bg-ink/40 rounded-full"></span>
+</div>
+<div class="flex justify-between items-center bg-surface-container-lowest/50 p-2 rounded-lg">
+<span class="w-10 h-2 bg-ink/20 rounded-full"></span>
+<span class="w-12 h-2 bg-ink/60 rounded-full"></span>
+</div>
+</div>
+<button class="w-full bg-surface-container-lowest text-ink font-button text-button h-[44px] rounded-xl hover:bg-white transition-colors">Enter Briefing</button>
+</article>
+</div>
+</section>
+<!-- Footer (from JSON) -->
+<footer class="w-full border-t border-hairline bg-surface-soft pt-12 pb-8 mt-auto relative overflow-hidden">
+<!-- Decorative Mountain Artifact -->
+<div class="absolute bottom-0 left-0 w-full h-32 opacity-10 pointer-events-none" style="background: radial-gradient(circle at 50% 150%, var(--tw-colors-brand-teal) 0%, transparent 60%);"></div>
+<div class="max-w-container-max mx-auto px-8 flex flex-col md:flex-row justify-between items-end relative z-10">
+<div class="mb-4 md:mb-0">
+<span class="font-display-sm text-display-sm text-ink font-black block mb-2">Naval Aviation</span>
+<p class="font-caption-uppercase text-caption-uppercase text-surface-tint opacity-60">© 2024 Naval Aviation Institute. Claymation Horizon.</p>
+</div>
+<nav class="flex space-x-6">
+<a class="font-caption-uppercase text-caption-uppercase text-ink opacity-60 hover:opacity-100 hover:text-ink transition-all" href="#">Flight Safety</a>
+<a class="font-caption-uppercase text-caption-uppercase text-ink opacity-60 hover:opacity-100 hover:text-ink transition-all" href="#">Protocol</a>
+<a class="font-caption-uppercase text-caption-uppercase text-ink opacity-60 hover:opacity-100 hover:text-ink transition-all" href="#">Contact Command</a>
+</nav>
+</div>
+</footer>
+</main>
+</body></html>

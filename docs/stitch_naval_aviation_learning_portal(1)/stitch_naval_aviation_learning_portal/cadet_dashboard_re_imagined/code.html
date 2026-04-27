@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cadet Dashboard - Naval Aviation Institute</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-fixed-dim": "#abcdcc",
+                        "surface-soft": "#faf5e8",
+                        "on-tertiary-fixed": "#1d1b1a",
+                        "body": "#3a3a3a",
+                        "on-tertiary-container": "#868381",
+                        "on-surface-variant": "#444748",
+                        "tertiary": "#000000",
+                        "on-primary-container": "#858383",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#f1edec",
+                        "on-secondary-fixed": "#002020",
+                        "surface-tint": "#5f5e5e",
+                        "inverse-on-surface": "#f4f0ef",
+                        "surface-container-lowest": "#ffffff",
+                        "hairline": "#e5e5e5",
+                        "error-container": "#ffdad6",
+                        "brand-ochre": "#e8b94a",
+                        "surface-strong": "#ebe6d6",
+                        "surface-card": "#f5f0e0",
+                        "surface": "#fdf8f8",
+                        "brand-pink": "#ff4d8b",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#c4e6e6",
+                        "on-secondary-container": "#496868",
+                        "brand-coral": "#ff6b5a",
+                        "on-surface": "#1c1b1b",
+                        "tertiary-fixed": "#e6e1df",
+                        "primary-fixed": "#e5e2e1",
+                        "on-error": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "on-primary-fixed-variant": "#474646",
+                        "inverse-primary": "#c9c6c5",
+                        "brand-teal": "#1a3a3a",
+                        "background": "#fdf8f8",
+                        "tertiary-container": "#1d1b1a",
+                        "surface-dim": "#ddd9d8",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface-container-low": "#f7f3f2",
+                        "brand-mint": "#a4d4c5",
+                        "on-background": "#1c1b1b",
+                        "surface-container-high": "#ebe7e6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "surface-bright": "#fdf8f8",
+                        "ink": "#0a0a0a",
+                        "canvas": "#fffaf0",
+                        "on-error-container": "#93000a",
+                        "brand-lavender": "#b8a4ed",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "brand-peach": "#ffb084",
+                        "secondary-fixed": "#c7e9e8",
+                        "warning": "#f59e0b",
+                        "error": "#ef4444",
+                        "inverse-surface": "#313030",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#2d4c4c",
+                        "success": "#22c55e",
+                        "primary-fixed-dim": "#c9c6c5",
+                        "outline": "#747878",
+                        "surface-variant": "#e5e2e1",
+                        "secondary": "#446464",
+                        "primary-container": "#1c1b1b"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "sm": "12px",
+                        "section": "96px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "container-max": "1280px",
+                        "xs": "8px",
+                        "xl": "32px",
+                        "base": "4px"
+                    },
+                    fontFamily: {
+                        "display-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Inter"],
+                        "display-md": ["Plus Jakarta Sans"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "button": ["Inter"],
+                        "display-xl": ["Plus Jakarta Sans"],
+                        "caption-uppercase": ["Inter"]
+                    },
+                    fontSize: {
+                        "display-sm": ["32px", { lineHeight: "1.15", letterSpacing: "-0.5px", fontWeight: "500" }],
+                        "body-md": ["16px", { lineHeight: "1.55", letterSpacing: "0px", fontWeight: "400" }],
+                        "display-md": ["40px", { lineHeight: "1.1", letterSpacing: "-1px", fontWeight: "500" }],
+                        "title-md": ["18px", { lineHeight: "1.4", letterSpacing: "0px", fontWeight: "600" }],
+                        "title-lg": ["24px", { lineHeight: "1.3", letterSpacing: "-0.3px", fontWeight: "600" }],
+                        "display-lg": ["56px", { lineHeight: "1.05", letterSpacing: "-2px", fontWeight: "500" }],
+                        "button": ["14px", { lineHeight: "1.0", letterSpacing: "0px", fontWeight: "600" }],
+                        "display-xl": ["72px", { lineHeight: "1.0", letterSpacing: "-2.5px", fontWeight: "500" }],
+                        "caption-uppercase": ["12px", { lineHeight: "1.4", letterSpacing: "1.5px", fontWeight: "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-shadow-sm {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-canvas text-ink antialiased">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-40 border-b border-hairline bg-[#fffaf0] dark:bg-stone-900 flat no shadows flex justify-between items-center h-16 px-6 md:hidden">
+<div class="flex items-center">
+<span class="text-xl font-black tracking-tight text-[#0a0a0a] dark:text-white font-['Plus_Jakarta_Sans']">AeroLearn</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#0a0a0a] dark:text-white" data-icon="search">search</span>
+<span class="material-symbols-outlined text-[#0a0a0a] dark:text-white" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-[#0a0a0a] dark:text-white" data-icon="settings">settings</span>
+<img alt="Student Pilot Profile" class="w-8 h-8 rounded-full border border-hairline object-cover" data-alt="Portrait of a young male pilot wearing a flight suit and aviator sunglasses, professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf_K-d0b1GUdI5YqsCc6f4vzwdr-PsCTSU1CwggMbsYlTaZiyJ2et9esVgkWJORmyKfh-RzobbONCd3ZJEOXbHFDjO3fsshGYLBgmUO5vwHQlIUY-RqRwrS70vl1zX3c1jg6NAZr6_fGgVgrkYSD2snDU9Hhw3WKX1C9G97zG8npgTpkDEJLKM7hgrnkiYoDAF4kVV2r1UOOGsIH6RR_rOvIokpNd-qNzXlgn0KLasVZ-acXkH4VWNT4WQHprIC78nnDyNfpSZy_Po"/>
+</div>
+</nav>
+<div class="flex h-screen pt-16 md:pt-0">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r hidden md:flex flex-col bg-[#fffaf0] dark:bg-stone-900 border-[#e5e5e5] dark:border-stone-800 flat no shadows z-50">
+<div class="p-6 border-b border-hairline flex items-center gap-3">
+<img alt="AeroLearn Wing Logo" class="w-10 h-10 rounded-lg object-cover" data-alt="Minimalist golden eagle wing logo against a plain white background, sharp vector style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlPkZ6ejEDiwYAa6h8fWN2BTlPJPADd08u9-lM2lO5JhXIPhDdgQzbuOKVbgyQU6l1YblArTVYG_g4UGnEJB1j4O1rN9CI1i4oX8XYMln_ydedm3Uq1Jlv0GaqaZ7AmhJh3PFSawjA3epeTduoaJRwUEKNkhF5GncaCxuMY82oU9vzZGOpF9pTqdaVJbWIuwCR9nHOaG8LbGuc8-In1wrGscup5A2u51yUIKGx82611Lgt5hB_RByMrF0eH0cknps64k2Wig9swEII"/>
+<div>
+<h1 class="text-lg font-black text-[#0a0a0a] dark:text-white font-['Plus_Jakarta_Sans']">AeroLearn</h1>
+<p class="text-caption-uppercase font-caption-uppercase text-surface-tint">Student Portal</p>
+</div>
+</div>
+<nav class="flex flex-col p-4 gap-2 h-full overflow-y-auto">
+<a class="bg-[#0a0a0a] text-white dark:bg-stone-100 dark:text-stone-900 rounded-xl px-4 py-3 flex items-center gap-3 active:scale-[0.98] duration-200 font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+<a class="text-stone-600 dark:text-stone-400 px-4 py-3 flex items-center gap-3 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition-all active:scale-[0.98] duration-200 font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="flight">flight</span>
+                    Flight Lessons
+                </a>
+<a class="text-stone-600 dark:text-stone-400 px-4 py-3 flex items-center gap-3 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition-all active:scale-[0.98] duration-200 font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+                    Ground School
+                </a>
+<a class="text-stone-600 dark:text-stone-400 px-4 py-3 flex items-center gap-3 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition-all active:scale-[0.98] duration-200 font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+                    Logbook
+                </a>
+<a class="text-stone-600 dark:text-stone-400 px-4 py-3 flex items-center gap-3 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition-all active:scale-[0.98] duration-200 font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                    Schedule
+                </a>
+<a class="text-stone-600 dark:text-stone-400 px-4 py-3 flex items-center gap-3 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition-all active:scale-[0.98] duration-200 font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                    Community
+                </a>
+<div class="mt-auto pt-4">
+<button class="w-full bg-canvas border border-hairline text-ink font-button text-button h-11 rounded-lg hover:bg-surface-strong transition-colors flex items-center justify-center gap-2">
+                        Upgrade to Pro
+                    </button>
+</div>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 overflow-y-auto bg-canvas p-6 md:p-12">
+<div class="max-w-[container-max] mx-auto">
+<!-- Welcome Section -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-section">
+<div>
+<p class="text-caption-uppercase font-caption-uppercase text-outline mb-2">Cadet Status: Active</p>
+<h2 class="text-display-lg font-display-lg text-ink">Welcome back, Maverick.</h2>
+<p class="text-body-md font-body-md text-surface-tint mt-2 max-w-2xl">Your pre-flight checks are complete. You have 2 assignments pending and a scheduled sim session this afternoon.</p>
+</div>
+<div class="hidden lg:block w-48 h-48 relative -mb-8">
+<!-- 3D Mascot/Artifact Placeholder -->
+<img alt="Claymation Airplane" class="w-full h-full object-contain drop-shadow-xl" data-alt="3D claymation style small propeller airplane, bright colors, soft studio lighting, cute and tactile feel, isolated on transparent background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvTpirldo6_1cV43hCT-2bXWFuBsccQqOzZgICwqmhC6EoH3OLRuZ6KTquWYtLhUSUsf7pcpnn48N_QE8cHywsemh10B1xDGvptyE38W5slhViIw71majA1tXXxjdWcpqX1C6G-1TDhorrZ9T_7a64aP33JsND0K5zrPnVFnNFU50f-kBE5HHwMYsojPwXKKg2F7oTQszymSpuaCvv7bBYkCOZY7umsSQzFWoXs5OKtvAMuAx5CdFH4GO3lZzoFfigr1FgjpR9gAAp" style="mix-blend-mode: multiply;"/>
+</div>
+</header>
+<!-- Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(180px,_auto)]">
+<!-- Flight Hours (Peach) -->
+<div class="md:col-span-5 lg:col-span-4 bg-brand-peach rounded-[24px] p-xl flex flex-col justify-between overflow-hidden relative group">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-ink/80 text-3xl mb-4" data-icon="schedule">schedule</span>
+<h3 class="text-title-lg font-title-lg text-ink mb-1">Flight Hours Logged</h3>
+<p class="text-body-md font-body-md text-ink/70">Total airborne time</p>
+</div>
+<div class="relative z-10 mt-8">
+<span class="text-display-xl font-display-xl text-ink">142</span>
+<span class="text-title-md font-title-md text-ink/80 ml-1">hrs</span>
+</div>
+<!-- Abstract decorative element -->
+<div class="absolute -bottom-10 -right-10 w-48 h-48 bg-white/20 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-700"></div>
+</div>
+<!-- Next Lesson (Teal) -->
+<div class="md:col-span-7 lg:col-span-8 bg-brand-teal rounded-[24px] p-xl flex flex-col md:flex-row justify-between items-start md:items-center relative overflow-hidden text-white group">
+<div class="relative z-10 max-w-md">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white text-caption-uppercase font-caption-uppercase backdrop-blur-sm mb-4">
+<span class="material-symbols-outlined text-[14px]" data-icon="notifications_active">notifications_active</span>
+                                Upcoming
+                            </span>
+<h3 class="text-display-sm font-display-sm text-white mb-2">Next Lesson: Carrier Landing II</h3>
+<p class="text-body-md font-body-md text-white/80 mb-6">Simulator Room B • 1400 hrs. Review approach vectors and hook deployment procedures before entry.</p>
+<button class="bg-white text-brand-teal px-6 py-3 rounded-xl font-button text-button hover:bg-surface-soft transition-colors flex items-center gap-2 w-fit">
+                                Prepare Briefing
+                                <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="relative z-10 w-full md:w-64 h-48 mt-6 md:mt-0 self-end flex-shrink-0">
+<img alt="Aircraft Carrier Mockup" class="w-full h-full object-cover rounded-xl shadow-2xl opacity-90 group-hover:opacity-100 transition-opacity" data-alt="Stylized 3D rendering of an aircraft carrier deck from above, clay texture, teal and white accents, soft lighting, minimalistic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqeOFSjGT33PPq1Z-oVm8M278V4H2rArfv89KPSQon7LM3207cfl9Y6YE6X5IMFSSAvLb3ckEoZUWZF3EQ25dS_bpOYJv0rq34WShIMcMLwqbeD1E8eSfVsyIc9x_P2z7VK3QJyTq9x0Be2nqahsWUMuaq9oKIvz6Z70qjZuulp2TfcjiQsC5uQ2GcFnGLsjAsTokdJJlvQ7_l6H0r3vpzakgxYhzEow-kDJBrHHrMIqgVe1k1_TmkIb4BZofo08EjoKgitJGGbPxa"/>
+</div>
+</div>
+<!-- Current Rank (Lavender) -->
+<div class="md:col-span-4 lg:col-span-4 bg-brand-lavender rounded-[24px] p-xl flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-ink/80 text-3xl" data-icon="military_tech">military_tech</span>
+<span class="text-caption-uppercase font-caption-uppercase text-ink/60 bg-white/20 px-2 py-1 rounded">Promotion in 3mo</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-ink mb-1">Current Rank</h3>
+<p class="text-display-md font-display-md text-ink mt-4">Midshipman</p>
+</div>
+<div class="mt-8 relative z-10">
+<div class="h-2 w-full bg-white/30 rounded-full overflow-hidden">
+<div class="h-full bg-ink w-[75%] rounded-full"></div>
+</div>
+<p class="text-body-md font-body-md text-ink/70 mt-2 text-right">75% to Ensign</p>
+</div>
+</div>
+<!-- Recent Exam (Pink) -->
+<div class="md:col-span-4 lg:col-span-4 bg-brand-pink rounded-[24px] p-xl flex flex-col justify-between relative overflow-hidden group">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-white/90 text-3xl mb-4" data-icon="assignment_turned_in">assignment_turned_in</span>
+<h3 class="text-title-lg font-title-lg text-white mb-1">Recent Exam</h3>
+<p class="text-body-md font-body-md text-white/80">Aerodynamics 101</p>
+</div>
+<div class="relative z-10 mt-8 flex items-end justify-between">
+<span class="text-display-md font-display-md text-white">Passed</span>
+<div class="bg-white text-brand-pink font-button text-button px-3 py-1.5 rounded-lg">
+                                Score: 94%
+                            </div>
+</div>
+<!-- Abstract blob -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-bl-full group-hover:scale-125 transition-transform duration-500 origin-top-right"></div>
+</div>
+<!-- Maintenance Alert (Ochre) -->
+<div class="md:col-span-4 lg:col-span-4 bg-brand-ochre rounded-[24px] p-xl flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-ink" data-icon="build">build</span>
+<span class="text-caption-uppercase font-caption-uppercase text-ink font-bold">Hangar Status</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-ink mb-2">Maintenance Alert</h3>
+<p class="text-body-md font-body-md text-ink/80">Bird #402 requires 100-hour inspection. Temporarily grounded.</p>
+</div>
+<div class="mt-6 relative z-10">
+<button class="w-full bg-ink text-white py-3 rounded-xl font-button text-button hover:bg-ink/90 transition-colors flex items-center justify-center gap-2">
+                                View Hangar Log
+                                <span class="material-symbols-outlined text-[18px]" data-icon="arrow_outward">arrow_outward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Secondary Content Area (Logbook preview) -->
+<section class="mt-section">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-display-sm font-display-sm text-ink">Recent Flights</h3>
+<p class="text-body-md font-body-md text-surface-tint mt-1">Your last 3 recorded sorties.</p>
+</div>
+<a class="text-button font-button text-ink underline underline-offset-4 hover:text-surface-tint" href="#">View Full Log</a>
+</div>
+<div class="bg-surface-card rounded-2xl border border-hairline overflow-hidden p-6 md:p-8">
+<div class="flex flex-col gap-4">
+<!-- Log Entry 1 -->
+<div class="flex items-center justify-between p-4 bg-white rounded-xl border border-hairline hover:border-outline-variant transition-colors group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-surface-tint group-hover:bg-brand-lavender group-hover:text-ink transition-colors">
+<span class="material-symbols-outlined" data-icon="flight_takeoff">flight_takeoff</span>
+</div>
+<div>
+<h4 class="text-title-md font-title-md text-ink">T-45 Goshawk • Tactical Maneuvers</h4>
+<p class="text-caption-uppercase font-caption-uppercase text-surface-tint mt-1">Oct 12 • KNAS Pensacola</p>
+</div>
+</div>
+<div class="text-right hidden sm:block">
+<span class="text-title-md font-title-md text-ink">1.8 hrs</span>
+<p class="text-body-md font-body-md text-surface-tint">Day VFR</p>
+</div>
+</div>
+<!-- Log Entry 2 -->
+<div class="flex items-center justify-between p-4 bg-white rounded-xl border border-hairline hover:border-outline-variant transition-colors group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-surface-tint group-hover:bg-brand-teal group-hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="air">air</span>
+</div>
+<div>
+<h4 class="text-title-md font-title-md text-ink">T-6 Texan II • Instrument Approach</h4>
+<p class="text-caption-uppercase font-caption-uppercase text-surface-tint mt-1">Oct 10 • KNDZ Whiting Field</p>
+</div>
+</div>
+<div class="text-right hidden sm:block">
+<span class="text-title-md font-title-md text-ink">2.2 hrs</span>
+<p class="text-body-md font-body-md text-surface-tint">Sim IFR</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

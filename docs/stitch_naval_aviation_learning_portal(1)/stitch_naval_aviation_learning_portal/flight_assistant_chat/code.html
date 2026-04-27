@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aviation Academy - Commander Clay Assistant</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#ebe7e6",
+                    "tertiary-fixed-dim": "#cac6c3",
+                    "on-surface": "#1c1b1b",
+                    "on-secondary-fixed": "#002020",
+                    "brand-peach": "#ffb084",
+                    "primary-fixed-dim": "#c9c6c5",
+                    "secondary-container": "#c4e6e6",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#474646",
+                    "surface-card": "#f5f0e0",
+                    "inverse-on-surface": "#f4f0ef",
+                    "surface-bright": "#fdf8f8",
+                    "surface-soft": "#faf5e8",
+                    "surface-container": "#f1edec",
+                    "brand-teal": "#1a3a3a",
+                    "inverse-primary": "#c9c6c5",
+                    "brand-ochre": "#e8b94a",
+                    "on-background": "#1c1b1b",
+                    "tertiary": "#000000",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#484645",
+                    "brand-lavender": "#b8a4ed",
+                    "surface-container-highest": "#e5e2e1",
+                    "tertiary-container": "#1d1b1a",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#c4c7c7",
+                    "on-tertiary-fixed": "#1d1b1a",
+                    "outline": "#747878",
+                    "secondary-fixed-dim": "#abcdcc",
+                    "primary": "#000000",
+                    "brand-mint": "#a4d4c5",
+                    "background": "#fdf8f8",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#5f5e5e",
+                    "ink": "#0a0a0a",
+                    "surface-strong": "#ebe6d6",
+                    "on-secondary-fixed-variant": "#2d4c4c",
+                    "on-secondary-container": "#496868",
+                    "secondary": "#446464",
+                    "inverse-surface": "#313030",
+                    "primary-fixed": "#e5e2e1",
+                    "surface-variant": "#e5e2e1",
+                    "tertiary-fixed": "#e6e1df",
+                    "warning": "#f59e0b",
+                    "canvas": "#fffaf0",
+                    "on-primary-container": "#858383",
+                    "success": "#22c55e",
+                    "brand-pink": "#ff4d8b",
+                    "on-tertiary-container": "#868381",
+                    "surface-dim": "#ddd9d8",
+                    "on-secondary": "#ffffff",
+                    "body": "#3a3a3a",
+                    "surface": "#fdf8f8",
+                    "secondary-fixed": "#c7e9e8",
+                    "on-surface-variant": "#444748",
+                    "hairline": "#e5e5e5",
+                    "on-primary-fixed": "#1c1b1b",
+                    "surface-container-low": "#f7f3f2",
+                    "brand-coral": "#ff6b5a",
+                    "primary-container": "#1c1b1b",
+                    "error": "#ef4444"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "8px",
+                    "section": "96px",
+                    "xl": "32px",
+                    "sm": "12px",
+                    "base": "4px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "caption-uppercase": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "display-md": ["Plus Jakarta Sans"],
+                    "button": ["Inter"],
+                    "display-sm": ["Plus Jakarta Sans"],
+                    "title-md": ["Inter"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Inter"],
+                    "display-xl": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "caption-uppercase": ["12px", {"lineHeight": "1.4", "letterSpacing": "1.5px", "fontWeight": "600"}],
+                    "title-lg": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.3px", "fontWeight": "600"}],
+                    "display-md": ["40px", {"lineHeight": "1.1", "letterSpacing": "-1px", "fontWeight": "500"}],
+                    "button": ["14px", {"lineHeight": "1.0", "letterSpacing": "0px", "fontWeight": "600"}],
+                    "display-sm": ["32px", {"lineHeight": "1.15", "letterSpacing": "-0.5px", "fontWeight": "500"}],
+                    "title-md": ["18px", {"lineHeight": "1.4", "letterSpacing": "0px", "fontWeight": "600"}],
+                    "display-lg": ["56px", {"lineHeight": "1.05", "letterSpacing": "-2px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.55", "letterSpacing": "0px", "fontWeight": "400"}],
+                    "display-xl": ["72px", {"lineHeight": "1.0", "letterSpacing": "-2.5px", "fontWeight": "500"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-canvas text-body font-body-md overflow-x-hidden">
+<nav class="fixed top-0 w-full h-16 z-50 border-b border-stone-200 dark:border-stone-800 bg-[#fffaf0] dark:bg-stone-900 flex justify-between items-center px-8 mx-auto left-0 right-0">
+<div class="text-xl font-extrabold tracking-tighter text-[#0a0a0a] dark:text-white uppercase font-['Plus_Jakarta_Sans']">Aviation Academy</div>
+<div class="hidden md:flex gap-2">
+<a class="text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 transition-colors font-['Plus_Jakarta_Sans'] text-sm font-semibold tracking-tight px-4 py-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-all" href="#">Courses</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 transition-colors font-['Plus_Jakarta_Sans'] text-sm font-semibold tracking-tight px-4 py-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-all" href="#">Quizzes</a>
+<a class="text-[#0a0a0a] dark:text-white border-b-2 border-[#0a0a0a] dark:border-white pb-1 font-['Plus_Jakarta_Sans'] text-sm font-semibold tracking-tight px-4 py-2 scale-95 duration-150" href="#">Chatbot</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 transition-colors font-['Plus_Jakarta_Sans'] text-sm font-semibold tracking-tight px-4 py-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-all" href="#">Dashboard</a>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full border border-hairline bg-surface-container-lowest font-body-md text-sm focus:border-ink focus:ring-0 outline-none w-64 transition-colors" placeholder="Search resources..." type="text"/>
+</div>
+<a class="text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 transition-colors font-['Plus_Jakarta_Sans'] text-sm font-semibold tracking-tight hidden sm:block" href="#">Sign In</a>
+<button class="bg-ink text-on-primary px-5 py-2.5 rounded-lg font-button text-button hover:opacity-90 transition-opacity">Launch Hangar</button>
+</div>
+</nav>
+<aside class="hidden md:flex h-[calc(100vh-64px)] w-64 border-r border-stone-200 dark:border-stone-800 bg-[#f5f0e0] dark:bg-stone-950 flex-col p-4 space-y-2 fixed left-0 top-16 z-40 overflow-y-auto">
+<div class="flex items-center gap-4 mb-8 px-2 mt-4">
+<img alt="Institute Crest" class="w-12 h-12 rounded-full object-cover shadow-sm" data-alt="close-up of ornate gold and navy military institute crest insignia patch with soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVAtm1NICM7-uGgLGa2bVEeB6yiz3-kATMLP486GHNnjRgKIUw9nCHEcAqkZZdknixmJ4IvEqgPQNpEm4x9Jrl2ZfZvtms1j7xc9vxnoZd5y6VUCoIe3MARFXbijM6Xkpp9UL_2svn7DNFRKW3d1sUf_Yl5E9OyCSLePdsFNdwias18RMZ-MNL8hAPuCknlR5GjEMhvQCf8ud4HqnANvPww8SFXjnCFAFdS6YtrzUNk8rLpupj47r3N-wO3lIU4YTeQjMkdS-XdaYA"/>
+<div>
+<h2 class="text-lg font-bold text-[#0a0a0a] dark:text-white font-['Plus_Jakarta_Sans'] leading-tight">Naval Academy</h2>
+<p class="text-xs font-['Plus_Jakarta_Sans'] text-outline mt-0.5">Flight Command</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800 rounded-xl hover:translate-x-1 transition-transform font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span> Overview
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800 rounded-xl hover:translate-x-1 transition-transform font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined text-[20px]">flight_takeoff</span> Flight Deck
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800 rounded-xl hover:translate-x-1 transition-transform font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span> Nav Analytics
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 bg-[#0a0a0a] text-white rounded-xl shadow-inner scale-98 font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined text-[20px]">forum</span> Briefing Room
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800 rounded-xl hover:translate-x-1 transition-transform font-['Plus_Jakarta_Sans'] font-medium" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span> Maintenance
+            </a>
+</nav>
+<div class="mt-auto pt-8 pb-4 px-2">
+<button class="w-full bg-brand-teal text-on-primary px-4 py-3 rounded-xl font-button text-button flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">add</span> New Mission
+             </button>
+</div>
+</aside>
+<main class="md:ml-64 mt-16 min-h-[calc(100vh-64px)] flex flex-col relative">
+<div class="flex-1 flex flex-col items-center justify-center p-6 md:p-12 w-full max-w-[1000px] mx-auto">
+<div class="w-full bg-surface-container-lowest rounded-[24px] border border-hairline flex flex-col h-[768px] min-h-[600px] shadow-sm overflow-hidden relative">
+<header class="flex items-center justify-between px-6 py-4 border-b border-hairline bg-surface-soft z-10">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Commander Clay" class="w-12 h-12 rounded-full object-cover bg-surface-card p-1" data-alt="3d claymation rendering of a friendly pilot mascot named Commander Clay wearing vintage aviator goggles and a bomber jacket, soft studio lighting, pastel cream background, highly tactile texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFPulw2SeOC8y2It55BJzky3mLqUaBVyDgmX0cM2hVTxJra2IwERoIOCL1qTXU7gbgCS5NjR15PFJYzmeWYzppTdVAeYwGTDrD3KH49onoHsmwsP1t_0qXAK1M2nkhHX9aV6LUK0BOQ7hTDyM_JwurJouIimEwzMhB2aCG5puC9-b8LwzOsWqKCqRUT2OGQYvJVy4qJB3n-4lOkbCJeLQ9JGf81He6lihpk0STmYLHUKtQ5mnCKWDjp56_0K9vdZVZLJNc7Sub5zfP"/>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-success border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div>
+<h1 class="font-title-md text-title-md text-ink tracking-tight">Commander Clay</h1>
+<p class="font-body-md text-[13px] text-outline">Flight AI Assistant • Ready for pre-flight</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-card transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">history</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-card transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-6 md:p-8 flex flex-col gap-8 bg-surface-container-lowest scrollbar-hide">
+<div class="flex gap-4 max-w-[85%]">
+<img alt="Clay" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1" data-alt="3d claymation rendering of a friendly pilot mascot named Commander Clay wearing vintage aviator goggles and a bomber jacket, soft studio lighting, pastel cream background, highly tactile texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdf5PTbP6rqHDJ2e88WIZwB4eKSSEhUUbpM7aDtske99lxglBiO2Cz0d3j7KW1Yq6FQJWgwmL6nGcveznWY8MX69Il8K5gKLTXRnra2sPe4LiQB_8uxsFaNykjrgKBIEFL4TKBlwsoJ6caP7c93zigO5l5Atw0-fXD-n8iILHC_mxTGuRhfEoQqGetR0kqk-P43XYP9Zub_TZWzrpyrJ1ftSBHlWsGq6F5T2T6V-IVcQztOpCrwU4vraU7mcpDEIkoAcgdUCJYv5VG"/>
+<div class="flex flex-col gap-2">
+<div class="bg-surface-card px-5 py-4 rounded-2xl rounded-tl-sm text-ink font-body-md text-[15px] leading-relaxed shadow-sm">
+                                Good morning, Cadet! The skies are clear and we are cleared for dialogue. How can I assist with your flight preparations today?
+                            </div>
+</div>
+</div>
+<div class="flex gap-4 max-w-[85%] self-end flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-brand-lavender flex items-center justify-center text-ink font-button flex-shrink-0 mt-1 border border-hairline">
+                            U
+                        </div>
+<div class="flex flex-col gap-2 items-end">
+<div class="bg-brand-peach px-5 py-4 rounded-2xl rounded-tr-sm text-ink font-body-md text-[15px] leading-relaxed shadow-sm">
+                                Can you pull up the technical specs for the F-18 Hornet? I need to review the fuel consumption rates for low-altitude maneuvers.
+                            </div>
+<span class="text-[11px] text-outline font-body-md mr-1">09:42 AM</span>
+</div>
+</div>
+<div class="flex gap-4 max-w-[85%]">
+<img alt="Clay" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1" data-alt="3d claymation rendering of a friendly pilot mascot named Commander Clay wearing vintage aviator goggles and a bomber jacket, soft studio lighting, pastel cream background, highly tactile texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5KUlmy0YCXpBZnELWh2DTjahKbHazGCbEjuBv8hG9mMdDAa0M9GKBBq34f4Y0HmypmIhLEnGS6GZiHtDP9W7w5O92FNd2euuEpF_lyNIVppHldfNhGRsXC1foFVpRgwtHsf--pG2w4786dPCgw7Me_79w418klsCW3ePYbAtp3jgE_clVRJE7LY9K0P0Qr1pydI3OZ8JDKQOP6rOJUCHqOi1H6J6vR7p3NCH4FG5SNnJ_Y9jn4FWXntpj9BqhkPXVmd1MULSjmgeo"/>
+<div class="flex flex-col gap-2">
+<div class="bg-surface-card px-5 py-4 rounded-2xl rounded-tl-sm text-ink font-body-md text-[15px] leading-relaxed shadow-sm">
+                                Roger that. Accessing F-18 Hornet telemetry and specifications...
+                            </div>
+<div class="bg-brand-mint px-5 py-4 rounded-2xl text-ink font-body-md text-[15px] leading-relaxed shadow-sm border border-[#8ec7b6]">
+<strong>F-18 Hornet Fuel Burn Rate (Low Altitude)</strong><br/><br/>
+                                At sea level to 10,000 ft, maintaining Mach 0.8 during tactical maneuvering typically results in a consumption rate of approximately <strong>11,000 to 14,000 lbs/hr</strong> depending on payload drag index and ambient temperature.<br/><br/>
+                                Would you like to run a specific routing simulation to calculate total required payload?
+                            </div>
+</div>
+</div>
+</div>
+<div class="border-t border-hairline bg-surface-container-lowest">
+<div class="px-6 py-3 flex gap-3 overflow-x-auto scrollbar-hide whitespace-nowrap bg-surface-soft/50">
+<button class="px-5 py-2 rounded-full border border-hairline bg-surface-container-lowest text-ink font-button text-[13px] hover:bg-brand-ochre hover:border-brand-ochre transition-all shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">route</span> Flight Plan Help
+                        </button>
+<button class="px-5 py-2 rounded-full border border-hairline bg-surface-container-lowest text-ink font-button text-[13px] hover:bg-brand-pink hover:border-brand-pink transition-all shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">quiz</span> Quiz Prep
+                        </button>
+<button class="px-5 py-2 rounded-full border border-hairline bg-surface-container-lowest text-ink font-button text-[13px] hover:bg-brand-lavender hover:border-brand-lavender transition-all shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">settings_b_roll</span> Technical Specs
+                        </button>
+</div>
+<div class="p-4 md:p-6 bg-surface-container-lowest">
+<div class="relative flex items-end gap-3 bg-surface-soft border border-hairline rounded-2xl p-2 focus-within:border-ink transition-colors shadow-sm">
+<button class="p-2 text-outline hover:text-ink transition-colors flex-shrink-0 mb-1">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<textarea class="w-full bg-transparent border-none focus:ring-0 resize-none font-body-md text-ink py-3 min-h-[48px] max-h-[120px] scrollbar-hide" placeholder="Ask Commander Clay a question..." rows="1"></textarea>
+<button class="w-12 h-12 bg-ink text-on-primary rounded-xl flex items-center justify-center hover:opacity-90 transition-opacity flex-shrink-0 shadow-md">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<div class="text-center mt-3">
+<span class="text-[11px] text-outline font-body-md">Commander Clay can make mistakes. Verify critical flight data.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="w-full border-t border-stone-200 dark:border-stone-800 pt-12 pb-8 bg-[#faf5e8] dark:bg-stone-900 mt-auto">
+<div class="max-w-[1280px] mx-auto px-8 flex flex-col md:flex-row justify-between items-end">
+<div>
+<div class="text-sm font-black font-['Plus_Jakarta_Sans'] mb-4 text-[#0a0a0a] dark:text-stone-50">NAVAL AVIATION INSTITUTE</div>
+<div class="font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest text-[#0a0a0a] dark:text-stone-50 opacity-80">© 2024 Naval Aviation Institute. Claymation Horizon.</div>
+</div>
+<div class="flex gap-8 mt-8 md:mt-0">
+<a class="font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest text-[#0a0a0a] dark:text-stone-50 opacity-60 hover:opacity-100 transition-opacity" href="#">Flight Safety</a>
+<a class="font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest text-[#0a0a0a] dark:text-stone-50 opacity-60 hover:opacity-100 transition-opacity" href="#">Protocol</a>
+<a class="font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest text-[#0a0a0a] dark:text-stone-50 opacity-60 hover:opacity-100 transition-opacity" href="#">Contact Command</a>
+</div>
+</div>
+</footer>
+</main>
+</body></html>

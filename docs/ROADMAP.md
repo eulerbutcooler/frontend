@@ -36,7 +36,7 @@
 | Data Fetching | TanStack Query | v5 | Server prefetch + client cache hydration |
 | State Mgmt | Zustand | v4 | Lightweight client state (sidebar, modals, quiz session) |
 | Styling | Tailwind CSS | v3.4+ | Utility-first, design token support |
-| UI Components | shadcn/ui | latest | Radix primitives + Tailwind, copy-paste customisable |
+| UI Primitives | Radix UI | latest | Accessible, unstyled primitives (Dialog, Select, Tabs, etc.) |
 | Forms | React Hook Form | v7 | Performant, Zod integration |
 | Validation | Zod | v3 | Shared schemas (client + server actions) |
 | Charts | Recharts | v2 | Composable SVG charts for analytics |
@@ -82,9 +82,8 @@ npm install @tanstack/react-query zustand zod react-hook-form @hookform/resolver
 # Auth
 npm install next-auth@beta
 
-# UI
-npx shadcn@latest init
-npx shadcn@latest add button card input dialog badge progress select skeleton table tabs toast
+# UI Primitives
+npm install @radix-ui/react-dialog @radix-ui/react-select @radix-ui/react-tabs @radix-ui/react-progress @radix-ui/react-dropdown-menu @radix-ui/react-toast @radix-ui/react-tooltip @radix-ui/react-slot
 
 # Data viz
 npm install recharts
@@ -141,13 +140,13 @@ const config: NextConfig = {
 ### Output Files
 - `package.json`, `tsconfig.json`, `tailwind.config.ts`, `next.config.ts`
 - `.env.local`, `.env.example`
-- `src/styles/globals.css` — Tailwind base + CSS variables for shadcn
+- `src/styles/globals.css` — Tailwind base + custom CSS design tokens
 
 ---
 
 ## 3. Phase 2 — Design System & Shared Components
 
-> **Goal**: Configure Tailwind theme, install shadcn primitives, create layout atoms.
+> **Goal**: Configure Tailwind theme, build custom UI components on Radix primitives, create layout atoms.
 
 ### 3.1 Tailwind Theme
 
@@ -169,31 +168,33 @@ theme: {
 },
 ```
 
-### 3.2 shadcn/ui Primitives
+### 3.2 Custom UI Components (Radix + Tailwind)
 
-Install all base components listed in `tree.md`:
+Build reusable components in `src/components/ui/` using Radix primitives for accessibility and Tailwind for styling:
 
-| Component | Usage |
-|---|---|
-| `Button` | All CTAs, form submits |
-| `Card` | Course cards, quiz cards |
-| `Dialog` | Confirm delete, create session |
-| `Input` | Form fields |
-| `Select` | Rank picker, difficulty picker |
-| `Badge` | Difficulty, ingest status |
-| `Progress` | Upload progress, quiz progress |
-| `Skeleton` | Loading states |
-| `Table` | Analytics tables |
-| `Tabs` | Course detail tabs, quiz tabs |
-| `Toast` | Success/error notifications (via `sonner`) |
+| Component | Radix Primitive | Usage |
+|---|---|---|
+| `Button` | — (native) | All CTAs, form submits |
+| `Card` | — (native) | Course cards, quiz cards |
+| `Dialog` | `@radix-ui/react-dialog` | Confirm delete, create session |
+| `Input` | — (native) | Form fields |
+| `Select` | `@radix-ui/react-select` | Rank picker, difficulty picker |
+| `Badge` | — (native) | Difficulty, ingest status |
+| `Progress` | `@radix-ui/react-progress` | Upload progress, quiz progress |
+| `Skeleton` | — (native) | Loading states |
+| `Table` | — (native) | Analytics tables |
+| `Tabs` | `@radix-ui/react-tabs` | Course detail tabs, quiz tabs |
+| `Toast` | `@radix-ui/react-toast` | Success/error notifications |
+| `DropdownMenu` | `@radix-ui/react-dropdown-menu` | User menu, context menus |
+| `Tooltip` | `@radix-ui/react-tooltip` | Hover hints |
 
 ### 3.3 Shared Utility Components
 
-**`src/components/ui/`** — all installed via `shadcn add`.
+**`src/components/ui/`** — custom-built with Radix + Tailwind.
 
 ### Output Files
 - `tailwind.config.ts` (theme extension)
-- `src/components/ui/*.tsx` — ~11 primitives
+- `src/components/ui/*.tsx` — ~13 custom components
 
 ---
 
@@ -960,7 +961,7 @@ const courseSchema = z.object({
 ### 14.5 Accessibility
 
 - All interactive elements have aria labels
-- shadcn/ui built on Radix — handles focus management, keyboard navigation
+- Radix UI primitives handle focus management, keyboard navigation
 - Color contrast meets WCAG 2.1 AA
 
 ---
@@ -1030,7 +1031,7 @@ const courseSchema = z.object({
 | Phase | Verification |
 |---|---|
 | 1 | `npm run dev` starts, no errors |
-| 2 | shadcn components render in Storybook/test page |
+| 2 | Custom UI components render correctly in test page |
 | 3 | Login → redirect to dashboard, logout → redirect to login, instructor guard works |
 | 4 | Server prefetch + client hydration works (no flash), mutations invalidate correctly |
 | 5 | Sidebar collapses, topbar shows user, responsive works |
