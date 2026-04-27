@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Course Builder - Naval Aviation Institute</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#c9c6c5",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed-dim": "#cac6c3",
+                      "primary-fixed": "#e5e2e1",
+                      "inverse-primary": "#c9c6c5",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed": "#1d1b1a",
+                      "on-secondary-fixed": "#002020",
+                      "ink": "#0a0a0a",
+                      "error": "#ef4444",
+                      "brand-peach": "#ffb084",
+                      "tertiary": "#000000",
+                      "secondary": "#446464",
+                      "on-secondary-fixed-variant": "#2d4c4c",
+                      "secondary-container": "#c4e6e6",
+                      "canvas": "#fffaf0",
+                      "on-surface": "#1c1b1b",
+                      "success": "#22c55e",
+                      "surface-container-low": "#f7f3f2",
+                      "surface-card": "#f5f0e0",
+                      "primary": "#000000",
+                      "on-primary-fixed-variant": "#474646",
+                      "brand-teal": "#1a3a3a",
+                      "background": "#fdf8f8",
+                      "surface-soft": "#faf5e8",
+                      "brand-ochre": "#e8b94a",
+                      "brand-lavender": "#b8a4ed",
+                      "tertiary-container": "#1d1b1a",
+                      "on-secondary": "#ffffff",
+                      "surface-tint": "#5f5e5e",
+                      "surface-strong": "#ebe6d6",
+                      "warning": "#f59e0b",
+                      "outline": "#747878",
+                      "on-primary-fixed": "#1c1b1b",
+                      "on-secondary-container": "#496868",
+                      "body": "#3a3a3a",
+                      "inverse-on-surface": "#f4f0ef",
+                      "surface-bright": "#fdf8f8",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#e6e1df",
+                      "on-tertiary-container": "#868381",
+                      "hairline": "#e5e5e5",
+                      "surface-container-highest": "#e5e2e1",
+                      "brand-mint": "#a4d4c5",
+                      "inverse-surface": "#313030",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "surface-variant": "#e5e2e1",
+                      "surface-container-high": "#ebe7e6",
+                      "brand-pink": "#ff4d8b",
+                      "brand-coral": "#ff6b5a",
+                      "on-surface-variant": "#444748",
+                      "on-error-container": "#93000a",
+                      "surface": "#fdf8f8",
+                      "on-primary-container": "#858383",
+                      "secondary-fixed-dim": "#abcdcc",
+                      "secondary-fixed": "#c7e9e8",
+                      "surface-dim": "#ddd9d8",
+                      "on-error": "#ffffff",
+                      "surface-container": "#f1edec",
+                      "outline-variant": "#c4c7c7",
+                      "on-background": "#1c1b1b",
+                      "primary-container": "#1c1b1b"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "base": "4px",
+                      "section": "96px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "xs": "8px",
+                      "xl": "32px",
+                      "sm": "12px"
+              },
+              "fontFamily": {
+                      "display-xl": ["Plus Jakarta Sans"],
+                      "caption-uppercase": ["Inter"],
+                      "button": ["Inter"],
+                      "title-md": ["Inter"],
+                      "title-lg": ["Inter"],
+                      "display-md": ["Plus Jakarta Sans"],
+                      "body-md": ["Inter"],
+                      "display-sm": ["Plus Jakarta Sans"],
+                      "display-lg": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "display-xl": ["72px", { "lineHeight": "1.0", "letterSpacing": "-2.5px", "fontWeight": "500" }],
+                      "caption-uppercase": ["12px", { "lineHeight": "1.4", "letterSpacing": "1.5px", "fontWeight": "600" }],
+                      "button": ["14px", { "lineHeight": "1.0", "letterSpacing": "0px", "fontWeight": "600" }],
+                      "title-md": ["18px", { "lineHeight": "1.4", "letterSpacing": "0px", "fontWeight": "600" }],
+                      "title-lg": ["24px", { "lineHeight": "1.3", "letterSpacing": "-0.3px", "fontWeight": "600" }],
+                      "display-md": ["40px", { "lineHeight": "1.1", "letterSpacing": "-1px", "fontWeight": "500" }],
+                      "body-md": ["16px", { "lineHeight": "1.55", "letterSpacing": "0px", "fontWeight": "400" }],
+                      "display-sm": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.5px", "fontWeight": "500" }],
+                      "display-lg": ["56px", { "lineHeight": "1.05", "letterSpacing": "-2px", "fontWeight": "500" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-canvas text-body font-body-md antialiased overflow-x-hidden min-h-screen flex">
+<!-- SideNavBar (Shared Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-[#e5e5e5] dark:border-stone-800 bg-[#fffaf0] dark:bg-stone-950 flex flex-col py-6 px-4 space-y-2 z-50 font-['Plus_Jakarta_Sans'] font-medium">
+<div class="mb-6 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-strong border border-hairline overflow-hidden flex-shrink-0">
+<img alt="Instructor Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAupO01mSNjvj2YbMXf93HAlYEP14net3xSOU8jstlaXh1jNffGOpaJsC3M3lwxP1R-sdWR4JnKwtzIYuBtGmPXYnAu31cWxWsE0TzZwqGNmvGFx7btJUwHhLS7OCcmUkxmD7Mz7wUINjLdvwzuKRsEhyS2Ql2tBDYJEXhcHxSPzdU70lzhZgaEsfNjV9L44_VALp2cl3VixlLi7nNniio5w7TrN9oPhfGCQNF8AhyrCP6y-IHeH9l78-Q-qnjDTfJGV39VXbY6AdAu"/>
+</div>
+<div class="flex flex-col">
+<span class="text-xl font-extrabold tracking-tight text-[#0a0a0a] dark:text-stone-50 leading-tight">Clay Academy</span>
+<span class="text-xs text-surface-tint font-caption-uppercase tracking-wider">Instructor Studio</span>
+</div>
+</div>
+<div class="flex flex-col space-y-1 flex-grow mt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] hover:bg-stone-100/50 dark:hover:bg-stone-900 transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined text-xl">grid_view</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#0a0a0a] dark:text-white font-bold bg-white/40 dark:bg-stone-900 rounded-l-none rounded-r-xl transition-all scale-[0.99] duration-150" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+                My Courses
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] hover:bg-stone-100/50 dark:hover:bg-stone-900 transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+                Students
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] hover:bg-stone-100/50 dark:hover:bg-stone-900 transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined text-xl">bar_chart</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] hover:bg-stone-100/50 dark:hover:bg-stone-900 transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+                Settings
+            </a>
+</div>
+<button class="mt-auto w-full bg-ink text-on-tertiary h-[44px] rounded-xl font-button text-button flex items-center justify-center gap-2 hover:bg-surface-tint transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+            New Course
+        </button>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TopAppBar (Shared Component) -->
+<header class="sticky top-0 z-40 w-full border-b border-[#e5e5e5] dark:border-stone-800 bg-[#fffaf0]/80 dark:bg-stone-950/80 backdrop-blur-md flex items-center justify-between h-16 pl-8 pr-8 font-['Plus_Jakarta_Sans'] text-sm">
+<div class="flex items-center gap-6">
+<div class="text-lg font-bold text-[#0a0a0a] dark:text-stone-50">Course Builder</div>
+<div class="h-5 w-px bg-hairline hidden md:block"></div>
+<div class="relative hidden md:flex items-center text-surface-tint">
+<span class="material-symbols-outlined absolute left-3 text-[18px]">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-hairline rounded-full w-64 focus:ring-1 focus:ring-ink focus:border-ink transition-all text-body outline-none" placeholder="Search resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-stone-500 hover:text-[#0a0a0a] dark:hover:text-white transition-all hover:bg-surface-container-low active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-stone-500 hover:text-[#0a0a0a] dark:hover:text-white transition-all hover:bg-surface-container-low active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-stone-500 hover:text-[#0a0a0a] dark:hover:text-white transition-all hover:bg-surface-container-low active:scale-95 duration-100 ml-2">
+<span class="material-symbols-outlined text-[24px]">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Canvas Area -->
+<main class="p-8 lg:p-12 w-full max-w-container-max mx-auto flex-1">
+<!-- Context Header -->
+<div class="mb-10">
+<span class="font-caption-uppercase text-caption-uppercase text-brand-teal tracking-widest block mb-2">Naval Aviation Institute</span>
+<h1 class="font-display-sm text-display-sm text-ink font-semibold">Create New Course</h1>
+</div>
+<!-- Progress Indicator -->
+<div class="flex items-center gap-4 mb-12">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-ink text-on-tertiary flex items-center justify-center font-button text-sm font-bold">1</div>
+<span class="font-title-md text-title-md text-ink font-semibold">Course Info</span>
+</div>
+<div class="h-px bg-hairline w-16"></div>
+<div class="flex items-center gap-3 opacity-50">
+<div class="w-8 h-8 rounded-full border-2 border-outline text-outline flex items-center justify-center font-button text-sm font-bold">2</div>
+<span class="font-title-md text-title-md text-surface-tint">Modules</span>
+</div>
+<div class="h-px bg-hairline w-16"></div>
+<div class="flex items-center gap-3 opacity-50">
+<div class="w-8 h-8 rounded-full border-2 border-outline text-outline flex items-center justify-center font-button text-sm font-bold">3</div>
+<span class="font-title-md text-title-md text-surface-tint">Review</span>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Form Canvas (7 Cols) -->
+<div class="lg:col-span-8 flex flex-col gap-8">
+<!-- Basic Information Card -->
+<div class="bg-surface-container-lowest rounded-[24px] p-8 border border-hairline shadow-sm relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-lavender to-brand-teal"></div>
+<h2 class="font-title-lg text-title-lg text-ink mb-6">Basic Information</h2>
+<div class="space-y-6">
+<div>
+<label class="font-caption-uppercase text-caption-uppercase text-surface-tint mb-2 block">Course Title</label>
+<input class="w-full bg-canvas border border-hairline rounded-xl h-[44px] px-4 font-body-md text-ink focus:border-ink focus:ring-1 focus:ring-ink transition-all outline-none" type="text" value="Advanced Tactical Maneuvers"/>
+</div>
+<div>
+<label class="font-caption-uppercase text-caption-uppercase text-surface-tint mb-2 block">Category</label>
+<div class="relative">
+<select class="w-full bg-canvas border border-hairline rounded-xl h-[44px] px-4 font-body-md text-ink focus:border-ink focus:ring-1 focus:ring-ink transition-all outline-none appearance-none cursor-pointer">
+<option value="aerodynamics">Aerodynamics</option>
+<option value="navigation">Navigation &amp; Instruments</option>
+<option value="propulsion">Propulsion Systems</option>
+<option selected="" value="tactics">Combat Tactics</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-surface-tint">expand_more</span>
+</div>
+</div>
+<div>
+<label class="font-caption-uppercase text-caption-uppercase text-surface-tint mb-2 block">Short Description</label>
+<textarea class="w-full bg-canvas border border-hairline rounded-xl p-4 font-body-md text-ink focus:border-ink focus:ring-1 focus:ring-ink transition-all outline-none resize-none" rows="3">Comprehensive study of high-G combat turns and evasion strategies for modern jet aircraft.</textarea>
+</div>
+</div>
+</div>
+<!-- Module Builder Card -->
+<div class="bg-surface-container-low rounded-[24px] p-8 border border-hairline shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-title-lg text-title-lg text-ink">Module Builder</h2>
+<span class="bg-surface-strong text-ink text-xs font-caption-uppercase px-3 py-1 rounded-full border border-hairline">Draft Mode</span>
+</div>
+<!-- Module List -->
+<div class="space-y-3 mb-6">
+<!-- Item 1 -->
+<div class="group flex items-center justify-between bg-surface-container-lowest p-4 rounded-xl border border-hairline hover:border-brand-lavender transition-all cursor-move">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-surface-tint cursor-grab active:cursor-grabbing">drag_indicator</span>
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-brand-teal">
+<span class="material-symbols-outlined">play_circle</span>
+</div>
+<div>
+<h3 class="font-title-md text-[16px] text-ink font-semibold">1. Introduction to High-G Forces</h3>
+<span class="text-sm text-surface-tint">Video • 12 mins</span>
+</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 flex items-center justify-center text-surface-tint hover:text-ink rounded-lg hover:bg-surface-container"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="w-8 h-8 flex items-center justify-center text-surface-tint hover:text-error rounded-lg hover:bg-error-container/30"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="group flex items-center justify-between bg-surface-container-lowest p-4 rounded-xl border border-hairline hover:border-brand-lavender transition-all cursor-move">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-surface-tint cursor-grab active:cursor-grabbing">drag_indicator</span>
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-brand-ochre">
+<span class="material-symbols-outlined">quiz</span>
+</div>
+<div>
+<h3 class="font-title-md text-[16px] text-ink font-semibold">2. G-Suit Mechanics Assessment</h3>
+<span class="text-sm text-surface-tint">Quiz • 10 questions</span>
+</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 flex items-center justify-center text-surface-tint hover:text-ink rounded-lg hover:bg-surface-container"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="w-8 h-8 flex items-center justify-center text-surface-tint hover:text-error rounded-lg hover:bg-error-container/30"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</div>
+</div>
+<button class="w-full bg-canvas border border-hairline text-ink h-[44px] rounded-xl font-button text-button flex items-center justify-center gap-2 hover:bg-surface-strong transition-all border-dashed">
+<span class="material-symbols-outlined text-sm">add</span>
+                            Add New Module
+                        </button>
+</div>
+</div>
+<!-- Right Column: Sidebar Extras (5 Cols) -->
+<div class="lg:col-span-4 flex flex-col gap-8">
+<!-- Branding Setup -->
+<div class="bg-surface-container-lowest rounded-[24px] p-6 border border-hairline shadow-sm">
+<h2 class="font-title-md text-title-md text-ink mb-1">Course Identity</h2>
+<p class="text-sm text-surface-tint mb-6">Select a brand color for the catalog card.</p>
+<div class="grid grid-cols-5 gap-3 mb-6">
+<!-- Swatches -->
+<button class="aspect-square rounded-full bg-brand-pink ring-2 ring-offset-2 ring-offset-canvas ring-brand-pink flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-on-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</button>
+<button class="aspect-square rounded-full bg-brand-teal hover:scale-110 transition-transform"></button>
+<button class="aspect-square rounded-full bg-brand-lavender hover:scale-110 transition-transform"></button>
+<button class="aspect-square rounded-full bg-brand-peach hover:scale-110 transition-transform"></button>
+<button class="aspect-square rounded-full bg-brand-ochre hover:scale-110 transition-transform"></button>
+</div>
+<!-- Card Preview -->
+<div class="rounded-xl bg-brand-pink p-5 text-on-tertiary relative overflow-hidden h-32 flex flex-col justify-end group cursor-pointer shadow-sm">
+<!-- Abstract decoration -->
+<div class="absolute -right-8 -top-8 w-24 h-24 bg-white/20 rounded-full blur-xl"></div>
+<span class="font-caption-uppercase text-[10px] tracking-wider opacity-80 mb-1">Combat Tactics</span>
+<h4 class="font-display-sm text-[20px] font-semibold leading-tight relative z-10 drop-shadow-sm">Advanced Tactical Maneuvers</h4>
+</div>
+</div>
+<!-- Claymation Mascot Tip -->
+<div class="bg-brand-teal rounded-[24px] p-6 text-on-tertiary relative overflow-hidden shadow-sm">
+<!-- Background glow effect -->
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-brand-mint/20 rounded-full blur-2xl"></div>
+<div class="flex items-start gap-4 relative z-10">
+<!-- Mascot Image (Placeholder via CSS background) -->
+<div class="w-16 h-16 rounded-xl bg-canvas flex-shrink-0 bg-cover bg-center shadow-inner" data-alt="Cute 3D claymation style mascot of a small pelican wearing aviator goggles and a scarf, soft studio lighting, playful B2B aesthetic, vibrant colors on cream background" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAHephPo8bq_vCKdLLpSEMw5g2Uh0FtA3IGgZ86Zt5OlwYB4uSMP9MbCZN6AmSmCR1ySDuPrv4HOFxiNQGCe3RHo5m6oWFlADIMfrFZnTP15VA0UK-ll56LYJL_jjWWmFfyScBSTAO9MzS59pStyO79pOftbSxRHGZmUFcEs0Des-Qkvz-g6MKUsgY5dilgQDiOEPcni9XLwVVVb7mER70spzm21552NrkfQeiHi7UiXwx3W-CMJcOh-AghsQodlNthfb7vki-6JiE7');">
+</div>
+<div>
+<h3 class="font-title-md text-[16px] font-semibold mb-1 flex items-center gap-1 text-brand-mint">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span>
+                                    Instructor Tip
+                                </h3>
+<p class="text-sm text-surface-container opacity-90 leading-relaxed font-body-md">
+                                    Keep your modules under 15 minutes. Data shows Cadets retain tactical maneuvers better in short, focused bursts. Need help structuring?
+                                </p>
+<button class="mt-4 text-sm font-semibold hover:text-brand-peach transition-colors underline decoration-brand-peach/50 underline-offset-4">Read our syllabus guide</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Page Action Footer -->
+<div class="mt-12 pt-6 border-t border-hairline flex items-center justify-end gap-4 pb-12">
+<button class="px-6 h-[44px] rounded-xl font-button text-button text-ink hover:bg-surface-container transition-colors">Save Draft</button>
+<button class="px-8 h-[44px] rounded-xl font-button text-button bg-ink text-on-tertiary shadow-sm hover:bg-surface-tint transition-all flex items-center gap-2">
+                    Continue to Modules
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</main>
+</div>
+</body></html>

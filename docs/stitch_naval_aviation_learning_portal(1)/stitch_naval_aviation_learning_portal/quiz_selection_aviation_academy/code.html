@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quiz Center</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@500;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ef4444",
+                        "secondary-fixed-dim": "#abcdcc",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#1d1b1a",
+                        "surface-bright": "#fdf8f8",
+                        "surface-soft": "#faf5e8",
+                        "inverse-primary": "#c9c6c5",
+                        "inverse-surface": "#313030",
+                        "on-primary-container": "#858383",
+                        "surface-container": "#f1edec",
+                        "brand-pink": "#ff4d8b",
+                        "primary-fixed": "#e5e2e1",
+                        "on-secondary-container": "#496868",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-secondary-fixed": "#002020",
+                        "primary-container": "#1c1b1b",
+                        "error-container": "#ffdad6",
+                        "surface": "#fdf8f8",
+                        "on-tertiary-fixed": "#1d1b1a",
+                        "on-error-container": "#93000a",
+                        "canvas": "#fffaf0",
+                        "background": "#fdf8f8",
+                        "surface-container-low": "#f7f3f2",
+                        "on-surface-variant": "#444748",
+                        "secondary-fixed": "#c7e9e8",
+                        "on-secondary-fixed-variant": "#2d4c4c",
+                        "hairline": "#e5e5e5",
+                        "brand-teal": "#1a3a3a",
+                        "secondary": "#446464",
+                        "ink": "#0a0a0a",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "surface-tint": "#5f5e5e",
+                        "body": "#3a3a3a",
+                        "outline": "#747878",
+                        "surface-strong": "#ebe6d6",
+                        "brand-mint": "#a4d4c5",
+                        "surface-container-high": "#ebe7e6",
+                        "secondary-container": "#c4e6e6",
+                        "brand-peach": "#ffb084",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f4f0ef",
+                        "brand-coral": "#ff6b5a",
+                        "warning": "#f59e0b",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "brand-lavender": "#b8a4ed",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-surface": "#1c1b1b",
+                        "success": "#22c55e",
+                        "primary": "#000000",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#ddd9d8",
+                        "on-primary-fixed-variant": "#474646",
+                        "brand-ochre": "#e8b94a",
+                        "surface-variant": "#e5e2e1",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "primary-fixed-dim": "#c9c6c5",
+                        "on-tertiary-container": "#868381",
+                        "on-background": "#1c1b1b",
+                        "surface-card": "#f5f0e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "8px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "base": "4px",
+                        "section": "96px",
+                        "container-max": "1280px",
+                        "xl": "32px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-md": ["Plus Jakarta Sans"],
+                        "button": ["Inter"],
+                        "display-xl": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "caption-uppercase": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["24px", { "lineHeight": "1.3", "letterSpacing": "-0.3px", "fontWeight": "600" }],
+                        "title-md": ["18px", { "lineHeight": "1.4", "letterSpacing": "0px", "fontWeight": "600" }],
+                        "display-md": ["40px", { "lineHeight": "1.1", "letterSpacing": "-1px", "fontWeight": "500" }],
+                        "button": ["14px", { "lineHeight": "1.0", "letterSpacing": "0px", "fontWeight": "600" }],
+                        "display-xl": ["72px", { "lineHeight": "1.0", "letterSpacing": "-2.5px", "fontWeight": "500" }],
+                        "display-lg": ["56px", { "lineHeight": "1.05", "letterSpacing": "-2px", "fontWeight": "500" }],
+                        "caption-uppercase": ["12px", { "lineHeight": "1.4", "letterSpacing": "1.5px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.55", "letterSpacing": "0px", "fontWeight": "400" }],
+                        "display-sm": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.5px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-canvas text-body min-h-screen font-body-md text-body-md flex">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 border-r border-[#e5e5e5] dark:border-stone-800 fixed left-0 top-0 bg-[#fffaf0] dark:bg-stone-950 flex flex-col h-full p-6 space-y-8 z-50">
+<!-- Brand Header -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-strong overflow-hidden flex items-center justify-center">
+<img alt="Officer profile picture" class="w-full h-full object-cover" data-alt="close up profile photo of a young professional in a neat uniform on a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2X1e-uJCF0NWny7YjLjdVul-_bHAKgMzwoe7pRZkKuW2Q1xaicImVRT-cCsHYKF2yScJxHsL1_mA8Fg2aarluewBTGQ0DhmpJkqVBURXcuePU7fKOex3vL__1wtgQCcztP6QmjFUSW1I5isSxJcde1Uob76iECnvqrlfVB6ChXXE7q4kU7InTzmQHvuci3KQ_4-ljWdJ8swNyY6tIcRFeF95qInRdiJd9RF7CeXprn9up4blZp57vXAWgFXpR2qJU59-6wDJVWM17"/>
+</div>
+<div>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-lg font-black text-[#0a0a0a] dark:text-stone-50">Aviation Academy</h1>
+<p class="font-title-md text-caption-uppercase text-surface-tint opacity-80">Naval Operations</p>
+</div>
+</div>
+<!-- Main Navigation -->
+<nav class="flex-1 flex flex-col gap-2">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 hover:bg-[#f5f0e0] dark:hover:bg-stone-900 transition-all duration-200 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Courses -->
+<a class="flex items-center gap-3 px-4 py-3 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 hover:bg-[#f5f0e0] dark:hover:bg-stone-900 transition-all duration-200 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined">school</span>
+<span>Courses</span>
+</a>
+<!-- Quizzes (Active) -->
+<a class="flex items-center gap-3 px-4 py-3 text-[#0a0a0a] dark:text-stone-50 bg-[#f5f0e0] dark:bg-stone-900 rounded-xl font-bold transition-all duration-200 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] tracking-tight" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">quiz</span>
+<span>Quizzes</span>
+</a>
+<!-- Flight Logs -->
+<a class="flex items-center gap-3 px-4 py-3 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 hover:bg-[#f5f0e0] dark:hover:bg-stone-900 transition-all duration-200 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined">flight_takeoff</span>
+<span>Flight Logs</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-3 px-4 py-3 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 hover:bg-[#f5f0e0] dark:hover:bg-stone-900 transition-all duration-200 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<!-- Call to Action -->
+<div class="pt-4 border-t border-[#e5e5e5]">
+<button class="w-full bg-ink text-on-primary font-button text-button h-[44px] rounded-[12px] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+                Schedule Exam
+            </button>
+</div>
+<!-- Footer Navigation -->
+<div class="flex flex-col gap-2 pt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 hover:bg-[#f5f0e0] dark:hover:bg-stone-900 transition-all duration-200 font-['Plus_Jakarta_Sans'] font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined">help_center</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-500 dark:text-stone-400 hover:text-[#0a0a0a] dark:hover:text-stone-200 hover:bg-[#f5f0e0] dark:hover:bg-stone-900 transition-all duration-200 font-['Plus_Jakarta_Sans'] font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col w-full">
+<!-- TopAppBar Component -->
+<header class="sticky top-0 w-full z-40 border-b border-[#e5e5e5] dark:border-stone-800 bg-[#fffaf0]/80 dark:bg-stone-950/80 backdrop-blur-md flex justify-between items-center h-16 px-8 ml-64 w-[calc(100%-16rem)]">
+<div class="flex items-center gap-4">
+<span class="text-xl font-black text-[#0a0a0a] dark:text-stone-50 font-['Plus_Jakarta_Sans'] font-bold">Quiz Center</span>
+</div>
+<div class="flex-1 max-w-md px-8">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-surface-tint">search</span>
+<input class="w-full bg-canvas border border-hairline rounded-[12px] h-[44px] pl-10 pr-4 font-body-md text-body-md text-ink focus:border-ink focus:ring-0 transition-colors" placeholder="Search quizzes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-canvas border border-hairline text-ink font-button text-button h-[44px] px-4 rounded-[12px] hover:bg-surface-soft transition-colors">
+                    Emergency
+                </button>
+<button class="bg-ink text-on-primary font-button text-button h-[44px] px-6 rounded-[12px] hover:opacity-90 transition-opacity">
+                    Take Flight
+                </button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-soft transition-colors text-[#0a0a0a]">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-soft transition-colors text-[#0a0a0a]">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas Area -->
+<main class="flex-1 p-section max-w-container-max mx-auto w-full ml-64 w-[calc(100%-16rem)]">
+<div class="mb-12">
+<h2 class="font-display-xl text-display-xl text-ink mb-4">Skill Validation</h2>
+<p class="font-title-lg text-title-lg text-surface-tint max-w-2xl">Master your technical knowledge with our targeted drill scenarios. Complete these assessments to clear your pre-flight requirements.</p>
+</div>
+<!-- Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Card 1: Aerodynamics -->
+<div class="bg-brand-pink rounded-xl p-xl relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 min-h-[320px] flex flex-col justify-between">
+<div class="relative z-10 text-on-primary">
+<span class="inline-block px-3 py-1 bg-on-primary/20 rounded-full font-caption-uppercase text-caption-uppercase mb-4 backdrop-blur-sm">Module 01</span>
+<h3 class="font-display-md text-display-md mb-2 leading-tight">Aerodynamics<br/>Quiz</h3>
+<p class="font-body-md text-body-md opacity-90 max-w-[200px]">Fluid dynamics, drag coefficients, and lift vectors.</p>
+</div>
+<div class="absolute bottom-0 right-[-10%] w-[200px] h-[200px]">
+<img alt="Aerodynamics Concept" class="w-full h-full object-contain drop-shadow-2xl opacity-90 group-hover:scale-110 transition-transform duration-500" data-alt="3d claymation style illustration of a cute aviator mascot holding a paper airplane in a pink studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcBf4fyjU9Js29-QFlTFr5pIuoqGnniVumJEr2o1to9Xaci1enWVF9YJoiz4Iwo6EcWhkW_HoA7Y5X1GuHsM_8ztxdoi1B_f258-Se-wAHk2mHq5MYm3lqy_XU7sGdUXkvt_llxjK9Fo8LDdh15bMaWdyLxFI9N6JYiqUBp2I2K0X2nwuVFXKYgTiMrHm81MVNkfnUILevRlELYA3CW0H8Vaq4xvYZ0VYX9e13nOb0GBXfn6Uquw5wBUOaSFwME97cAsdLTQDquGiz"/>
+</div>
+<div class="relative z-10 mt-8">
+<button class="bg-on-primary text-ink font-button text-button h-[44px] px-6 rounded-[12px] hover:bg-surface-soft transition-colors inline-flex items-center gap-2">
+                            Start Drill
+                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Card 2: Navigation Drill -->
+<div class="bg-brand-teal rounded-xl p-xl relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 min-h-[320px] flex flex-col justify-between md:col-span-2 lg:col-span-1">
+<div class="relative z-10 text-on-primary">
+<span class="inline-block px-3 py-1 bg-on-primary/10 rounded-full font-caption-uppercase text-caption-uppercase mb-4 backdrop-blur-sm">Module 02</span>
+<h3 class="font-display-md text-display-md mb-2 leading-tight">Navigation<br/>Drill</h3>
+<p class="font-body-md text-body-md opacity-80 max-w-[200px]">Instrument reading, dead reckoning, and GPS failure protocols.</p>
+</div>
+<div class="absolute -bottom-10 right-0 w-[240px] h-[240px]">
+<img alt="Navigation Compass" class="w-full h-full object-contain drop-shadow-2xl group-hover:rotate-12 transition-transform duration-500" data-alt="3d claymation style illustration of an oversized vintage compass with a cute face sitting on a teal cloud" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX_5iMLluKQJ9flHn82bcw_FzcawUmuWcMFn7Rm3J3BqNlk9jx0NfUD6poT9S27AhtvbCPRYLQTuxnc1aUPRfNSrb4EQXXrCZzt3h517gxIbu8KpyNhFp_jynccuqZc1M1ViIUAdmORcr8BGoEc96pSY9y2O2rjP25e3WHvtVe-vAOFzAH0lARDftQLvoRA0mLXDNqELrZiSXdDvNq7hxIZ7o6Ozsi8VBTBx3lttc5HwwwAE2JoAP1mH0Xfr2HGAdzafIOrfvv6wxh"/>
+</div>
+<div class="relative z-10 mt-8">
+<button class="bg-on-primary text-brand-teal font-button text-button h-[44px] px-6 rounded-[12px] hover:bg-surface-soft transition-colors inline-flex items-center gap-2">
+                            Start Drill
+                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Engine Specs -->
+<div class="bg-brand-lavender rounded-xl p-xl relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 min-h-[320px] flex flex-col justify-between">
+<div class="relative z-10 text-ink">
+<span class="inline-block px-3 py-1 bg-ink/10 rounded-full font-caption-uppercase text-caption-uppercase mb-4 backdrop-blur-sm">Module 03</span>
+<h3 class="font-display-md text-display-md mb-2 leading-tight">Engine Specs<br/>Test</h3>
+<p class="font-body-md text-body-md text-surface-tint max-w-[200px]">Turbine mechanics, thrust calibration, and diagnostics.</p>
+</div>
+<div class="absolute -bottom-4 -right-4 w-[220px] h-[220px]">
+<img alt="Jet Engine" class="w-full h-full object-contain drop-shadow-2xl group-hover:-translate-y-4 transition-transform duration-500" data-alt="3d claymation style illustration of a chunky jet engine spraying colorful sparks on a soft purple background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZENJe84FHNnCwWF0a3m7pg2Yo05TEOArsWoaRRXWSkZuzL6uTx0X6GRDouEyR0XG01LaFsindcpnhBN1_DKPiu_ZSQOVxlKWSy6glS1t4uxB9lFBltq3slOrJtbdCQh4P4Hswnc-zLK4JJMMfjfFvVxoLKjbmkMdjC219eK_OWtERQmkFcHupsFPUL8MuueyFwWY1LiqQZOQDmGCGgAilpV0zqoNgEu-H36smzYLb-WjX0HZ5fRT-hn_i307u2HIGO25P5jW1dfBm"/>
+</div>
+<div class="relative z-10 mt-8">
+<button class="bg-ink text-on-primary font-button text-button h-[44px] px-6 rounded-[12px] hover:bg-ink/90 transition-colors inline-flex items-center gap-2">
+                            Start Drill
+                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Card 4: Weather Patterns (Horizontal Span) -->
+<div class="bg-brand-peach rounded-xl p-xl relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 min-h-[320px] flex flex-col justify-between lg:col-span-2">
+<div class="relative z-10 text-ink w-1/2">
+<span class="inline-block px-3 py-1 bg-ink/10 rounded-full font-caption-uppercase text-caption-uppercase mb-4 backdrop-blur-sm">Module 04</span>
+<h3 class="font-display-lg text-display-lg mb-4 leading-tight">Meteorology &amp;<br/>Weather</h3>
+<p class="font-title-md text-title-md text-surface-tint">Identify storm fronts, thermal patterns, and high-altitude winds before takeoff.</p>
+</div>
+<div class="absolute top-1/2 -translate-y-1/2 right-4 w-[300px] h-[300px]">
+<img alt="Weather Radar" class="w-full h-full object-contain drop-shadow-2xl group-hover:scale-105 transition-transform duration-500" data-alt="3d claymation style illustration of a puffy rain cloud striking a soft lightning bolt over a radar screen on a peach background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApVd8xbl5Y7Sf8hP4I3jpxIzvNNFLe1yDFr9NV8G3Dmd0QcIxiLuTUSv8BHjY2E9W1pKP8dH-1-I88EefMPR80a6TE42wP_DySOwtq1Hr6FwJOg3SxLgTsTWd1NmUmtQlxCfAsNxbcSgj6lEoEZuht66s6ypD-92wYXrZm6Wgg09DmMDearR3QZz-UoGy0fg6dq5Q3VViXFztw9EH4_uQXSsFNtXiLpmkBHY27j6WcsG1jWijyHv66r-SdN60cm8C2Prs-UoSizl5t"/>
+</div>
+<div class="relative z-10 mt-8">
+<button class="bg-ink text-on-primary font-button text-button h-[44px] px-6 rounded-[12px] hover:bg-ink/90 transition-colors inline-flex items-center gap-2">
+                            Start Assessment
+                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Card 5: Emergency Procs -->
+<div class="bg-brand-ochre rounded-xl p-xl relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 min-h-[320px] flex flex-col justify-between">
+<div class="relative z-10 text-ink">
+<span class="inline-block px-3 py-1 bg-ink/10 rounded-full font-caption-uppercase text-caption-uppercase mb-4 backdrop-blur-sm">Module 05</span>
+<h3 class="font-display-md text-display-md mb-2 leading-tight">Emergency<br/>Procedures</h3>
+<p class="font-body-md text-body-md text-surface-tint max-w-[200px]">Rapid response tactics for mid-air critical failures.</p>
+</div>
+<div class="absolute -bottom-8 -right-8 w-[240px] h-[240px]">
+<img alt="Emergency Button" class="w-full h-full object-contain drop-shadow-2xl group-hover:scale-110 transition-transform duration-500" data-alt="3d claymation style illustration of a large red emergency eject button being pressed by a chunky gloved hand on yellow background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXD6IB3oh3FjPpSbYrspk5S1wOi8-1w85F0iKW_K2BVw5qyST8AYB2NMNOaYRRHstuhxTfy4JXgMawbgaAilAIEAbC1Os8CP0_QQcRat9M7P9-WU1TtgNQHeQUmYppTaOaqrKoj2jW5blKIsF44QJ-Vhvz2XDKiSk6WjGkfFhTeh-4SRSiYorkZ9ZYWuY-l1dRxPYAlFRLErHjb_O7pf5r3Y5OXg_NMneVxhVRiY4JL0W2mMyoaFRHq_7fkpC0_mLyY04QDDX7TkYj"/>
+</div>
+<div class="relative z-10 mt-8">
+<button class="bg-ink text-on-primary font-button text-button h-[44px] px-6 rounded-[12px] hover:bg-ink/90 transition-colors inline-flex items-center gap-2">
+                            Start Drill
+                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
