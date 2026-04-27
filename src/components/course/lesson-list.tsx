@@ -6,6 +6,7 @@ import { FileUploadZone } from "./file-upload-zone";
 import { FileList } from "./file-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 import {
   useCreateLesson,
   useUpdateLesson,
@@ -30,6 +31,7 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId }: Le
   const createLesson = useCreateLesson();
   const updateLesson = useUpdateLesson();
   const deleteLesson = useDeleteLesson();
+  const router = useRouter();
 
   const handleAdd = async () => {
     if (!newTitle.trim()) return;
@@ -39,6 +41,7 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId }: Le
     });
     setNewTitle("");
     setShowAdd(false);
+    router.refresh();
   };
 
   const handleUpdate = async (lessonId: string) => {
@@ -48,10 +51,12 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId }: Le
       data: { title: editTitle.trim(), order_idx: 0 },
     });
     setEditingId(null);
+    router.refresh();
   };
 
   const handleDelete = async (lessonId: string) => {
     await deleteLesson.mutateAsync({ id: lessonId, courseId });
+    router.refresh();
   };
 
   return (

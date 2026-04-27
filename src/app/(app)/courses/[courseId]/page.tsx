@@ -36,6 +36,8 @@ export default async function CourseDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const isCourseAuthor = isInstructor && course.instructor_id === session.user.id;
+
   return (
     <div>
       {/* Back link */}
@@ -66,16 +68,20 @@ export default async function CourseDetailPage({ params }: PageProps) {
           <div className="mt-8 flex gap-4">
             {isInstructor ? (
               <>
-                <Link href={`/courses/${courseId}/edit`}>
-                  <Button className="gap-2">
-                    <Pencil className="h-4 w-4" />
-                    Edit Course
-                  </Button>
-                </Link>
-                <Button variant="destructive" className="gap-2">
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </Button>
+                {isCourseAuthor && (
+                  <>
+                    <Link href={`/courses/${courseId}/edit`}>
+                      <Button className="gap-2">
+                        <Pencil className="h-4 w-4" />
+                        Edit Course
+                      </Button>
+                    </Link>
+                    <Button variant="destructive" className="gap-2">
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </Button>
+                  </>
+                )}
               </>
             ) : (
               <Button className="gap-2">
@@ -103,7 +109,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <LessonList
         courseId={courseId}
         lessons={lessons}
-        isInstructor={isInstructor}
+        isInstructor={isCourseAuthor}
         instructorId={course.instructor_id}
       />
     </div>

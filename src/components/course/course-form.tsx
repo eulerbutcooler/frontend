@@ -54,8 +54,8 @@ export function CourseForm({ initialData }: CourseFormProps) {
         await updateMutation.mutateAsync({ id: initialData.id, data });
         router.push(`/courses/${initialData.id}`);
       } else {
-        const course = await createMutation.mutateAsync(data);
-        router.push(`/courses/${course.id}`);
+        await createMutation.mutateAsync(data);
+        router.push("/courses");
       }
     } catch (err) {
       setServerError(

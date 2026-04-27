@@ -36,7 +36,7 @@ export function CourseGrid({ courses, isInstructor }: CourseGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {courses.map((course, i) => (
-        <CourseCard key={course.id} course={course} index={i} />
+        <CourseCard key={course.id || i} course={course} index={i} />
       ))}
     </div>
   );
