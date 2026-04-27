@@ -159,9 +159,9 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
           </div>
           <div className="bg-surface-card rounded-2xl border border-hairline overflow-hidden p-6 md:p-8">
             <div className="flex flex-col gap-4">
-              {courses.slice(0, 4).map((course) => (
+              {courses.slice(0, 4).map((course, index) => (
                 <Link
-                  key={course.id}
+                  key={course.id || index}
                   href={`/courses/${course.id}`}
                   className="flex items-center justify-between p-4 bg-white rounded-xl border border-hairline hover:border-outline-variant transition-colors group cursor-pointer"
                 >

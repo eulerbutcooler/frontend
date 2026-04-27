@@ -1,8 +1,13 @@
-"use client";
-
 import { CourseForm } from "@/components/course/course-form";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function CreateCoursePage() {
+export default async function CreateCoursePage() {
+  const session = await auth();
+  if (session?.user?.role !== "instructor") {
+    redirect("/courses");
+  }
+
   return (
     <div>
       <div className="mb-10">
