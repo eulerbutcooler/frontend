@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Plus, Pencil, Trash2, Check, X, ChevronDown, ChevronRight } from "lucide-react";
-import { FileUploadZone } from "./file-upload-zone";
 import { FileList } from "./file-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -199,12 +198,7 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId }: Le
           {/* Files section (expanded) */}
           {expandedId === lesson.id && (
             <div className="px-6 pb-6 border-t border-hairline pt-4 animate-fade-in">
-              <FileList lessonId={lesson.id} isInstructor={isInstructor} />
-              {isInstructor && instructorId && (
-                <div className="mt-4">
-                  <FileUploadZone lessonId={lesson.id} instructorId={instructorId} />
-                </div>
-              )}
+              <FileList lessonId={lesson.id} isInstructor={isInstructor} instructorId={instructorId} />
             </div>
           )}
           </div>

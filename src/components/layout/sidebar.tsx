@@ -10,21 +10,15 @@ import { cn } from "@/lib/utils";
 interface NavItem {
   label: string;
   href: string;
-  glyph: string;
   instructorOnly?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", glyph: "D" },
-  { label: "Courses", href: "/courses", glyph: "C" },
-  { label: "Quizzes", href: "/quizzes", glyph: "Q" },
-  { label: "Chat", href: "/chat", glyph: "AI" },
-  {
-    label: "Analytics",
-    href: "/analytics",
-    glyph: "A",
-    instructorOnly: true,
-  },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Courses", href: "/courses" },
+  { label: "Quizzes", href: "/quizzes" },
+  { label: "Chat", href: "/chat" },
+  { label: "Analytics", href: "/analytics", instructorOnly: true },
 ];
 
 interface SidebarUser {
@@ -78,19 +72,7 @@ export function Sidebar({ user, className }: SidebarProps) {
                   : "text-surface-tint hover:bg-surface-strong hover:translate-x-0.5 group"
               )}
             >
-              <span
-                className={cn(
-                  "w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold font-display tracking-tight shrink-0",
-                  isActive
-                    ? "bg-white/20 text-white"
-                    : "bg-surface-container text-surface-tint group-hover:bg-surface-strong group-hover:text-ink"
-                )}
-              >
-                {item.glyph}
-              </span>
-              <span className={cn(!isActive && "group-hover:text-ink")}>
-                {item.label}
-              </span>
+              {item.label}
             </Link>
           );
         })}

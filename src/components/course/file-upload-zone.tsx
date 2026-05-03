@@ -17,11 +17,13 @@ import type { Upload as TusUpload } from "tus-js-client";
 interface FileUploadZoneProps {
   lessonId: string;
   instructorId: string;
+  allowedFileType?: "pdf" | "ppt" | "docx";
 }
 
 export function FileUploadZone({
   lessonId,
   instructorId,
+  allowedFileType,
 }: FileUploadZoneProps) {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
@@ -36,12 +38,25 @@ export function FileUploadZone({
   const [fileName, setFileName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const token = (session as { accessToken?: string } | null)?.accessToken ?? "";
+  const token = session?.user?.accessToken ?? "";
 
   const startUpload = useCallback(
     (file: File) => {
+      let allowedExts = ACCEPTED_EXTENSIONS;
+      let allowedMime = ACCEPTED_MIME_TYPES;
+      if (allowedFileType === "pdf") {
+          allowedExts = [".pdf"];
+          allowedMime = "application/pdf";
+      } else if (allowedFileType === "ppt") {
+          allowedExts = [".ppt", ".pptx"];
+          allowedMime = "application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation";
+      } else if (allowedFileType === "docx") {
+          allowedExts = [".docx"];
+          allowedMime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      }
+
       const ext = getFileExtension(file.name);
-      if (!ACCEPTED_EXTENSIONS.includes(`.${ext}`)) {
+      if (!allowedExts.includes(`.${ext}`)) {
         setErrorMsg(`Unsupported file type: .${ext}`);
         setStatus("error");
         setFileName(file.name);
@@ -66,6 +81,12 @@ export function FileUploadZone({
             setStatus("complete");
             setProgress(100);
             queryClient.invalidateQueries({ queryKey: ["files", lessonId] });
+            // Auto-reset to idle so instructor can upload another file
+            setTimeout(() => {
+              setStatus("idle");
+              setProgress(0);
+              setFileName("");
+            }, 2000);
           },
           onError: (err) => {
             setStatus("error");
@@ -133,7 +154,12 @@ export function FileUploadZone({
       <input
         ref={inputRef}
         type="file"
-        accept={ACCEPTED_MIME_TYPES}
+        accept={
+          allowedFileType === "pdf" ? "application/pdf" : 
+          allowedFileType === "ppt" ? "application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation" : 
+          allowedFileType === "docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : 
+          ACCEPTED_MIME_TYPES
+        }
         className="hidden"
         onChange={handleSelect}
       />
@@ -148,7 +174,7 @@ export function FileUploadZone({
           drag and drop
         </p>
         <p className="text-caption text-outline">
-          PDF, PPT, PPTX, DOCX
+          {allowedFileType === "pdf" ? "PDF" : allowedFileType === "ppt" ? "PPT, PPTX" : allowedFileType === "docx" ? "DOCX" : "PDF, PPT, PPTX, DOCX"}
         </p>
       </div>
     </div>
