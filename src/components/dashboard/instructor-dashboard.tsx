@@ -28,6 +28,7 @@ export function InstructorDashboard({
   overview,
   courses,
 }: InstructorDashboardProps) {
+  const safeCourses = courses || [];
   return (
     <div className="space-y-12">
       {/* Welcome Header */}
@@ -114,7 +115,7 @@ export function InstructorDashboard({
           </Link>
         </div>
 
-        {courses.length === 0 ? (
+        {safeCourses.length === 0 ? (
           <div className="bg-surface-card rounded-2xl border border-hairline p-12 text-center">
             <p className="text-title-md font-semibold text-ink mb-2">
               No courses yet
@@ -141,7 +142,7 @@ export function InstructorDashboard({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {courses.map((course) => (
+                {safeCourses.map((course) => (
                   <TableRow key={course.id}>
                     <TableCell className="font-semibold">
                       {course.title}
