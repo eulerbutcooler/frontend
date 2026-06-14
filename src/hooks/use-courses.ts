@@ -113,3 +113,16 @@ export function useDeleteLesson() {
       qc.invalidateQueries({ queryKey: ["lessons", vars.courseId] }),
   });
 }
+
+export function useFinalizeCourse() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (courseId: string) =>
+      clientApi.post<{ status: string }>(`/api/v1/courses/${courseId}/finalize`),
+    onSuccess: (_, courseId) => {
+      qc.invalidateQueries({ queryKey: ["courses"] });
+      qc.invalidateQueries({ queryKey: ["courses", courseId] });
+      qc.invalidateQueries({ queryKey: ["quizzes", courseId] });
+    },
+  });
+}

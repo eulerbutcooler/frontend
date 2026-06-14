@@ -46,12 +46,19 @@ export function CourseCard({ course, index }: CourseCardProps) {
             >
               {formatRank(course.rank)}
             </span>
-            <span
-              className={cn(
-                "w-2 h-2 rounded-full opacity-50",
-                isDark ? "bg-white" : "bg-ink"
+            <div className="flex items-center gap-2">
+              {!course.published && (
+                <span className="px-2 py-0.5 rounded-full text-caption bg-white/40 text-ink">
+                  Draft
+                </span>
               )}
-            />
+              <span
+                className={cn(
+                  "w-2 h-2 rounded-full opacity-50",
+                  isDark ? "bg-white" : "bg-ink"
+                )}
+              />
+            </div>
           </div>
           <h3
             className={cn(

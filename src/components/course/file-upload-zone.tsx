@@ -17,11 +17,13 @@ import type { Upload as TusUpload } from "tus-js-client";
 interface FileUploadZoneProps {
   lessonId: string;
   instructorId: string;
+  onUploadSuccess?: () => void;
 }
 
 export function FileUploadZone({
   lessonId,
   instructorId,
+  onUploadSuccess,
 }: FileUploadZoneProps) {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
@@ -36,7 +38,7 @@ export function FileUploadZone({
   const [fileName, setFileName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const token = (session as { accessToken?: string } | null)?.accessToken ?? "";
+  const token = session?.user?.accessToken ?? "";
 
   const startUpload = useCallback(
     (file: File) => {
@@ -66,6 +68,7 @@ export function FileUploadZone({
             setStatus("complete");
             setProgress(100);
             queryClient.invalidateQueries({ queryKey: ["files", lessonId] });
+            onUploadSuccess?.();
           },
           onError: (err) => {
             setStatus("error");

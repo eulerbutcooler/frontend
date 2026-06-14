@@ -16,8 +16,8 @@ interface AttemptResults {
 }
 
 interface QuizDetail {
-  Quiz: Quiz;
-  Questions: Question[];
+  quiz: Quiz;
+  questions: Question[];
 }
 
 export default function QuizResultsPage() {
@@ -66,7 +66,7 @@ export default function QuizResultsPage() {
   }
 
   const { attempt, answers } = results;
-  const { Questions: questions } = quizDetail;
+  const { questions } = quizDetail;
   const score = Math.round(attempt.score);
   const questionsMap = new Map(questions.map((q) => [q.id, q]));
 

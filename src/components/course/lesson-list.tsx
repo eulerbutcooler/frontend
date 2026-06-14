@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Check, X, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Pencil, Trash2, Check, X, ChevronDown, ChevronRight, Save } from "lucide-react";
 import { FileUploadZone } from "./file-upload-zone";
 import { FileList } from "./file-list";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import {
   useCreateLesson,
   useUpdateLesson,
   useDeleteLesson,
+  useFinalizeCourse,
 } from "@/hooks/use-courses";
 import type { Lesson } from "@/types/course";
 
@@ -19,18 +20,21 @@ interface LessonListProps {
   lessons: Lesson[];
   isInstructor: boolean;
   instructorId?: string;
+  published?: boolean;
 }
 
-export function LessonList({ courseId, lessons, isInstructor, instructorId }: LessonListProps) {
+export function LessonList({ courseId, lessons, isInstructor, instructorId, published }: LessonListProps) {
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const createLesson = useCreateLesson();
   const updateLesson = useUpdateLesson();
   const deleteLesson = useDeleteLesson();
+  const finalizeCourse = useFinalizeCourse();
   const router = useRouter();
 
   const handleAdd = async () => {
@@ -41,6 +45,7 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId }: Le
     });
     setNewTitle("");
     setShowAdd(false);
+    setHasChanges(true);
     router.refresh();
   };
 
@@ -202,13 +207,31 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId }: Le
               <FileList lessonId={lesson.id} isInstructor={isInstructor} />
               {isInstructor && instructorId && (
                 <div className="mt-4">
-                  <FileUploadZone lessonId={lesson.id} instructorId={instructorId} />
+                  <FileUploadZone lessonId={lesson.id} instructorId={instructorId} onUploadSuccess={() => setHasChanges(true)} />
                 </div>
               )}
             </div>
           )}
           </div>
         ))}
+
+        {/* Save / Publish button */}
+        {isInstructor && hasChanges && (
+          <div className="flex items-center justify-end pt-6 border-t border-hairline">
+            <Button
+              className="gap-2"
+              disabled={finalizeCourse.isPending}
+              onClick={async () => {
+                await finalizeCourse.mutateAsync(courseId);
+                setHasChanges(false);
+                router.refresh();
+              }}
+            >
+              <Save className="h-4 w-4" />
+              {published ? "Save Changes" : "Save & Publish"}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

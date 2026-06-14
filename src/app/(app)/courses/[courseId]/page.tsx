@@ -2,10 +2,11 @@ import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { api } from "@/lib/api-client";
 import Link from "next/link";
-import { ArrowRight, Pencil, Trash2, ArrowLeft } from "lucide-react";
+import { ArrowRight, Pencil, ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LessonList } from "@/components/course/lesson-list";
+import { DeleteCourseButton } from "@/components/course/delete-course-button";
 import type { Course, Lesson } from "@/types/course";
 
 function formatRank(rank?: string | null): string {
@@ -53,10 +54,11 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16 items-center">
         <div className="md:col-span-7">
           <div className="inline-flex items-center gap-2 bg-surface-card px-3 py-1.5 rounded-full mb-6 border border-hairline">
-            <span className="w-2 h-2 rounded-full bg-success" />
+            <span className={`w-2 h-2 rounded-full ${course.published ? "bg-success" : "bg-warning"}`} />
             <span className="text-caption-uppercase uppercase text-ink">
               {formatRank(course.rank)} · {lessons.length}{" "}
               {lessons.length === 1 ? "lesson" : "lessons"}
+              {!course.published && " · Draft"}
             </span>
           </div>
           <h1 className="font-display text-display-xl text-ink mb-6 leading-tight">
@@ -76,10 +78,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                         Edit Course
                       </Button>
                     </Link>
-                    <Button variant="destructive" className="gap-2">
-                      <Trash2 className="h-4 w-4" />
-                      Delete
-                    </Button>
+                    <DeleteCourseButton courseId={courseId} />
                   </>
                 )}
               </>
@@ -111,6 +110,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
         lessons={lessons}
         isInstructor={isCourseAuthor}
         instructorId={course.instructor_id}
+        published={course.published}
       />
     </div>
   );

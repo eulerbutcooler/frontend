@@ -16,8 +16,8 @@ import { clientApi } from "@/lib/api-client.client";
 import type { Quiz, Question } from "@/types/quiz";
 
 interface QuizDetail {
-  Quiz: Quiz;
-  Questions: Question[];
+  quiz: Quiz;
+  questions: Question[];
 }
 
 export default function QuizTakePage() {
@@ -73,7 +73,7 @@ export default function QuizTakePage() {
     );
   }
 
-  const { Quiz: quiz, Questions: questions } = quizDetail;
+  const { quiz, questions } = quizDetail;
   const total = questions.length;
   const current = questions[currentQuestion];
   const isFirst = currentQuestion === 0;
