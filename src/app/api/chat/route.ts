@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+// Extend the route handler timeout so slow LLM streaming doesn't 504.
+export const maxDuration = 300;
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 export async function POST(req: Request) {

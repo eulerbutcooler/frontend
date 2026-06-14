@@ -7,13 +7,15 @@ const STYLES: Record<Difficulty, { bg: string; text: string }> = {
   hard: { bg: "bg-error/10", text: "text-error" },
 };
 
+const DEFAULT_STYLE = { bg: "bg-surface-soft", text: "text-surface-tint" };
+
 interface DifficultyBadgeProps {
-  difficulty: Difficulty;
+  difficulty: Difficulty | string;
   className?: string;
 }
 
 export function DifficultyBadge({ difficulty, className }: DifficultyBadgeProps) {
-  const style = STYLES[difficulty];
+  const style = STYLES[difficulty as Difficulty] ?? DEFAULT_STYLE;
   return (
     <span
       className={cn(

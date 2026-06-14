@@ -5,6 +5,7 @@ export interface Course {
   description: string;
   rank: string;
   instructor_id: string;
+  published: boolean;
   created_at: string;
   updated_at: string;
 }

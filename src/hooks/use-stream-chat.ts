@@ -24,6 +24,54 @@ function createId(): string {
   return `msg-${Date.now()}-${++msgCounter}`;
 }
 
+/** Parse SSE frames from the raw chunk buffer.
+ *  Returns {tokens: string, citations: Citation[] | null, done: boolean}
+ *  and any incomplete line to carry over to the next chunk.
+ */
+function parseSSE(buffer: string): {
+  tokens: string;
+  citations: Citation[] | null;
+  done: boolean;
+  remainder: string;
+} {
+  let tokens = "";
+  let citations: Citation[] | null = null;
+  let done = false;
+
+  // Split by newlines; keep any trailing partial line as remainder.
+  const lastNewline = buffer.lastIndexOf("\n");
+  const remainder = lastNewline === -1 ? buffer : buffer.slice(lastNewline + 1);
+  const lines =
+    lastNewline === -1 ? [] : buffer.slice(0, lastNewline + 1).split("\n");
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("data:")) continue;
+
+    const payload = trimmed.slice(5).trim();
+    if (payload === "[DONE]") {
+      done = true;
+      continue;
+    }
+
+    try {
+      const parsed = JSON.parse(payload);
+      if (parsed.token !== undefined) {
+        tokens += parsed.token;
+      } else if (parsed.citations) {
+        citations = parsed.citations as Citation[];
+      } else if (parsed.error) {
+        throw new Error(parsed.error);
+      }
+    } catch {
+      // If JSON.parse fails, treat raw payload as plain text (fallback).
+      tokens += payload;
+    }
+  }
+
+  return { tokens, citations, done, remainder };
+}
+
 export function useStreamChat(sessionId: string): UseStreamChatReturn {
   const [messages, setMessages] = useState<StreamMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -33,7 +81,7 @@ export function useStreamChat(sessionId: string): UseStreamChatReturn {
 
   const sendMessage = useCallback(
     async (query: string) => {
-      if (!query.trim() || isStreaming) return;
+      if (!query.trim() || isStreaming || !sessionId) return;
 
       setError(null);
 
@@ -74,24 +122,36 @@ export function useStreamChat(sessionId: string): UseStreamChatReturn {
         if (!reader) throw new Error("No stream body");
 
         const decoder = new TextDecoder();
+        let buffer = "";
 
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
 
-          const chunk = decoder.decode(value, { stream: true });
+          const decoded = decoder.decode(value, { stream: true });
+          buffer += decoded;
+          console.debug("[SSE] raw chunk:", decoded);
+          const { tokens, citations: newCitations, done: isDone, remainder } =
+            parseSSE(buffer);
+          buffer = remainder;
+          console.debug("[SSE] parsed tokens:", tokens, "citations:", newCitations, "done:", isDone);
 
-          setMessages((prev) => {
-            const updated = [...prev];
-            const last = updated[updated.length - 1];
-            if (last && last.role === "assistant") {
-              updated[updated.length - 1] = {
-                ...last,
-                content: last.content + chunk,
-              };
-            }
-            return updated;
-          });
+          if (tokens || newCitations) {
+            setMessages((prev) => {
+              const updated = [...prev];
+              const last = updated[updated.length - 1];
+              if (last && last.role === "assistant") {
+                updated[updated.length - 1] = {
+                  ...last,
+                  content: last.content + tokens,
+                  citations: newCitations ?? last.citations,
+                };
+              }
+              return updated;
+            });
+          }
+
+          if (isDone) break;
         }
 
         queryClient.invalidateQueries({
