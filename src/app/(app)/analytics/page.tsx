@@ -24,7 +24,7 @@ export default async function AnalyticsPage() {
   try {
     [overview, courses] = await Promise.all([
       api.get<AnalyticsOverview>("/api/v1/analytics"),
-      api.get<Course[]>("/api/v1/courses"),
+      api.get<Course[]>("/api/v1/courses").then(res => res || []),
     ]);
   } catch {
     // API fallback

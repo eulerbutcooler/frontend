@@ -16,7 +16,8 @@ export default async function QuizzesPage() {
 
   let courses: Course[] = [];
   try {
-    courses = await api.get<Course[]>("/api/v1/courses");
+    const fetchedCourses = await api.get<Course[]>("/api/v1/courses");
+    courses = fetchedCourses || [];
   } catch {
     // API unreachable
   }

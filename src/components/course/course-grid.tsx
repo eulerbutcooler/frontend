@@ -9,7 +9,8 @@ interface CourseGridProps {
 }
 
 export function CourseGrid({ courses, isInstructor }: CourseGridProps) {
-  if (courses.length === 0) {
+  const safeCourses = courses || [];
+  if (safeCourses.length === 0) {
     return (
       <div className="bg-surface-card rounded-2xl border border-hairline p-16 text-center">
         <h3 className="font-display text-display-sm text-ink mb-2">
@@ -35,7 +36,7 @@ export function CourseGrid({ courses, isInstructor }: CourseGridProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {courses.map((course, i) => (
+      {safeCourses.map((course, i) => (
         <CourseCard key={course.id || i} course={course} index={i} />
       ))}
     </div>

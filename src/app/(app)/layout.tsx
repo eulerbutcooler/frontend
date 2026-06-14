@@ -23,7 +23,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
       <SidebarOverlay user={user} />
 
-      <div className="flex flex-col flex-1 md:ml-64 min-w-0">
+      <div className="flex flex-col flex-1 min-w-0">
         <Topbar user={user} />
 
         <main className="flex-1 overflow-y-auto p-6 md:p-12 pt-20 md:pt-12">
