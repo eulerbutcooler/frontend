@@ -80,13 +80,23 @@ export function FileUploadZone({
           onSuccess: () => {
             setStatus("complete");
             setProgress(100);
-            queryClient.invalidateQueries({ queryKey: ["files", lessonId] });
-            // Auto-reset to idle so instructor can upload another file
+            // Force all consumers (FileList, useCourseFiles, publish bar)
+            // to refetch immediately — not just on next poll tick.
+            queryClient.invalidateQueries({
+              queryKey: ["files", lessonId],
+              refetchType: "all",
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["ingest-status"],
+              refetchType: "all",
+            });
+            // Brief "complete" flash then reset so next upload works.
+            // The file row will appear in FileList within ~3s via polling.
             setTimeout(() => {
               setStatus("idle");
               setProgress(0);
               setFileName("");
-            }, 2000);
+            }, 1500);
           },
           onError: (err) => {
             setStatus("error");

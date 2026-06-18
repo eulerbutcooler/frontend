@@ -54,8 +54,8 @@ export function CourseForm({ initialData }: CourseFormProps) {
         await updateMutation.mutateAsync({ id: initialData.id, data });
         router.push(`/courses/${initialData.id}`);
       } else {
-        await createMutation.mutateAsync(data);
-        router.push("/courses");
+        const course = await createMutation.mutateAsync(data);
+        router.push(`/courses/${course.id}`);
       }
     } catch (err) {
       setServerError(
@@ -147,7 +147,7 @@ export function CourseForm({ initialData }: CourseFormProps) {
             ? "Saving..."
             : isEdit
               ? "Save Changes"
-              : "Create Course"}
+              : "Create & Add Content"}
           {!isSubmitting && <ArrowRight className="h-4 w-4" />}
         </Button>
       </div>

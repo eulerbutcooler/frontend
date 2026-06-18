@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
+import { Suspense } from "react";
 import { api } from "@/lib/api-client";
 import Link from "next/link";
 import { ArrowRight, Pencil, ArrowLeft } from "lucide-react";
@@ -67,6 +68,14 @@ export default async function CourseDetailPage({ params }: PageProps) {
           <p className="text-body-md text-surface-tint max-w-xl">
             {course.description}
           </p>
+          {isCourseAuthor && !course.published && (
+            <div className="mt-6 inline-flex items-start gap-3 bg-warning/10 text-ink rounded-2xl px-4 py-3 max-w-xl">
+              <span className="w-2 h-2 rounded-full bg-warning mt-1.5 shrink-0" />
+              <p className="text-body-sm text-surface-tint">
+                This course is a <span className="font-semibold text-ink">draft</span>. Add modules and files below — students see it only after you publish.
+              </p>
+            </div>
+          )}
           <div className="mt-8 flex gap-4">
             {isInstructor ? (
               <>
@@ -104,14 +113,16 @@ export default async function CourseDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Lessons */}
-      <LessonList
-        courseId={courseId}
-        lessons={lessons}
-        isInstructor={isCourseAuthor}
-        instructorId={course.instructor_id}
-        published={course.published}
-      />
+      {/* Lessons — client-only to avoid hydration mismatch from useQueries */}
+      <Suspense fallback={<div className="h-40" />}>
+        <LessonList
+          courseId={courseId}
+          lessons={lessons}
+          isInstructor={isCourseAuthor}
+          instructorId={course.instructor_id}
+          published={course.published}
+        />
+      </Suspense>
     </div>
   );
 }

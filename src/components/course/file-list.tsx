@@ -78,7 +78,6 @@ export function FileList({
     queryKey: ["files", lessonId],
     queryFn: () =>
       clientApi.get<FileAsset[]>(`/api/v1/lessons/${lessonId}/files`),
-    refetchInterval: 5000,
   });
 
   const visibleFiles = isInstructor

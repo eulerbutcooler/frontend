@@ -49,7 +49,7 @@ export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => getQueryClient());
 
   return (
-    <SessionProvider>
+    <SessionProvider refetchInterval={14 * 60} refetchOnWindowFocus>
       <QueryClientProvider client={queryClient}>
         {children}
         <Toaster

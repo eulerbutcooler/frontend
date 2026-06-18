@@ -1,6 +1,6 @@
 "use client";
 
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 import { ApiClientError } from "@/types/api";
 import type { ApiEnvelope } from "@/types/api";
 
@@ -12,9 +12,12 @@ async function getAccessToken(): Promise<string | null> {
 }
 
 class ClientApiClient {
-  async fetch<T>(path: string, opts?: RequestInit): Promise<T> {
-    const token = await getAccessToken();
-    const res = await fetch(`${BASE_URL}${path}`, {
+  private async doFetch(
+    path: string,
+    token: string | null,
+    opts?: RequestInit
+  ): Promise<Response> {
+    return fetch(`${BASE_URL}${path}`, {
       ...opts,
       headers: {
         "Content-Type": "application/json",
@@ -22,6 +25,21 @@ class ClientApiClient {
         ...opts?.headers,
       },
     });
+  }
+
+  async fetch<T>(path: string, opts?: RequestInit): Promise<T> {
+    const token = await getAccessToken();
+    let res = await this.doFetch(path, token, opts);
+
+    if (res.status === 401) {
+      const refreshed = await getSession();
+      const newToken = refreshed?.user?.accessToken ?? null;
+      if (newToken && newToken !== token) {
+        res = await this.doFetch(path, newToken, opts);
+      } else {
+        signOut({ callbackUrl: "/login" });
+      }
+    }
 
     if (res.status === 204) return undefined as T;
 

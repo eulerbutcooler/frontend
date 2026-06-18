@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus, Pencil, Trash2, Check, X, ChevronDown, ChevronRight } from "lucide-react";
 import { FileList } from "./file-list";
+import { PublishBar } from "./publish-bar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
@@ -10,8 +11,8 @@ import {
   useCreateLesson,
   useUpdateLesson,
   useDeleteLesson,
-  useFinalizeCourse,
 } from "@/hooks/use-courses";
+import { useCourseFiles } from "@/hooks/use-course-files";
 import type { Lesson } from "@/types/course";
 
 interface LessonListProps {
@@ -28,13 +29,13 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [hasChanges, setHasChanges] = useState(false);
 
   const createLesson = useCreateLesson();
   const updateLesson = useUpdateLesson();
   const deleteLesson = useDeleteLesson();
-  const finalizeCourse = useFinalizeCourse();
   const router = useRouter();
+
+  const fileSummary = useCourseFiles(lessons);
 
   const handleAdd = async () => {
     if (!newTitle.trim()) return;
@@ -44,7 +45,6 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
     });
     setNewTitle("");
     setShowAdd(false);
-    setHasChanges(true);
     router.refresh();
   };
 
@@ -66,9 +66,16 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h2 className="font-display text-display-md text-ink">
-          Course Modules
-        </h2>
+        <div>
+          <h2 className="font-display text-display-md text-ink">
+            Course Modules
+          </h2>
+          {isInstructor && (
+            <p className="text-body-sm text-surface-tint mt-1">
+              Add modules and upload files. Each file ingests on its own — publish once all are ready.
+            </p>
+          )}
+        </div>
         {isInstructor && (
           <Button
             variant="secondary"
@@ -208,25 +215,16 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
           )}
           </div>
         ))}
-
-        {/* Save / Publish button */}
-        {isInstructor && hasChanges && (
-          <div className="flex items-center justify-end pt-6 border-t border-hairline">
-            <Button
-              className="gap-2"
-              disabled={finalizeCourse.isPending}
-              onClick={async () => {
-                await finalizeCourse.mutateAsync(courseId);
-                setHasChanges(false);
-                router.refresh();
-              }}
-            >
-              <Save className="h-4 w-4" />
-              {published ? "Save Changes" : "Save & Publish"}
-            </Button>
-          </div>
-        )}
       </div>
+
+      {/* Sticky publish gate — only enabled once every file is ingested */}
+      {isInstructor && (
+        <PublishBar
+          courseId={courseId}
+          published={!!published}
+          summary={fileSummary}
+        />
+      )}
     </div>
   );
 }
