@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { capitalize } from "@/lib/utils";
 import {
   Table,
   TableHeader,
@@ -16,11 +17,6 @@ interface InstructorDashboardProps {
   user: { name?: string | null };
   overview: AnalyticsOverview | null;
   courses: Course[];
-}
-
-function formatRank(rank?: string | null): string {
-  if (!rank) return "—";
-  return rank.charAt(0).toUpperCase() + rank.slice(1);
 }
 
 export function InstructorDashboard({
@@ -148,7 +144,7 @@ export function InstructorDashboard({
                       {course.title}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="default">{formatRank(course.rank)}</Badge>
+                      <Badge variant="default">{capitalize(course.rank)}</Badge>
                     </TableCell>
                     <TableCell className="text-surface-tint">
                       {new Date(course.created_at).toLocaleDateString()}

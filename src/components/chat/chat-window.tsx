@@ -3,19 +3,11 @@
 import { useRef, useEffect } from "react";
 import { MessageBubble } from "./message-bubble";
 import { ChatInput } from "./chat-input";
-import type { Citation } from "@/types/chat";
-
-interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  citations: Citation[];
-  created_at: string;
-}
+import type { Message } from "@/types/chat";
 
 interface ChatWindowProps {
   sessionTitle?: string;
-  messages: ChatMessage[];
+  messages: Message[];
   isStreaming: boolean;
   error: string | null;
   onSend: (message: string) => void;

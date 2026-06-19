@@ -12,7 +12,6 @@ const buttonVariants = cva(
         ghost: "text-ink hover:bg-surface-card",
         "on-color": "bg-white text-ink hover:bg-surface-soft",
         destructive: "bg-error text-white hover:bg-error/90",
-        link: "text-ink underline underline-offset-4 hover:text-surface-tint p-0 h-auto",
       },
       size: {
         sm: "h-9 px-4 rounded-lg text-[13px]",

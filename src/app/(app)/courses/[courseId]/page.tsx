@@ -8,12 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LessonList } from "@/components/course/lesson-list";
 import { DeleteCourseButton } from "@/components/course/delete-course-button";
+import { capitalize } from "@/lib/utils";
 import type { Course, Lesson } from "@/types/course";
-
-function formatRank(rank?: string | null): string {
-  if (!rank) return "—";
-  return rank.charAt(0).toUpperCase() + rank.slice(1);
-}
 
 interface PageProps {
   params: Promise<{ courseId: string }>;
@@ -57,7 +53,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
           <div className="inline-flex items-center gap-2 bg-surface-card px-3 py-1.5 rounded-full mb-6 border border-hairline">
             <span className={`w-2 h-2 rounded-full ${course.published ? "bg-success" : "bg-warning"}`} />
             <span className="text-caption-uppercase uppercase text-ink">
-              {formatRank(course.rank)} · {lessons.length}{" "}
+              {capitalize(course.rank)} · {lessons.length}{" "}
               {lessons.length === 1 ? "lesson" : "lessons"}
               {!course.published && " · Draft"}
             </span>
@@ -103,7 +99,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
           <div className="bg-brand-lavender rounded-[32px] aspect-[4/3] overflow-hidden relative shadow-sm border border-ink/5 flex items-center justify-center">
             <div className="text-center p-8">
               <Badge variant="ghost" className="mb-4">
-                {formatRank(course.rank)}
+                {capitalize(course.rank)}
               </Badge>
               <h2 className="font-display text-display-sm text-ink">
                 {course.title}

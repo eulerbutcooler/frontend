@@ -2,16 +2,12 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { capitalize } from "@/lib/utils";
 import type { Course } from "@/types/course";
 
 interface StudentDashboardProps {
   user: { name?: string | null; rank?: string | null };
   courses: Course[];
-}
-
-function formatRank(rank?: string | null): string {
-  if (!rank) return "—";
-  return rank.charAt(0).toUpperCase() + rank.slice(1);
 }
 
 export function StudentDashboard({ user, courses }: StudentDashboardProps) {
@@ -86,7 +82,7 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
               Current Rank
             </h3>
             <p className="font-display text-display-md text-ink mt-4">
-              {formatRank(user.rank)}
+              {capitalize(user.rank)}
             </p>
           </div>
         </div>
@@ -174,7 +170,7 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
                         {course.title}
                       </h4>
                       <p className="text-caption-uppercase uppercase text-surface-tint mt-1">
-                        {formatRank(course.rank)}
+                        {capitalize(course.rank)}
                       </p>
                     </div>
                   </div>

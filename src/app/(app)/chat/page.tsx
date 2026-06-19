@@ -6,16 +6,9 @@ import { clientApi } from "@/lib/api-client.client";
 import { useCreateChatSession } from "@/hooks/use-chat";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatDate } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import type { ChatSession } from "@/types/chat";
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
 
 export default function ChatListPage() {
   const router = useRouter();

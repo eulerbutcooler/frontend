@@ -3,10 +3,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input, Label } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RANKS } from "@/types/user";
+import { capitalize } from "@/lib/utils";
 import {
   createCourseSchema,
   type CreateCourseInput,
@@ -15,11 +15,6 @@ import { useCreateCourse, useUpdateCourse } from "@/hooks/use-courses";
 import type { Course } from "@/types/course";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-
-function formatRank(rank?: string | null): string {
-  if (!rank) return "—";
-  return rank.charAt(0).toUpperCase() + rank.slice(1);
-}
 
 interface CourseFormProps {
   initialData?: Course;
@@ -105,7 +100,7 @@ export function CourseForm({ initialData }: CourseFormProps) {
               <option value="">Select rank...</option>
               {RANKS.map((r) => (
                 <option key={r} value={r}>
-                  {formatRank(r)}
+                  {capitalize(r)}
                 </option>
               ))}
             </select>

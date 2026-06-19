@@ -1,21 +1,6 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn, capitalize, BRAND_COLORS, DARK_TEXT_COLORS } from "@/lib/utils";
 import type { Course } from "@/types/course";
-
-const BRAND_COLORS = [
-  "bg-brand-pink",
-  "bg-brand-teal",
-  "bg-brand-lavender",
-  "bg-brand-peach",
-  "bg-brand-ochre",
-] as const;
-
-const DARK_TEXT_COLORS = new Set(["bg-brand-teal"]);
-
-function formatRank(rank?: string | null): string {
-  if (!rank) return "—";
-  return rank.charAt(0).toUpperCase() + rank.slice(1);
-}
 
 interface CourseCardProps {
   course: Course;
@@ -44,7 +29,7 @@ export function CourseCard({ course, index }: CourseCardProps) {
                   : "bg-white/30 text-ink"
               )}
             >
-              {formatRank(course.rank)}
+              {capitalize(course.rank)}
             </span>
             <div className="flex items-center gap-2">
               {!course.published && (

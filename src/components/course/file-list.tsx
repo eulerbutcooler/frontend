@@ -17,7 +17,7 @@ import { FileViewer } from "./file-viewer";
 import { FileUploadZone } from "./file-upload-zone";
 import type { FileAsset, FileType } from "@/types/course";
 
-const FILE_ICONS: Record<FileType, React.ElementType> = {
+export const FILE_ICONS: Record<FileType, React.ElementType> = {
   pdf: FileText,
   ppt: FileSpreadsheet,
   docx: FileText,

@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useFileViewUrl } from "@/hooks/use-file-url";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Download, X, FileText, FileSpreadsheet, ExternalLink } from "lucide-react";
+import { Download, X, FileText, ExternalLink } from "lucide-react";
+import { FILE_ICONS } from "./file-list";
 import type { FileType } from "@/types/course";
 
 interface FileViewerProps {
@@ -13,12 +14,6 @@ interface FileViewerProps {
   fileType: FileType;
   onClose: () => void;
 }
-
-const FILE_ICONS: Record<FileType, React.ElementType> = {
-  pdf: FileText,
-  ppt: FileSpreadsheet,
-  docx: FileText,
-};
 
 export function FileViewer({
   fileId,

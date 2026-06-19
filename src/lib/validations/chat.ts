@@ -5,9 +5,3 @@ export const createSessionSchema = z.object({
 });
 
 export type CreateSessionInput = z.infer<typeof createSessionSchema>;
-
-export const sendMessageSchema = z.object({
-  query: z.string().min(1, "Message cannot be empty"),
-});
-
-export type SendMessageInput = z.infer<typeof sendMessageSchema>;
