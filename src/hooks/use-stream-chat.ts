@@ -2,20 +2,12 @@ import { useState, useCallback, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Message, Citation } from "@/types/chat";
 
-interface StreamMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  citations: Citation[];
-  created_at: string;
-}
-
 interface UseStreamChatReturn {
-  messages: StreamMessage[];
+  messages: Message[];
   isStreaming: boolean;
   error: string | null;
   sendMessage: (query: string) => Promise<void>;
-  setMessages: (messages: StreamMessage[]) => void;
+  setMessages: (messages: Message[]) => void;
 }
 
 let msgCounter = 0;
@@ -73,7 +65,7 @@ function parseSSE(buffer: string): {
 }
 
 export function useStreamChat(sessionId: string): UseStreamChatReturn {
-  const [messages, setMessages] = useState<StreamMessage[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -85,7 +77,7 @@ export function useStreamChat(sessionId: string): UseStreamChatReturn {
 
       setError(null);
 
-      const userMsg: StreamMessage = {
+      const userMsg: Message = {
         id: createId(),
         role: "user",
         content: query,
@@ -93,7 +85,7 @@ export function useStreamChat(sessionId: string): UseStreamChatReturn {
         created_at: new Date().toISOString(),
       };
 
-      const assistantMsg: StreamMessage = {
+      const assistantMsg: Message = {
         id: createId(),
         role: "assistant",
         content: "",
@@ -130,11 +122,9 @@ export function useStreamChat(sessionId: string): UseStreamChatReturn {
 
           const decoded = decoder.decode(value, { stream: true });
           buffer += decoded;
-          console.debug("[SSE] raw chunk:", decoded);
           const { tokens, citations: newCitations, done: isDone, remainder } =
             parseSSE(buffer);
           buffer = remainder;
-          console.debug("[SSE] parsed tokens:", tokens, "citations:", newCitations, "done:", isDone);
 
           if (tokens || newCitations) {
             setMessages((prev) => {
@@ -172,12 +162,6 @@ export function useStreamChat(sessionId: string): UseStreamChatReturn {
   return { messages, isStreaming, error, sendMessage, setMessages };
 }
 
-export function historyToStreamMessages(history: Message[]): StreamMessage[] {
-  return history.map((m) => ({
-    id: m.id,
-    role: m.role,
-    content: m.content,
-    citations: m.citations ?? [],
-    created_at: m.created_at,
-  }));
+export function historyToStreamMessages(history: Message[]): Message[] {
+  return history;
 }

@@ -14,26 +14,17 @@ export function formatDate(dateStr: string): string {
   });
 }
 
-export function formatRelativeTime(dateStr: string): string {
-  const now = Date.now();
-  const then = new Date(dateStr).getTime();
-  const diffMs = now - then;
-  const seconds = Math.floor(diffMs / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  if (days > 0) return `${days}d ago`;
-  if (hours > 0) return `${hours}h ago`;
-  if (minutes > 0) return `${minutes}m ago`;
-  return "just now";
-}
-
-export function capitalize(str: string): string {
+export function capitalize(str?: string | null): string {
+  if (!str) return "—";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function truncate(str: string, maxLength: number): string {
-  if (str.length <= maxLength) return str;
-  return str.slice(0, maxLength - 3) + "...";
-}
+export const BRAND_COLORS = [
+  "bg-brand-pink",
+  "bg-brand-teal",
+  "bg-brand-lavender",
+  "bg-brand-peach",
+  "bg-brand-ochre",
+] as const;
+
+export const DARK_TEXT_COLORS = new Set(["bg-brand-teal"]);

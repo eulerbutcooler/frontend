@@ -8,6 +8,7 @@ import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
 import { RANKS } from "@/types/user";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { capitalize } from "@/lib/utils";
 import {
   Select,
   SelectTrigger,
@@ -24,11 +25,6 @@ const ERROR_MAP: Record<string, string> = {
   conflict: "This service number is already registered.",
   bad_request: "Please check your input and try again.",
 };
-
-function formatRank(rank?: string | null): string {
-  if (!rank) return "—";
-  return rank.charAt(0).toUpperCase() + rank.slice(1);
-}
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -136,7 +132,7 @@ export default function RegisterPage() {
             <SelectContent>
               {RANKS.map((rank) => (
                 <SelectItem key={rank} value={rank}>
-                  {formatRank(rank)}
+                  {capitalize(rank)}
                 </SelectItem>
               ))}
             </SelectContent>

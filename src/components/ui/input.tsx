@@ -1,4 +1,4 @@
-import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes } from "react";
+import { forwardRef, type InputHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const inputBase =
@@ -16,17 +16,6 @@ const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>
 );
 Input.displayName = "Input";
 
-const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(
-  ({ className, ...props }, ref) => (
-    <textarea
-      ref={ref}
-      className={cn(inputBase, "min-h-[120px] py-3 resize-y", className)}
-      {...props}
-    />
-  )
-);
-Textarea.displayName = "Textarea";
-
 type LabelProps = React.LabelHTMLAttributes<HTMLLabelElement>;
 
 const Label = forwardRef<HTMLLabelElement, LabelProps>(
@@ -43,4 +32,4 @@ const Label = forwardRef<HTMLLabelElement, LabelProps>(
 );
 Label.displayName = "Label";
 
-export { Input, Textarea, Label };
+export { Input, Label };

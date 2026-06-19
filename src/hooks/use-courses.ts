@@ -5,7 +5,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { clientApi } from "@/lib/api-client.client";
-import type { Course, Lesson, FileAsset } from "@/types/course";
+import type { Course, Lesson } from "@/types/course";
 import type { CreateCourseInput, UpdateCourseInput, CreateLessonInput, UpdateLessonInput } from "@/lib/validations/course";
 
 export const courseListOptions = () =>
@@ -14,41 +14,8 @@ export const courseListOptions = () =>
     queryFn: () => clientApi.get<Course[]>("/api/v1/courses"),
   });
 
-export const courseDetailOptions = (courseId: string) =>
-  queryOptions({
-    queryKey: ["courses", courseId],
-    queryFn: () => clientApi.get<Course>(`/api/v1/courses/${courseId}`),
-    enabled: !!courseId,
-  });
-
-export const lessonListOptions = (courseId: string) =>
-  queryOptions({
-    queryKey: ["lessons", courseId],
-    queryFn: () => clientApi.get<Lesson[]>(`/api/v1/courses/${courseId}/lessons`),
-    enabled: !!courseId,
-  });
-
-export const fileListOptions = (lessonId: string) =>
-  queryOptions({
-    queryKey: ["files", lessonId],
-    queryFn: () => clientApi.get<FileAsset[]>(`/api/v1/lessons/${lessonId}/files`),
-    enabled: !!lessonId,
-  });
-
 export function useCourses() {
   return useSuspenseQuery(courseListOptions());
-}
-
-export function useCourseDetail(courseId: string) {
-  return useSuspenseQuery(courseDetailOptions(courseId));
-}
-
-export function useLessons(courseId: string) {
-  return useSuspenseQuery(lessonListOptions(courseId));
-}
-
-export function useFiles(lessonId: string) {
-  return useSuspenseQuery(fileListOptions(lessonId));
 }
 
 export function useCreateCourse() {

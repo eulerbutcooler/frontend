@@ -7,11 +7,6 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "bg-surface-card text-ink px-3 py-1 rounded-full",
-        success: "bg-success/10 text-success px-3 py-1 rounded-full",
-        warning: "bg-warning/10 text-warning px-3 py-1 rounded-full",
-        error: "bg-error/10 text-error px-3 py-1 rounded-full",
-        info: "bg-brand-teal text-white px-3 py-1 rounded-full",
-        outline: "border border-hairline text-ink px-3 py-1 rounded-full",
         ghost: "bg-white/10 text-white px-3 py-1 rounded-full backdrop-blur-sm",
       },
     },

@@ -1,23 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, capitalize, BRAND_COLORS, DARK_TEXT_COLORS } from "@/lib/utils";
 import { DifficultyBadge } from "./difficulty-badge";
 import type { Quiz } from "@/types/quiz";
-
-const BRAND_COLORS = [
-  "bg-brand-pink",
-  "bg-brand-teal",
-  "bg-brand-lavender",
-  "bg-brand-peach",
-  "bg-brand-ochre",
-] as const;
-
-const DARK_TEXT_COLORS = new Set(["bg-brand-teal"]);
-
-function formatStatus(status?: string | null): string {
-  if (!status) return "—";
-  return status.charAt(0).toUpperCase() + status.slice(1);
-}
 
 interface QuizCardProps {
   quiz: Quiz;
@@ -52,7 +37,7 @@ export function QuizCard({ quiz, index }: QuizCardProps) {
           )}
         </div>
         <h3 className="font-display text-display-md leading-tight mb-2">
-          {formatStatus(quiz.difficulty)} Quiz
+          {capitalize(quiz.difficulty)} Quiz
         </h3>
         <p
           className={cn(
@@ -84,7 +69,7 @@ export function QuizCard({ quiz, index }: QuizCardProps) {
           </Link>
         ) : (
           <span className="inline-flex items-center gap-2 h-[44px] px-6 rounded-xl bg-white/30 text-[13px] font-semibold cursor-not-allowed opacity-70">
-            {formatStatus(quiz.status)}
+            {capitalize(quiz.status)}
           </span>
         )}
       </div>

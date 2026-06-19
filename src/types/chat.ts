@@ -18,7 +18,7 @@ export interface Citation {
 /** Matches backend domain.Message */
 export interface Message {
   id: string;
-  session_id: string;
+  session_id?: string;
   role: "user" | "assistant";
   content: string;
   citations: Citation[];

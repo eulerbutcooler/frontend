@@ -14,7 +14,7 @@ export default function ChatSessionPage() {
   const sessionId = params?.sessionId;
 
   // Guard against undefined sessionId (initial render, navigation, etc.)
-  const isValidSessionId = sessionId && sessionId !== "undefined";
+  const isValidSessionId = !!sessionId && sessionId !== "undefined";
 
   const { data: session } = useQuery({
     queryKey: ["chat-session", sessionId],
