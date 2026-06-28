@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckCircle2, Loader2, AlertTriangle, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFinalizeCourse } from "@/hooks/use-courses";
@@ -23,6 +23,8 @@ export function PublishBar({ courseId, published, summary }: PublishBarProps) {
   const router = useRouter();
   const finalizeCourse = useFinalizeCourse();
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const { total, ready, processing, failed, allReady } = summary;
 
@@ -35,7 +37,7 @@ export function PublishBar({ courseId, published, summary }: PublishBarProps) {
     hint = `${failed} file${failed === 1 ? "" : "s"} failed — remove or re-upload to continue.`;
   }
 
-  const canPublish = allReady && !finalizeCourse.isPending;
+  const canPublish = mounted && allReady && !finalizeCourse.isPending;
 
   const handlePublish = async () => {
     setError("");
