@@ -2,9 +2,9 @@ import { cn } from "@/lib/utils";
 import type { Difficulty } from "@/types/quiz";
 
 const STYLES: Record<Difficulty, { bg: string; text: string }> = {
-  easy: { bg: "bg-success/10", text: "text-success" },
-  medium: { bg: "bg-warning/10", text: "text-warning" },
-  hard: { bg: "bg-error/10", text: "text-error" },
+  easy: { bg: "bg-success/15", text: "text-success" },
+  medium: { bg: "bg-warning/15", text: "text-warning" },
+  hard: { bg: "bg-error/15", text: "text-error" },
 };
 
 const DEFAULT_STYLE = { bg: "bg-surface-soft", text: "text-surface-tint" };
@@ -19,7 +19,7 @@ export function DifficultyBadge({ difficulty, className }: DifficultyBadgeProps)
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[13px] font-medium capitalize",
+        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-caption font-semibold capitalize",
         style.bg,
         style.text,
         className

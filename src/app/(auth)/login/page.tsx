@@ -63,16 +63,16 @@ function LoginForm() {
       </div>
 
       {registered && (
-        <div className="mb-6 rounded-xl border border-success/30 bg-success/5 px-4 py-3">
-          <p className="text-body-sm text-success font-medium">
+        <div className="mb-6 rounded-xl border border-success/30 bg-success/10 px-4 py-3">
+          <p className="text-body-sm text-success font-semibold">
             Account created successfully. Sign in with your credentials.
           </p>
         </div>
       )}
 
       {error && (
-        <div className="mb-6 rounded-xl border border-error/30 bg-error/5 px-4 py-3">
-          <p className="text-body-sm text-error font-medium">{error}</p>
+        <div role="alert" className="mb-6 rounded-xl border border-error/30 bg-error/10 px-4 py-3">
+          <p className="text-body-sm text-error font-semibold">{error}</p>
         </div>
       )}
 
@@ -84,10 +84,12 @@ function LoginForm() {
             placeholder="SVC-2024-001"
             className="mt-2"
             autoComplete="username"
+            aria-invalid={!!errors.enrollment_id}
+            aria-describedby={errors.enrollment_id ? "enrollment_id-error" : undefined}
             {...register("enrollment_id")}
           />
           {errors.enrollment_id && (
-            <p className="text-body-sm text-error mt-1.5">
+            <p id="enrollment_id-error" className="text-body-sm text-error font-semibold mt-1.5">
               {errors.enrollment_id.message}
             </p>
           )}
@@ -101,10 +103,12 @@ function LoginForm() {
             placeholder="••••••••"
             className="mt-2"
             autoComplete="current-password"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-error" : undefined}
             {...register("password")}
           />
           {errors.password && (
-            <p className="text-body-sm text-error mt-1.5">
+            <p id="password-error" className="text-body-sm text-error font-semibold mt-1.5">
               {errors.password.message}
             </p>
           )}

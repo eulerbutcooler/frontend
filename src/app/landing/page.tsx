@@ -2,410 +2,459 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
-import { motion, useScroll, useTransform, useMotionValueEvent } from "motion/react";
+import { useState } from "react";
+import {
+  ArrowRight,
+  BookOpen,
+  BrainCircuit,
+  Check,
+  Clock3,
+  FileText,
+  Library,
+  Menu,
+  MessageSquareText,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  X,
+  Zap,
+} from "lucide-react";
 
-export default function LandingPage() {
-  const { scrollY } = useScroll();
-  const [layoutReady, setLayoutReady] = useState(false);
-  const [startScale, setStartScale] = useState(5);
-  const [startY, setStartY] = useState(0);
-  const [heroHeight, setHeroHeight] = useState(800);
-  const [isScrolled, setIsScrolled] = useState(false);
-  
-  const placeholderRef = useRef<HTMLSpanElement>(null);
-  const textRef = useRef<HTMLHeadingElement>(null);
-  const parallaxContainerRef = useRef<HTMLDivElement>(null);
-  
-  const { scrollYProgress: parallaxProgress } = useScroll({
-    target: parallaxContainerRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const parallaxY = useTransform(parallaxProgress, [0, 1], ["-15%", "15%"]);
+const features = [
+  {
+    icon: Library,
+    label: "Extensive Library",
+    title: "Everything you need, in one intelligent library.",
+    description:
+      "Access a vast collection of specialized aviation resources and documents.",
+    accent: "bg-blue-600",
+  },
+  {
+    icon: Sparkles,
+    label: "Auto Quizzes",
+    title: "Turn training material into active recall.",
+    description:
+      "Test your knowledge with instantly generated quizzes tailored to your studies.",
+    accent: "bg-sky-400",
+  },
+  {
+    icon: MessageSquareText,
+    label: "RAG AI Chatbot",
+    title: "Answers grounded in your aviation sources.",
+    description:
+      "Get accurate, context-aware answers from our intelligent AI tutor anytime.",
+    accent: "bg-indigo-500",
+  },
+];
 
-  const marqueeContainerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: marqueeProgress } = useScroll({
-    target: marqueeContainerRef,
-    offset: ["start end", "end start"]
-  });
-  const marqueeX = useTransform(marqueeProgress, [0, 1], ["5%", "-10%"]);
+const faqs = [
+  {
+    q: "What is Aeromentor?",
+    a: "Aeromentor is an advanced RAG-based AI learning platform tailored specifically for naval aviation training, providing instant answers and dynamic quizzes.",
+  },
+  {
+    q: "Who can use this platform?",
+    a: "Currently, Aeromentor is optimized for students and instructors at the Naval Institute of Aeronautical Technology (NIAT).",
+  },
+  {
+    q: "Is the AI tutor available 24/7?",
+    a: "Yes, our intelligent AI tutor is available round-the-clock to assist with complex aerodynamics, combat scenarios, and navigation concepts.",
+  },
+  {
+    q: "How does the quiz system work?",
+    a: "The platform dynamically generates interactive quizzes that adapt to your specific knowledge gaps to ensure comprehensive exam readiness.",
+  },
+];
 
-  const bentoRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: bentoProgress } = useScroll({
-    target: bentoRef,
-    offset: ["start end", "end start"]
-  });
-  const bentoY = useTransform(bentoProgress, [0, 1], ["-20%", "20%"]);
-
-  const flyOutRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: flyOutProgress } = useScroll({
-    target: flyOutRef,
-    offset: ["start end", "center center"]
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      let calculatedScale = 5;
-      if (textRef.current) {
-        const baseWidth = textRef.current.offsetWidth || 1;
-        calculatedScale = (window.innerWidth - 48) / baseWidth;
-        setStartScale(calculatedScale);
-      }
-      
-      const heroEl = document.getElementById("hero");
-      if (heroEl) {
-        setHeroHeight(heroEl.offsetHeight);
-      }
-      
-      if (placeholderRef.current) {
-        placeholderRef.current.style.fontSize = `${24 * calculatedScale}px`;
-        const rect = placeholderRef.current.getBoundingClientRect();
-        const absoluteBottom = rect.bottom + window.scrollY;
-        setStartY(absoluteBottom - 48);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    
-    // Wait for fonts to load before measuring, fixes the incorrect right gap
-    document.fonts.ready.then(() => {
-      handleResize();
-      setLayoutReady(true);
-    });
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    const footerEl = document.getElementById("main-footer");
-    if (footerEl && footerEl.getBoundingClientRect().top <= 80) {
-      setIsScrolled(false);
-      return;
-    }
-    
-    setIsScrolled(latest > heroHeight - 60);
-  });
-
-  const currentY = useTransform(scrollY, (v) => Math.max(0, startY - v));
-  
-  const maxScaleScroll = Math.max(startY + 600, 800);
-  const currentScale = useTransform(scrollY, (v) => {
-    const scaleProgress = Math.min(Math.max(v, 0) / maxScaleScroll, 1);
-    const easeOut = 1 - Math.pow(1 - scaleProgress, 3);
-    return startScale - (startScale - 1) * easeOut;
-  });
-
+function LogoMark({ inverted = false }: { inverted?: boolean }) {
   return (
-    <div className="w-full bg-canvas overflow-x-hidden font-sans text-ink">
-      {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 flex justify-between items-start p-6 text-sm font-medium transition-colors duration-500 ${isScrolled ? 'text-ink' : 'text-white'}`}>
-        <div className="flex-1">
-          <Link href="/">
-            <motion.h1 
-              ref={textRef}
-              className="inline-block text-2xl leading-none font-display font-black uppercase tracking-tighter origin-bottom-left select-none whitespace-nowrap"
-              style={{
-                y: currentY,
-                scale: currentScale,
-                opacity: layoutReady && startY > 0 ? 1 : 0
-              }}
-            >
-              AEROMENTOR
-            </motion.h1>
-          </Link>
-        </div>
-        <div className="flex gap-8 flex-1 justify-center pt-1">
-        </div>
-        <div className="flex gap-4 flex-1 justify-end">
-          <button className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isScrolled ? 'bg-white hover:bg-white/90' : 'hover:bg-white/10'}`} aria-label="account">
-            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5">
-                <path d="M16.4815 14.7656C15.5175 13.0737 14.0122 11.7554 12.2079 11.0229C13.1051 10.35 13.7679 9.41177 14.1023 8.34123C14.4367 7.27068 14.4258 6.12206 14.0712 5.05805C13.7165 3.99405 13.036 3.06861 12.1262 2.41282C11.2163 1.75703 10.1232 1.40414 9.00163 1.40414C7.88007 1.40414 6.78694 1.75703 5.87709 2.41282C4.96723 3.06861 4.28678 3.99405 3.93211 5.05805C3.57744 6.12206 3.56654 7.27068 3.90095 8.34123C4.23536 9.41177 4.89814 10.35 5.79538 11.0229C3.99111 11.7554 2.4858 13.0737 1.52179 14.7656C1.46206 14.8617 1.42224 14.9688 1.40472 15.0805C1.3872 15.1922 1.39232 15.3064 1.41978 15.4161C1.44724 15.5258 1.49649 15.6289 1.56459 15.7192C1.63269 15.8095 1.71825 15.8852 1.81618 15.9418C1.91412 15.9984 2.02244 16.0347 2.13469 16.0486C2.24694 16.0625 2.36084 16.0537 2.46962 16.0226C2.57839 15.9916 2.67982 15.9391 2.76787 15.8681C2.85592 15.7971 2.92881 15.7091 2.98218 15.6094C4.25624 13.4072 6.50624 12.0938 9.00163 12.0938C11.497 12.0938 13.747 13.4079 15.0211 15.6094C15.1368 15.7954 15.3202 15.9291 15.5327 15.9823C15.7452 16.0355 15.97 16.0039 16.1597 15.8944C16.3493 15.7848 16.4889 15.6058 16.549 15.3951C16.609 15.1845 16.5848 14.9587 16.4815 14.7656ZM5.34538 6.75C5.34538 6.02687 5.55982 5.31997 5.96157 4.7187C6.36333 4.11743 6.93435 3.6488 7.60245 3.37207C8.27054 3.09534 9.00569 3.02293 9.71493 3.16401C10.4242 3.30508 11.0757 3.65331 11.587 4.16464C12.0983 4.67598 12.4466 5.32746 12.5876 6.0367C12.7287 6.74595 12.6563 7.4811 12.3796 8.14919C12.1028 8.81728 11.6342 9.38831 11.0329 9.79006C10.4317 10.1918 9.72477 10.4063 9.00163 10.4063C8.03228 10.4051 7.10295 10.0196 6.41751 9.33413C5.73207 8.64869 5.3465 7.71936 5.34538 6.75Z" fill="currentColor" />
-            </svg>
-          </button>
-        </div>
-      </nav>
+    <span
+      className={`grid size-7 place-items-center rounded-[7px] ${
+        inverted ? "bg-white text-blue-700" : "bg-blue-600 text-white"
+      }`}
+      aria-hidden="true"
+    >
+      <Sparkles className="size-4" strokeWidth={2.5} />
+    </span>
+  );
+}
 
-      {/* Hero Section */}
-      <section id="hero" className="relative w-full h-screen min-h-[600px] flex flex-col justify-end overflow-hidden pt-32 pb-16 px-6">
-        <Image
-          src="/lol.jpg"
-          alt="Indian MiG-29K"
-          fill
-          className="object-cover object-center absolute inset-0 z-0"
-          priority
-        />
-        
-        <div className="relative z-20 flex flex-col md:flex-row justify-between items-end w-full">
-          <h2 className="text-canvas text-5xl md:text-7xl font-display font-medium tracking-tight leading-none max-w-lg">
-            {/* 
-              This invisible text block creates the exact natural line spacing 
-              and physical space for the animated AEROMENTOR text to overlay perfectly on load.
-            */}
-            <span ref={placeholderRef} className="block leading-none font-black tracking-tighter invisible pb-2" style={{ fontSize: startScale ? `${24 * startScale}px` : '14vw' }}>
-              AEROMENTOR
-            </span>
-            master the skies with intelligence
-          </h2>
-        </div>
-      </section>
-
-
-
-      {/* Info Section */}
-      <section className="bg-canvas text-ink py-24 flex flex-col">
-        <h2 className="px-6 md:px-16 text-4xl md:text-6xl font-display font-bold tracking-tight text-center max-w-5xl mx-auto leading-tight mb-20">
-          Aeromentor <span className="inline-block w-24 h-10 bg-brand-coral rounded-full align-middle overflow-hidden relative"><Image src="/images/cockpit-view.png" alt="cockpit" fill className="object-cover"/></span> is crafted with cutting-edge aviation insights, so <span className="inline-block w-24 h-10 bg-brand-lavender rounded-full align-middle overflow-hidden relative"><Image src="/images/navy-jet-takeoff.png" alt="jet takeoff" fill className="object-cover"/></span> you master the skies safely, every time.
-        </h2>
-        
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 border-t-2 border-b-2 border-ink">
-          <div className="p-8 px-6 md:px-16 border-b-2 md:border-b-0 md:border-r-2 border-ink">
-            <div className="relative w-10 h-10 mb-24">
-              <Image src="/Lightning.svg" alt="Lightning" fill className="object-contain" />
-            </div>
-            <h3 className="text-2xl font-bold font-display tracking-tight mb-2">Extensive Library</h3>
-            <p className="text-lg">Access a vast collection of specialized aviation resources and documents.</p>
-          </div>
-          <div className="p-8 px-6 md:px-16 border-b-2 md:border-b-0 md:border-r-2 border-ink">
-            <div className="relative w-10 h-10 mb-24">
-              <Image src="/CirclesThree.svg" alt="Circles" fill className="object-contain" />
-            </div>
-            <h3 className="text-2xl font-bold font-display tracking-tight mb-2">Auto Quizzes</h3>
-            <p className="text-lg">Test your knowledge with instantly generated quizzes tailored to your studies.</p>
-          </div>
-          <div className="p-8 px-6 md:px-16">
-            <div className="relative w-10 h-10 mb-24">
-              <Image src="/SmileySticker.svg" alt="Smiley" fill className="object-contain" />
-            </div>
-            <h3 className="text-2xl font-bold font-display tracking-tight mb-2">RAG AI Chatbot</h3>
-            <p className="text-lg">Get accurate, context-aware answers from our intelligent AI tutor anytime.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Parallax Image Section */}
-      <section id="parallax-section" className="bg-canvas p-4 md:p-8 pb-16 md:pb-32">
-        <div ref={parallaxContainerRef} className="relative w-full h-[70vh] md:h-[90vh] rounded-[32px] md:rounded-[48px] overflow-hidden flex flex-col justify-center items-center border-2 border-ink">
-          <motion.div 
-            className="absolute inset-0 z-0 w-full h-[130%]"
-            style={{ y: parallaxY, top: "-15%" }}
-          >
-            <Image 
-              src="/images/navy-jet-takeoff.png" 
-              alt="Navy Jet Takeoff" 
-              fill 
-              className="object-cover"
-            />
-            {/* Dark overlay for text readability */}
-            <div className="absolute inset-0 bg-black/30"></div>
-          </motion.div>
-          
-          <div className="relative z-10 text-center px-4 w-full h-full flex flex-col justify-center items-center">
-            <h2 className="text-white text-6xl md:text-[8rem] font-display font-bold tracking-tighter leading-none mt-12 md:mt-24">
-              Discover<br/>aerospace mastery
-            </h2>
-          </div>
-        </div>
-      </section>
-
-      {/* Marquee Section */}
-      <section ref={marqueeContainerRef} className="bg-canvas text-ink py-32 overflow-hidden flex items-center">
-        <motion.div 
-          className="whitespace-nowrap flex"
-          style={{ x: marqueeX }}
-        >
-          <h2 className="text-[10rem] md:text-[15rem] font-display font-black tracking-tighter leading-none uppercase px-8">
-            elevate your knowledge • elevate your knowledge • elevate your knowledge • elevate your knowledge • 
-          </h2>
-          <h2 className="text-[10rem] md:text-[15rem] font-display font-black tracking-tighter leading-none uppercase px-8" aria-hidden="true">
-            elevate your knowledge • elevate your knowledge • elevate your knowledge • elevate your knowledge • 
-          </h2>
-        </motion.div>
-      </section>
-
-      {/* Technology Bento Grid */}
-      <section ref={bentoRef} className="bg-canvas p-4 md:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 w-full h-auto md:h-[90vh]">
-          
-          <div className="md:col-span-7 flex flex-col gap-4 md:gap-8">
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 flex-1">
-                <div className="bg-ink text-canvas border-2 border-ink rounded-[32px] p-8 flex flex-col justify-between relative overflow-hidden">
-                  <motion.div className="absolute inset-0 w-full h-[140%] z-0" style={{ y: bentoY, top: "-20%" }}>
-                    <Image src="/images/helicopter-formation.png" alt="heli" fill className="object-cover opacity-40" />
-                  </motion.div>
-                  <h4 className="text-6xl md:text-7xl font-display font-bold tracking-tighter z-10 drop-shadow-md">10x</h4>
-                  <p className="text-2xl font-medium leading-snug z-10 drop-shadow-md">Accelerated learning speed for all fundamental modules and advanced combat scenarios.</p>
-                </div>
-                <div className="md:col-span-2 bg-ink text-canvas border-2 border-ink rounded-[32px] p-8 relative flex flex-col justify-end overflow-hidden">
-                  <motion.div className="absolute inset-0 w-full h-[140%] z-0" style={{ y: bentoY, top: "-20%" }}>
-                    <Image src="/Indian-Mig-29K-2(1).jpg" alt="jet" fill className="object-cover opacity-50" />
-                  </motion.div>
-                  <div className="absolute top-6 right-6 text-5xl md:text-6xl font-display font-bold z-10 drop-shadow-md">24/7</div>
-                  <p className="text-2xl font-medium leading-snug mt-24 z-10 drop-shadow-md">Direct access to our intelligent AI tutor, ready to explain complex aerodynamics, advanced naval aviation concepts, and tactical navigation on demand.</p>
-                </div>
-             </div>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 flex-1">
-                <div className="bg-ink text-canvas border-2 border-ink rounded-[32px] p-8 flex items-center relative overflow-hidden">
-                  <motion.div className="absolute inset-0 w-full h-[140%] z-0" style={{ y: bentoY, top: "-20%" }}>
-                    <Image src="/images/navy-crew-deck.png" alt="navy crew" fill className="object-cover opacity-50" />
-                  </motion.div>
-                  <p className="text-2xl font-medium leading-snug z-10 drop-shadow-md">Interactive quizzes that adapt dynamically to your knowledge gaps, focusing on your weakest areas to ensure comprehensive readiness.</p>
-                </div>
-                <div className="bg-ink text-canvas border-2 border-ink rounded-[32px] p-8 relative flex flex-col justify-between overflow-hidden">
-                  <motion.div className="absolute inset-0 w-full h-[140%] z-0" style={{ y: bentoY, top: "-20%" }}>
-                    <Image src="/images/aircraft-carrier.png" alt="carrier" fill className="object-cover opacity-40" />
-                  </motion.div>
-                  <h4 className="text-7xl font-display font-bold tracking-tighter z-10 drop-shadow-md">#1</h4>
-                  <p className="text-2xl font-medium leading-snug z-10 mt-20 drop-shadow-md">Highest pass rate for naval aviation institute exams in the industry, backed by rigorous data and student performance metrics.</p>
-                </div>
-             </div>
-          </div>
-
-          <div className="md:col-span-5 bg-ink text-canvas border-2 border-ink rounded-[32px] p-8 flex flex-col relative overflow-hidden h-[500px] md:h-auto">
-             <h3 className="text-4xl md:text-5xl font-display font-medium tracking-tight mb-4 z-10 leading-tight">
-               <span className="underline">Aeromentor</span> Accelerates your naval aviation training with cutting-edge tech.
-             </h3>
-             <motion.div className="absolute inset-0 w-full h-[140%] z-0" style={{ y: bentoY, top: "-20%" }}>
-               <Image src="/images/cockpit-view.png" alt="cockpit" fill className="object-cover opacity-60" />
-             </motion.div>
-          </div>
-          
-        </div>
-      </section>
-
-      {/* New to Aeromentor */}
-      <section id="explosion-section" ref={flyOutRef} className="bg-canvas py-48 px-6 text-center relative overflow-hidden flex flex-col justify-center min-h-screen">
-        
-        {/* Dynamic Flying Images */}
-        {flyOutImages.map((config, index) => (
-          <FloatingImage key={index} config={config} progress={flyOutProgress} />
-        ))}
-
-        <div className="relative z-10">
-          <h2 className="text-7xl md:text-[10rem] font-display font-bold tracking-tighter text-ink leading-none mb-12 drop-shadow-lg">
-            New to<br/>Aeromentor?
-          </h2>
-          <p className="text-xl md:text-2xl font-medium max-w-2xl mx-auto mb-10 bg-canvas/80 backdrop-blur-md p-6 rounded-3xl border-2 border-ink shadow-lg">
-            We'll walk you through our advanced RAG-based learning environment and how Aeromentor can enhance your naval aviation studies — with comprehensive materials, interactive AI tutoring, and rigorous exam preparation.
-          </p>
-          <button className="bg-ink text-canvas px-8 py-4 rounded-full font-bold hover:bg-ink/90 shadow-xl">
-            start learning
-          </button>
-        </div>
-      </section>
-      
-      {/* FAQs Section */}
-      <section className="bg-canvas text-ink py-32 px-6 md:px-16 border-b-2 border-ink">
-        <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-16 text-center">Frequently Asked Questions</h2>
-        <div className="max-w-4xl mx-auto space-y-6">
-          {[
-            { q: "What is Aeromentor?", a: "Aeromentor is an advanced RAG-based AI learning platform tailored specifically for naval aviation training, providing instant answers and dynamic quizzes." },
-            { q: "Who can use this platform?", a: "Currently, Aeromentor is optimized for students and instructors at the Naval Institute of Aeronautical Technology (NIAT)." },
-            { q: "Is the AI tutor available 24/7?", a: "Yes, our intelligent AI tutor is available round-the-clock to assist with complex aerodynamics, combat scenarios, and navigation concepts." },
-            { q: "How does the quiz system work?", a: "The platform dynamically generates interactive quizzes that adapt to your specific knowledge gaps to ensure comprehensive exam readiness." }
-          ].map((faq, i) => (
-            <div key={i} className="border-2 border-ink rounded-3xl p-8 bg-white shadow-md">
-              <h3 className="text-2xl font-bold mb-4">{faq.q}</h3>
-              <p className="font-medium text-lg opacity-80">{faq.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer id="main-footer" className="relative pt-24 pb-8 overflow-hidden text-canvas min-h-screen flex flex-col">
-        <div className="absolute inset-0 z-0">
-          <Image src="/military-mikoyan_mig_29-215220.jpeg" alt="background" fill className="object-cover" />
-          <div className="absolute inset-0 bg-ink/60"></div>
-        </div>
-
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-12 mb-32 font-medium w-full px-4 md:px-8 mt-auto">
-           <div className="md:col-span-2 flex flex-col gap-6">
-             <div className="flex gap-6 items-center">
-               <Image src="/crest.png" alt="crest" width={120} height={120} className="object-contain" />
-               <Image src="/niat.png" alt="niat" width={120} height={120} className="object-contain" />
-             </div>
-             <div>
-               <h3 className="text-3xl font-bold mb-3 font-display tracking-tight">Naval Institute of Aeronautical Technology</h3>
-               <p className="max-w-md opacity-80 leading-relaxed text-lg">
-                 Established in 1956 at the Naval Base in Kochi, Kerala, NIAT is the premier aviation technical training establishment of the Indian Navy. It trains naval personnel in aeronautical engineering to maintain fixed and rotary-wing naval air assets.
-               </p>
-             </div>
-           </div>
-           
-           <div>
-              <p className="opacity-50 uppercase tracking-widest mb-6 font-bold text-sm">Navigation</p>
-              <ul className="space-y-4 text-lg">
-                <li><a href="#" className="hover:underline transition-all">Home</a></li>
-                <li><a href="#hero" className="hover:underline transition-all">Platform Features</a></li>
-                <li><a href="#" className="hover:underline transition-all">Training Library</a></li>
-                <li><a href="#" className="hover:underline transition-all">AI Chatbot</a></li>
-              </ul>
-           </div>
-
-           <div>
-              <p className="opacity-50 uppercase tracking-widest mb-6 font-bold text-sm">Resources</p>
-              <ul className="space-y-4 text-lg">
-                <li><a href="#" className="hover:underline transition-all">About NIAT</a></li>
-                <li><a href="#" className="hover:underline transition-all">FAQs</a></li>
-                <li><a href="#" className="hover:underline transition-all">Contact Us</a></li>
-              </ul>
-           </div>
-        </div>
-
-        <div className="relative z-10 w-full select-none mb-16 px-4 md:px-8">
-          <h1 className="text-[14.5vw] leading-none tracking-tighter text-canvas font-display font-black uppercase text-center whitespace-nowrap opacity-90 drop-shadow-2xl">
-            AEROMENTOR
-          </h1>
-        </div>
-
-        <div className="relative z-10 w-full border-t border-canvas/30"></div>
-
-        <div className="relative z-10 flex flex-col md:flex-row justify-between pt-8 text-sm opacity-70 w-full px-4 md:px-8">
-           <p>All Rights Reserved | Copyright ©2026 AeroMentor</p>
-           <div className="flex gap-8 mt-4 md:mt-0">
-             <a href="#" className="hover:underline">Privacy Policy</a>
-             <a href="#" className="hover:underline">Terms of Service</a>
-           </div>
-        </div>
-      </footer>
+function SourceRow({ name, meta }: { name: string; meta: string }) {
+  return (
+    <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3 last:border-0">
+      <span className="grid size-8 shrink-0 place-items-center rounded-md bg-blue-50 text-blue-600">
+        <FileText className="size-4" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[11px] font-semibold text-slate-700">{name}</span>
+        <span className="block text-[11px] text-slate-400">{meta}</span>
+      </span>
+      <Check className="size-3.5 text-emerald-500" />
     </div>
   );
 }
 
-const flyOutImages = [
-  // Left side (4 images)
-  { endX: "-40vw", endY: "-20vh", startRotate: -15, endRotate: 0, src: "/images/cockpit-view.png" },
-  { endX: "-35vw", endY: "15vh", startRotate: 20, endRotate: 0, src: "/images/aircraft-carrier.png" },
-  { endX: "-25vw", endY: "-30vh", startRotate: -5, endRotate: 0, src: "/Indian-Mig-29K-2(1).jpg" },
-  { endX: "-15vw", endY: "25vh", startRotate: 12, endRotate: 0, src: "/images/navy-crew-deck.png" },
-  
-  // Right side (4 images)
-  { endX: "40vw", endY: "20vh", startRotate: -20, endRotate: 0, src: "/images/helicopter-formation.png" },
-  { endX: "35vw", endY: "-15vh", startRotate: 15, endRotate: 0, src: "/military-mikoyan_mig_29-215220.jpeg" },
-  { endX: "25vw", endY: "30vh", startRotate: -10, endRotate: 0, src: "/ship.jpg" },
-  { endX: "15vw", endY: "-25vh", startRotate: 8, endRotate: 0, src: "/night.jpg" },
-];
-
-function FloatingImage({ config, progress }: { config: any, progress: any }) {
-  const x = useTransform(progress, [0, 1], ["0vw", config.endX]);
-  const y = useTransform(progress, [0, 1], ["0vh", config.endY]);
-  const rotate = useTransform(progress, [0, 1], [config.startRotate, config.endRotate]);
-
+function ProductPreview() {
   return (
-    <motion.div
-      className="hidden md:block absolute top-[50%] left-[50%] w-32 h-40 md:w-48 md:h-64 rounded-3xl overflow-hidden shadow-2xl border-4 border-white origin-center z-0"
-      style={{
-        x,
-        y,
-        rotate,
-        marginLeft: "-6rem", 
-        marginTop: "-8rem", 
-      }}
-    >
-      <Image src={config.src} alt="img" fill className="object-cover" />
-    </motion.div>
+    <div className="relative mx-auto w-full max-w-5xl px-4 sm:px-8">
+      <div className="absolute -inset-x-8 top-8 h-72 rounded-full bg-blue-400/20 blur-3xl" />
+      <div className="relative overflow-hidden rounded-xl border border-white/20 bg-white/95 shadow-[0_35px_90px_rgba(0,0,50,0.42)]">
+        <div className="flex h-9 items-center gap-2 border-b border-slate-200 bg-white px-3">
+          <span className="size-2 rounded-full bg-red-400" />
+          <span className="size-2 rounded-full bg-amber-400" />
+          <span className="size-2 rounded-full bg-emerald-400" />
+          <div className="mx-auto h-4 w-48 rounded bg-slate-100" />
+        </div>
+        <div className="grid min-h-[390px] grid-cols-[64px_1fr] bg-slate-50 sm:grid-cols-[170px_1fr]">
+          <aside className="border-r border-slate-200 bg-white p-3 sm:p-4">
+            <div className="mb-5 flex items-center gap-2">
+              <LogoMark />
+              <span className="hidden text-[11px] font-bold sm:block">AEROMENTOR</span>
+            </div>
+            <div className="space-y-2">
+              {["Ask", "Library", "Courses", "Quizzes"].map((item, index) => (
+                <div
+                  key={item}
+                  className={`flex items-center gap-2 rounded-md px-2 py-2 text-[11px] font-medium ${
+                    index === 0 ? "bg-blue-50 text-blue-700" : "text-slate-400"
+                  }`}
+                >
+                  <span className={`size-2 rounded-sm ${index === 0 ? "bg-blue-600" : "bg-slate-200"}`} />
+                  <span className="hidden sm:inline">{item}</span>
+                </div>
+              ))}
+            </div>
+          </aside>
+          <div className="grid gap-4 p-4 sm:grid-cols-[1fr_230px] sm:p-6">
+            <div className="flex flex-col">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-600">AI tutor</p>
+                  <h3 className="text-sm font-bold text-slate-900">Ask your training library</h3>
+                </div>
+                <span className="rounded-full border border-slate-200 px-2 py-1 text-xs text-slate-500">4 sources</span>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                <p className="mb-3 text-[11px] font-semibold text-slate-800">
+                  Explain the primary considerations during a carrier approach.
+                </p>
+                <div className="space-y-2 text-[11px] leading-relaxed text-slate-500">
+                  <p>
+                    A carrier approach requires precise control of the aircraft&apos;s lineup, angle of attack,
+                    and glide slope. Pilots continuously cross-check visual landing aids and cockpit indications.
+                  </p>
+                  <p>
+                    Aeromentor grounds the response in your uploaded naval aviation material and keeps the
+                    relevant references attached to the answer.
+                  </p>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <span className="rounded bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">[1] Flight manual</span>
+                  <span className="rounded bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">[2] NIAT notes</span>
+                </div>
+              </div>
+              <div className="mt-auto flex items-center gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
+                <Search className="size-3.5 text-slate-400" />
+                <span className="flex-1 text-[11px] text-slate-400">Ask a question about your material...</span>
+                <span className="grid size-7 place-items-center rounded-md bg-blue-600 text-white">
+                  <ArrowRight className="size-3.5" />
+                </span>
+              </div>
+            </div>
+            <div className="hidden overflow-hidden rounded-lg border border-slate-200 bg-white sm:block">
+              <div className="border-b border-slate-100 px-4 py-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Referenced sources</p>
+              </div>
+              <SourceRow name="Carrier operations.pdf" meta="Pages 82–86" />
+              <SourceRow name="Flight fundamentals.pdf" meta="Chapter 12" />
+              <SourceRow name="Approach procedures.pdf" meta="Pages 14–19" />
+              <div className="relative mx-4 mt-4 h-28 overflow-hidden rounded-md bg-blue-600">
+                <Image src="/images/navy-jet-takeoff.png" alt="Navy aircraft taking off" fill className="object-cover opacity-70" />
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 to-transparent" />
+                <p className="absolute bottom-3 left-3 text-[11px] font-semibold text-white">Training library</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function LandingPage() {
+  const [open, setOpen] = useState(false);
+  return (
+    <main className="min-h-screen overflow-hidden bg-white text-[#101321] selection:bg-blue-200">
+      <nav aria-label="Primary" className="relative z-50 border-b border-slate-100 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
+          <Link href="/landing" className="flex items-center gap-2.5 text-xs font-extrabold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+            <LogoMark />
+            AEROMENTOR
+          </Link>
+          <div className="hidden items-center gap-7 text-[11px] font-medium text-slate-500 md:flex">
+            <a href="#features" className="transition-colors hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Features</a>
+            <a href="#how-it-works" className="transition-colors hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">How it works</a>
+            <a href="#about" className="transition-colors hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">About NIAT</a>
+            <a href="#faq" className="transition-colors hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">FAQs</a>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/login" className="hidden px-3 py-2 text-[11px] font-semibold text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:block">Log in</Link>
+            <Link
+              href="/register"
+              className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-[11px] font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            >
+              Start learning <ArrowRight className="size-3" />
+            </Link>
+            <button
+              type="button"
+              aria-label="Toggle navigation menu"
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+              className="grid size-9 place-items-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 md:hidden"
+            >
+              {open ? <X className="size-5" /> : <Menu className="size-5" />}
+            </button>
+          </div>
+        </div>
+        {open && (
+          <div className="border-t border-slate-100 bg-white px-5 sm:px-8 md:hidden">
+            <div className="flex flex-col gap-1 py-3 text-sm font-medium text-slate-600">
+              <a href="#features" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 transition-colors hover:bg-slate-50 hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Features</a>
+              <a href="#how-it-works" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 transition-colors hover:bg-slate-50 hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">How it works</a>
+              <a href="#about" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 transition-colors hover:bg-slate-50 hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">About NIAT</a>
+              <a href="#faq" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 transition-colors hover:bg-slate-50 hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">FAQs</a>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      <section className="relative px-5 pb-20 pt-20 text-center sm:px-8 sm:pt-28">
+        <div className="absolute left-1/2 top-8 -z-0 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-100/70 blur-3xl" />
+        <div className="relative z-10 mx-auto max-w-4xl">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-[11px] font-semibold text-blue-700">
+            <span className="size-1.5 rounded-full bg-blue-600" />
+            Built for focused aviation learning
+          </div>
+          <h1 className="text-balance text-[clamp(2.8rem,7vw,5.6rem)] font-semibold leading-[0.95] tracking-[-0.065em] text-slate-950">
+            Master the skies with <span className="text-blue-600">intelligence.</span>
+          </h1>
+          <p className="mx-auto mt-7 max-w-2xl text-balance text-sm leading-6 text-slate-500 sm:text-base">
+            Your aviation knowledge, organized and connected to an AI tutor that helps you understand,
+            recall, and apply every concept.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href="/register" className="flex items-center gap-2 rounded-md bg-blue-600 px-5 py-3 text-xs font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              Start learning <ArrowRight className="size-3.5" />
+            </Link>
+            <a href="#how-it-works" className="rounded-md border border-slate-200 bg-white px-5 py-3 text-xs font-semibold text-slate-700 transition hover:border-slate-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              See how it works
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-[#050943] pb-20 pt-14 sm:pb-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(37,99,235,0.9),transparent_40%)]" />
+        <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.08)_1px,transparent_1px)] [background-size:40px_40px]" />
+        <div className="relative mb-10 flex items-center justify-center gap-3 text-white">
+          <span className="h-px w-12 bg-blue-300/40" />
+          <Sparkles className="size-5 text-blue-200" />
+          <span className="h-px w-12 bg-blue-300/40" />
+        </div>
+        <ProductPreview />
+      </section>
+
+      <section id="features" className="px-5 py-24 sm:px-8 sm:py-32">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+            <div>
+              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-blue-600">A learning system, not another folder</p>
+              <h2 className="max-w-md text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-slate-950 sm:text-5xl">
+                All the things to build the perfect context for your training.
+              </h2>
+              <p className="mt-6 max-w-md text-sm leading-6 text-slate-500">
+                Aeromentor is crafted with cutting-edge aviation insights, so you master the skies safely, every time.
+              </p>
+            </div>
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-3 shadow-[0_20px_60px_rgba(15,23,42,0.08)] sm:p-6">
+              <div className="grid min-h-[430px] overflow-hidden rounded-lg border border-slate-200 bg-white sm:grid-cols-[180px_1fr]">
+                <div className="hidden border-r border-slate-100 p-4 sm:block">
+                  <div className="mb-6 flex items-center gap-2 text-[11px] font-bold"><LogoMark /> Library</div>
+                  {["Flight manuals", "Aerodynamics", "Navigation", "Carrier ops", "Assessments"].map((item, i) => (
+                    <div key={item} className={`mb-1 rounded px-2 py-2 text-[11px] ${i === 1 ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-400"}`}>{item}</div>
+                  ))}
+                </div>
+                <div className="p-5 sm:p-7">
+                  <div className="mb-5 flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] text-slate-400">Aviation knowledge</p>
+                      <h3 className="text-sm font-bold">Aerodynamics</h3>
+                    </div>
+                    <button className="rounded bg-blue-600 px-3 py-2 text-[11px] font-semibold text-white">Add material</button>
+                  </div>
+                  <div className="relative mb-5 h-44 overflow-hidden rounded-lg bg-blue-600">
+                    <Image src="/lol1.png" alt="Aircraft study material" fill className="object-contain p-5" />
+                    <div className="absolute left-4 top-4 rounded-full bg-white/15 px-2 py-1 text-xs font-medium text-white backdrop-blur">12 resources</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {["Aircraft stability", "Flight controls", "Lift & drag", "High-speed flight"].map((item) => (
+                      <div key={item} className="rounded-md border border-slate-100 p-3">
+                        <div className="mb-5 size-6 rounded bg-blue-50" />
+                        <p className="text-[11px] font-semibold text-slate-700">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-24 grid border-y border-slate-200 md:grid-cols-3">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <article key={feature.label} className={`flex min-h-72 flex-col py-8 md:px-8 ${index !== 2 ? "border-b border-slate-200 md:border-b-0 md:border-r" : ""} ${index === 0 ? "md:pl-0" : ""}`}>
+                  <span className={`mb-14 grid size-9 place-items-center rounded-lg text-white ${feature.accent}`}><Icon className="size-4" /></span>
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-blue-600">{feature.label}</p>
+                  <h3 className="max-w-xs text-xl font-semibold leading-tight tracking-tight text-slate-900">{feature.title}</h3>
+                  <p className="mt-3 max-w-xs text-xs leading-5 text-slate-500">{feature.description}</p>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" className="bg-slate-50 px-5 py-24 sm:px-8 sm:py-32">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto mb-16 max-w-2xl text-center">
+            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-blue-600">How it works</p>
+            <h2 className="text-balance text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl">From source material to mastery.</h2>
+            <p className="mt-5 text-sm leading-6 text-slate-500">Discover aerospace mastery through a focused learning loop that keeps your material, questions, and progress connected.</p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <article className="overflow-hidden rounded-xl border border-slate-200 bg-white p-6 sm:p-8">
+              <div className="mb-8 flex items-start justify-between">
+                <div><span className="text-[11px] font-bold text-blue-600">01</span><h3 className="mt-2 text-xl font-semibold tracking-tight">Bring in your material</h3></div>
+                <BookOpen className="size-5 text-blue-600" />
+              </div>
+              <div className="rounded-lg bg-slate-950 p-4 shadow-xl">
+                <div className="mb-6 flex gap-1.5"><span className="size-1.5 rounded-full bg-slate-600" /><span className="size-1.5 rounded-full bg-slate-600" /><span className="size-1.5 rounded-full bg-slate-600" /></div>
+                <div className="grid grid-cols-3 gap-2">
+                  {["Manual.pdf", "Course notes", "Procedures"].map((item, i) => <div key={item} className={`rounded-md p-3 ${i === 1 ? "bg-blue-600" : "bg-slate-900 ring-1 ring-white/10"}`}><FileText className="mb-8 size-4 text-white/70" /><p className="truncate text-xs text-white/80">{item}</p></div>)}
+                </div>
+              </div>
+              <p className="mt-6 text-xs leading-5 text-slate-500">Build an extensive library from specialized aviation resources and documents.</p>
+            </article>
+
+            <article className="overflow-hidden rounded-xl border border-slate-200 bg-white p-6 sm:p-8">
+              <div className="mb-8 flex items-start justify-between">
+                <div><span className="text-[11px] font-bold text-blue-600">02</span><h3 className="mt-2 text-xl font-semibold tracking-tight">Ask, learn, and test</h3></div>
+                <BrainCircuit className="size-5 text-blue-600" />
+              </div>
+              <div className="relative h-44 overflow-hidden rounded-lg bg-blue-600 p-5 shadow-xl">
+                <div className="absolute -right-10 -top-14 size-44 rounded-full border-[24px] border-white/10" />
+                <div className="relative ml-auto w-[85%] rounded-md bg-white p-3 shadow-lg">
+                  <p className="text-[11px] font-semibold text-slate-800">Create a quiz from carrier operations</p>
+                  <div className="mt-3 space-y-1.5">{["Approach procedures", "Deck safety", "Flight controls"].map((item, i) => <div key={item} className={`rounded border p-2 text-xs ${i === 0 ? "border-blue-200 bg-blue-50 text-blue-700" : "border-slate-100 text-slate-400"}`}>{item}</div>)}</div>
+                </div>
+              </div>
+              <p className="mt-6 text-xs leading-5 text-slate-500">Get accurate answers, then use instantly generated quizzes tailored to your studies.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 py-24 sm:px-8 sm:py-32">
+        <div className="mx-auto max-w-6xl">
+          <div className="overflow-hidden rounded-2xl bg-[#07105f] px-6 py-16 text-white shadow-[0_30px_80px_rgba(20,35,140,0.25)] sm:px-12 sm:py-20">
+            <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.15fr]">
+              <div>
+                <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-blue-300">A smarter training layer</p>
+                <h2 className="text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.045em] sm:text-5xl">Sub-200ms graph traversal, every request.</h2>
+                <p className="mt-5 max-w-md text-sm leading-6 text-blue-100/70">Aeromentor accelerates your naval aviation training with cutting-edge tech and direct access to relevant learning context.</p>
+              </div>
+              <div className="relative h-64">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,.55),transparent_55%)]" />
+                <svg viewBox="0 0 500 260" className="relative h-full w-full" aria-label="Connected aviation knowledge graph">
+                  <g stroke="rgba(147,197,253,.35)" strokeWidth="1">
+                    <path d="M250 130L85 55M250 130L105 205M250 130L405 45M250 130L420 195M85 55L145 25M85 55L35 115M105 205L45 225M105 205L175 230M405 45L470 85M405 45L345 20M420 195L470 150M420 195L355 230" />
+                  </g>
+                  {[[250,130,12],[85,55,7],[105,205,7],[405,45,7],[420,195,7],[145,25,4],[35,115,4],[45,225,4],[175,230,4],[470,85,4],[345,20,4],[470,150,4],[355,230,4]].map(([cx,cy,r], i) => <circle key={i} cx={cx} cy={cy} r={r} fill={i === 0 ? "white" : i < 5 ? "#60a5fa" : "#2563eb"} />)}
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            <div className="rounded-xl border border-slate-200 p-7"><Zap className="mb-16 size-5 text-blue-600" /><p className="text-4xl font-semibold tracking-tight">10x</p><p className="mt-3 text-xs leading-5 text-slate-500">Accelerated learning speed for all fundamental modules and advanced combat scenarios.</p></div>
+            <div className="rounded-xl border border-slate-200 p-7"><Clock3 className="mb-16 size-5 text-blue-600" /><p className="text-4xl font-semibold tracking-tight">24/7</p><p className="mt-3 text-xs leading-5 text-slate-500">Direct access to our intelligent AI tutor, ready to explain complex aerodynamics, advanced naval aviation concepts, and tactical navigation on demand.</p></div>
+            <div className="rounded-xl border border-slate-200 p-7"><ShieldCheck className="mb-16 size-5 text-blue-600" /><p className="text-4xl font-semibold tracking-tight">#1</p><p className="mt-3 text-xs leading-5 text-slate-500">Highest pass rate for naval aviation institute exams in the industry, backed by rigorous data and student performance metrics.</p></div>
+          </div>
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-7 sm:flex sm:items-center sm:justify-between">
+            <p className="max-w-3xl text-sm leading-6 text-slate-600">Interactive quizzes adapt dynamically to your knowledge gaps, focusing on your weakest areas to ensure comprehensive readiness.</p>
+            <span className="mt-4 inline-flex rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700 sm:mt-0">Adaptive by design</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="border-y border-slate-200 bg-slate-50 px-5 py-24 sm:px-8">
+        <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-900 shadow-2xl">
+            <Image src="/images/cockpit-view.png" alt="View from a naval aircraft cockpit" fill className="object-cover opacity-75" />
+            <div className="absolute inset-0 bg-gradient-to-t from-blue-950 via-transparent to-transparent" />
+            <div className="absolute bottom-0 p-7 text-white"><p className="text-[11px] font-bold uppercase tracking-[0.2em] text-blue-200">Naval aviation training</p><p className="mt-2 text-2xl font-semibold">Elevate your knowledge.</p></div>
+          </div>
+          <div>
+            <div className="mb-7 flex items-center gap-4"><Image src="/crest.png" alt="Indian Navy crest" width={64} height={64} className="object-contain" /><Image src="/niat.png" alt="NIAT emblem" width={64} height={64} className="object-contain" /></div>
+            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-blue-600">Built for NIAT</p>
+            <h2 className="text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.045em] text-slate-950">Naval Institute of Aeronautical Technology</h2>
+            <p className="mt-6 text-sm leading-6 text-slate-500">Established in 1956 at the Naval Base in Kochi, Kerala, NIAT is the premier aviation technical training establishment of the Indian Navy. It trains naval personnel in aeronautical engineering to maintain fixed and rotary-wing naval air assets.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" className="px-5 py-24 sm:px-8 sm:py-32">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-14 text-center"><p className="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-blue-600">Questions, answered</p><h2 className="text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl">Frequently Asked Questions</h2></div>
+          <div className="border-t border-slate-200">
+            {faqs.map((faq, index) => (
+              <details key={faq.q} className="group border-b border-slate-200 py-1" open={index === 0}>
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-sm font-semibold text-slate-900">
+                  {faq.q}<span className="grid size-6 shrink-0 place-items-center rounded-full border border-slate-200 text-base font-normal text-blue-600 transition group-open:rotate-45">+</span>
+                </summary>
+                <p className="max-w-2xl pb-6 text-xs leading-5 text-slate-500">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 pb-5 sm:px-8 sm:pb-8">
+        <div className="relative mx-auto max-w-6xl overflow-hidden rounded-2xl bg-blue-600 px-6 py-16 text-center text-white sm:px-12 sm:py-24">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,.28),transparent_44%)]" />
+          <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(rgba(255,255,255,.15)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.15)_1px,transparent_1px)] [background-size:32px_32px]" />
+          <div className="relative mx-auto max-w-3xl">
+            <LogoMark inverted />
+            <h2 className="mt-7 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-6xl">New to Aeromentor?</h2>
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-blue-100">We&apos;ll walk you through our advanced RAG-based learning environment and how Aeromentor can enhance your naval aviation studies — with comprehensive materials, interactive AI tutoring, and rigorous exam preparation.</p>
+            <Link href="/register" className="mt-8 inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-xs font-bold text-blue-700 shadow-xl transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Start learning <ArrowRight className="size-3.5" /></Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="bg-[#050943] px-5 pb-8 pt-16 text-white sm:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-12 border-b border-white/10 pb-16 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="lg:col-span-2"><div className="flex items-center gap-2.5 text-xs font-extrabold"><LogoMark inverted />AEROMENTOR</div><p className="mt-5 max-w-sm text-xs leading-5 text-blue-100/60">A context-aware aviation learning environment for comprehensive materials, interactive AI tutoring, and rigorous exam preparation.</p></div>
+            <div><p className="mb-5 text-[11px] font-bold uppercase tracking-[0.2em] text-blue-300">Navigation</p><ul className="space-y-3 text-xs text-blue-100/60"><li><Link href="/landing" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Home</Link></li><li><a href="#features" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Platform Features</a></li><li><a href="#how-it-works" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Training Library</a></li><li><a href="#features" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">AI Chatbot</a></li></ul></div>
+            <div><p className="mb-5 text-[11px] font-bold uppercase tracking-[0.2em] text-blue-300">Resources</p><ul className="space-y-3 text-xs text-blue-100/60"><li><a href="#about" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">About NIAT</a></li><li><a href="#faq" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">FAQs</a></li><li><a href="#about" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Contact Us</a></li></ul></div>
+          </div>
+          <div className="flex flex-col gap-4 pt-7 text-[11px] text-blue-100/40 sm:flex-row sm:items-center sm:justify-between"><p>All Rights Reserved | Copyright ©2026 AeroMentor</p><div className="flex gap-6"><a href="#" aria-label="Privacy Policy, placeholder" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Privacy Policy</a><a href="#" aria-label="Terms of Service, placeholder" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Terms of Service</a></div></div>
+          <p className="mt-12 select-none text-center text-[clamp(3.4rem,13vw,9.5rem)] font-black leading-none tracking-[-0.08em] text-blue-500/20">AEROMENTOR</p>
+        </div>
+      </footer>
+    </main>
   );
 }

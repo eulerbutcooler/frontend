@@ -20,9 +20,9 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
         <p className="text-caption-uppercase uppercase text-outline mb-2">
           Cadet Status: Active
         </p>
-        <h1 className="font-display text-display-lg text-ink">
-          Welcome back, {user.name?.split(" ")[0] ?? "Cadet"}.
-        </h1>
+            <h1 className="font-display text-display-lg text-ink">
+              Welcome back, {user.name?.split(" ")[0] ?? "Cadet"}.
+            </h1>
         <p className="text-body-md text-surface-tint mt-2 max-w-2xl">
           Your training dashboard is ready. Browse your courses, test your
           knowledge, or start a conversation with your AI flight assistant.
@@ -34,9 +34,9 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
         {/* Courses Count — Peach (col-span-4) */}
         <div className="md:col-span-5 lg:col-span-4 bg-brand-peach rounded-[24px] p-8 flex flex-col justify-between min-h-[220px] relative overflow-hidden group">
           <div className="relative z-10">
-            <h3 className="text-title-lg font-semibold text-ink mb-1">
+            <h2 className="text-title-lg font-semibold text-ink mb-1">
               Enrolled Courses
-            </h3>
+            </h2>
             <p className="text-body-md text-ink/70">Active training modules</p>
           </div>
           <div className="relative z-10 mt-6">
@@ -56,9 +56,9 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
             <Badge variant="ghost" className="mb-4">
               {firstCourse ? "Continue Learning" : "Get Started"}
             </Badge>
-            <h3 className="font-display text-display-sm text-white mb-2">
+            <h2 className="font-display text-display-sm text-white mb-2">
               {firstCourse?.title ?? "No courses yet"}
-            </h3>
+            </h2>
             <p className="text-body-md text-white/80 max-w-md">
               {firstCourse?.description ??
                 "Browse available courses to begin your training journey."}
@@ -78,9 +78,9 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
         {/* Rank — Lavender (col-span-4) */}
         <div className="md:col-span-4 bg-brand-lavender rounded-[24px] p-8 flex flex-col justify-between min-h-[200px] relative overflow-hidden">
           <div className="relative z-10">
-            <h3 className="text-title-lg font-semibold text-ink mb-1">
+            <h2 className="text-title-lg font-semibold text-ink mb-1">
               Current Rank
-            </h3>
+            </h2>
             <p className="font-display text-display-md text-ink mt-4">
               {capitalize(user.rank)}
             </p>
@@ -90,10 +90,10 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
         {/* Recent Quiz — Pink (col-span-4) */}
         <div className="md:col-span-4 bg-brand-pink rounded-[24px] p-8 flex flex-col justify-between min-h-[200px] relative overflow-hidden group">
           <div className="relative z-10">
-            <h3 className="text-title-lg font-semibold text-white mb-1">
+            <h2 className="text-title-lg font-semibold text-ink mb-1">
               Quizzes
-            </h3>
-            <p className="text-body-md text-white/80">
+            </h2>
+            <p className="text-body-md text-ink/80">
               Test your knowledge
             </p>
           </div>
@@ -116,9 +116,9 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
                 Quick Actions
               </span>
             </div>
-            <h3 className="text-title-lg font-semibold text-ink mb-2">
+            <h2 className="text-title-lg font-semibold text-ink mb-2">
               AI Flight Assistant
-            </h3>
+            </h2>
             <p className="text-body-md text-ink/80">
               Ask questions about your course material.
             </p>
@@ -148,7 +148,7 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
             </div>
             <Link
               href="/courses"
-              className="text-button font-semibold text-ink underline underline-offset-4 hover:text-surface-tint transition-colors"
+              className="focus-ring text-button font-semibold text-ink underline underline-offset-4 hover:text-surface-tint transition-colors"
             >
               View All
             </Link>
@@ -159,16 +159,16 @@ export function StudentDashboard({ user, courses }: StudentDashboardProps) {
                 <Link
                   key={course.id || index}
                   href={`/courses/${course.id}`}
-                  className="flex items-center justify-between p-4 bg-white rounded-xl border border-hairline hover:border-outline-variant transition-colors group cursor-pointer"
+                  className="focus-ring flex items-center justify-between p-4 bg-surface-card rounded-xl border border-hairline hover:border-outline-variant transition-[border-color] group cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-surface-tint group-hover:bg-brand-lavender group-hover:text-ink transition-colors font-display font-bold text-lg select-none">
                       {course.title?.charAt(0) ?? "—"}
                     </div>
                     <div>
-                      <h4 className="text-title-md font-semibold text-ink">
+                      <h3 className="text-title-md font-semibold text-ink">
                         {course.title}
-                      </h4>
+                      </h3>
                       <p className="text-caption-uppercase uppercase text-surface-tint mt-1">
                         {capitalize(course.rank)}
                       </p>

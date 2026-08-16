@@ -85,8 +85,8 @@ export default function RegisterPage() {
       </div>
 
       {error && (
-        <div className="mb-6 rounded-xl border border-error/30 bg-error/5 px-4 py-3">
-          <p className="text-body-sm text-error font-medium">{error}</p>
+        <div role="alert" className="mb-6 rounded-xl border border-error/30 bg-error/10 px-4 py-3">
+          <p className="text-body-sm text-error font-semibold">{error}</p>
         </div>
       )}
 
@@ -98,10 +98,12 @@ export default function RegisterPage() {
             placeholder="John Maverick"
             className="mt-2"
             autoComplete="name"
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? "name-error" : undefined}
             {...register("name")}
           />
           {errors.name && (
-            <p className="text-body-sm text-error mt-1.5">
+            <p id="name-error" className="text-body-sm text-error font-semibold mt-1.5">
               {errors.name.message}
             </p>
           )}
@@ -114,10 +116,12 @@ export default function RegisterPage() {
             placeholder="SVC-2024-001"
             className="mt-2"
             autoComplete="username"
+            aria-invalid={!!errors.enrollment_id}
+            aria-describedby={errors.enrollment_id ? "enrollment_id-error" : undefined}
             {...register("enrollment_id")}
           />
           {errors.enrollment_id && (
-            <p className="text-body-sm text-error mt-1.5">
+            <p id="enrollment_id-error" className="text-body-sm text-error font-semibold mt-1.5">
               {errors.enrollment_id.message}
             </p>
           )}
@@ -138,7 +142,7 @@ export default function RegisterPage() {
             </SelectContent>
           </Select>
           {errors.rank && (
-            <p className="text-body-sm text-error mt-1.5">
+            <p id="rank-error" className="text-body-sm text-error font-semibold mt-1.5">
               {errors.rank.message}
             </p>
           )}
@@ -159,7 +163,7 @@ export default function RegisterPage() {
             </SelectContent>
           </Select>
           {errors.role && (
-            <p className="text-body-sm text-error mt-1.5">
+            <p id="role-error" className="text-body-sm text-error font-semibold mt-1.5">
               {errors.role.message}
             </p>
           )}
@@ -173,10 +177,12 @@ export default function RegisterPage() {
             placeholder="••••••••"
             className="mt-2"
             autoComplete="new-password"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-error" : undefined}
             {...register("password")}
           />
           {errors.password && (
-            <p className="text-body-sm text-error mt-1.5">
+            <p id="password-error" className="text-body-sm text-error font-semibold mt-1.5">
               {errors.password.message}
             </p>
           )}

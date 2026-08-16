@@ -16,44 +16,55 @@ export default function ChatSessionPage() {
   // Guard against undefined sessionId (initial render, navigation, etc.)
   const isValidSessionId = !!sessionId && sessionId !== "undefined";
 
+  if (!isValidSessionId) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-error/5 border border-error/20 rounded-2xl p-8 text-center text-error">
+          <h3 className="font-semibold text-lg mb-2">Invalid Chat Session</h3>
+          <p className="text-sm">
+            The session ID is missing or invalid. Please return to the chat list
+            and try again.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Key the inner view by sessionId so switching sessions fully remounts it —
+  // the streaming hook's local message state resets cleanly and history reloads
+  // from the server instead of carrying over the previous session's messages.
+  return <ChatSessionView key={sessionId} sessionId={sessionId!} />;
+}
+
+function ChatSessionView({ sessionId }: { sessionId: string }) {
   const { data: session } = useQuery({
     queryKey: ["chat-session", sessionId],
     queryFn: () =>
       clientApi.get<ChatSession[]>("/api/v1/chat/sessions").then(
         (sessions) => sessions.find((s) => s.id === sessionId) ?? null
       ),
-    enabled: isValidSessionId,
   });
 
   const { data: history, isLoading } = useQuery({
     queryKey: ["chat-history", sessionId],
     queryFn: () =>
-      clientApi.get<Message[]>(
-        `/api/v1/chat/sessions/${sessionId}/history`
-      ),
-    enabled: isValidSessionId,
+      clientApi.get<Message[]>(`/api/v1/chat/sessions/${sessionId}/history`),
   });
 
   const { messages, isStreaming, error, sendMessage, setMessages } =
-    useStreamChat(sessionId ?? "");
+    useStreamChat(sessionId);
 
+  // Load persisted history once it's available. Because this view is keyed by
+  // sessionId, it remounts on navigation/refresh with empty message state, so
+  // the server history always wins on initial load. After a stream completes,
+  // the hook invalidates chat-history; the refetched history (now including the
+  // assistant's persisted answer) replaces the streamed content harmlessly.
   useEffect(() => {
-    if (history && messages.length === 0) {
+    if (history) {
       setMessages(historyToStreamMessages(history));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history]);
-
-  if (!isValidSessionId) {
-    return (
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-error/5 border border-error/20 rounded-2xl p-8 text-center text-error">
-          <h3 className="font-semibold text-lg mb-2">Invalid Chat Session</h3>
-          <p className="text-sm">The session ID is missing or invalid. Please return to the chat list and try again.</p>
-        </div>
-      </div>
-    );
-  }
 
   if (isLoading) {
     return (
@@ -64,7 +75,7 @@ export default function ChatSessionPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl xl:max-w-5xl mx-auto">
       <ChatWindow
         sessionTitle={session?.title}
         messages={messages}

@@ -25,13 +25,13 @@ export function QuizCard({ quiz, index }: QuizCardProps) {
         <div className="flex items-center gap-2 mb-4">
           <DifficultyBadge difficulty={quiz.difficulty} />
           {quiz.status === "generating" && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 text-[13px] font-medium">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/25 text-caption font-semibold backdrop-blur-sm">
               <Loader2 className="h-3 w-3 animate-spin" />
               Generating
             </span>
           )}
           {quiz.status === "failed" && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error/20 text-error text-[13px] font-medium">
+            <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/85 text-error text-caption font-semibold")}>
               Failed
             </span>
           )}
@@ -42,7 +42,7 @@ export function QuizCard({ quiz, index }: QuizCardProps) {
         <p
           className={cn(
             "text-body-md max-w-[200px]",
-            isDark ? "opacity-80" : "text-surface-tint"
+            isDark ? "text-white/80" : "text-ink/80"
           )}
         >
           {quiz.status === "ready"
@@ -58,7 +58,7 @@ export function QuizCard({ quiz, index }: QuizCardProps) {
           <Link
             href={`/quizzes/${quiz.id}`}
             className={cn(
-              "inline-flex items-center gap-2 h-[44px] px-6 rounded-xl text-button font-semibold transition-colors",
+              "focus-ring inline-flex items-center gap-2 h-11 px-6 rounded-xl text-button font-semibold transition-colors",
               isDark
                 ? "bg-white text-brand-teal hover:bg-surface-soft"
                 : "bg-ink text-white hover:bg-ink/90"
@@ -68,7 +68,7 @@ export function QuizCard({ quiz, index }: QuizCardProps) {
             <ArrowRight className="h-4 w-4" />
           </Link>
         ) : (
-          <span className="inline-flex items-center gap-2 h-[44px] px-6 rounded-xl bg-white/30 text-[13px] font-semibold cursor-not-allowed opacity-70">
+          <span className="inline-flex items-center gap-2 h-11 px-6 rounded-xl bg-white/40 text-caption font-semibold cursor-not-allowed">
             {capitalize(quiz.status)}
           </span>
         )}

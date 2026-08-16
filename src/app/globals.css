@@ -12,11 +12,19 @@
   --color-ink: #0a0a0a;
   --color-body: #3a3a3a;
   --color-surface-tint: #5f5e5e;
-  --color-outline: #747878;
-  --color-outline-variant: #c4c7c7;
+  /* outline is used for muted text + minor UI accents. Darkened from #747878
+     to surface-tint's value (#5f5e5e) so text-outline passes WCAG AA 4.5:1
+     on canvas/white. Kept as a separate token for semantic intent (borders
+     / hover / muted text) vs surface-tint (the inline muted text tier). */
+  --color-outline: #5f5e5e;
+  /* outline-variant: the resting card/border tier. Slightly darkened from
+     #c4c7c7 to improve non-text 3:1 contrast on cards / rows. */
+  --color-outline-variant: #b3b6b6;
 
   /* ─── Borders ─── */
-  --color-hairline: #e5e5e5;
+  /* Darkened from #e5e5e5 for slightly better 3:1 non-text contrast on
+     structural separators while keeping the cream-toned aesthetic subtle. */
+  --color-hairline: #dcdcdc;
 
   /* ─── Brand Palette (6-color saturated cards) ─── */
   --color-brand-pink: #ff4d8b;
@@ -28,9 +36,12 @@
   --color-brand-coral: #ff6b5a;
 
   /* ─── Semantic ─── */
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
+  /* Darkened from Tailwind *-500 to *-600 equivalents so the colors meet
+     WCAG AA 4.5:1 for normal-sized text (e.g. difficulty badges, form error
+     messages) when used directly, not just at large sizes. */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
 
   /* ─── Typography ─── */
   --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
@@ -159,6 +170,14 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+  }
+}
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: inherit;
   }
 }
 

@@ -28,6 +28,16 @@ export function SidebarOverlay({ user }: SidebarOverlayProps) {
     };
   }, [isOpen]);
 
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSidebarCollapsed(true);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, setSidebarCollapsed]);
+
   if (sidebarCollapsed) return null;
 
   return (
@@ -35,11 +45,12 @@ export function SidebarOverlay({ user }: SidebarOverlayProps) {
       <div
         className="absolute inset-0 bg-ink/40 backdrop-blur-sm animate-fade-in"
         onClick={() => setSidebarCollapsed(true)}
+        aria-hidden="true"
       />
       <div className="relative h-full w-64 animate-slide-in-left">
         <button
           onClick={() => setSidebarCollapsed(true)}
-          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-strong transition-colors"
+          className="focus-ring absolute top-4 right-4 z-10 w-10 h-10 rounded-xl flex items-center justify-center hover:bg-surface-strong transition-[background-color,transform] duration-150 ease-snappy active:scale-[0.97] cursor-pointer"
           aria-label="Close navigation"
         >
           <X className="h-4 w-4 text-ink" />

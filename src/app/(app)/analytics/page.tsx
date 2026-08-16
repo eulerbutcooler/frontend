@@ -4,7 +4,6 @@ import { api } from "@/lib/api-client";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { KpiCard } from "@/components/analytics/kpi-card";
-import { ScoreBarChart } from "@/components/analytics/score-bar-chart";
 import { MetricsHorizontalBar } from "@/components/analytics/metrics-horizontal-bar";
 import { DataTable } from "@/components/analytics/data-table";
 import type { AnalyticsOverview } from "@/types/analytics";
@@ -30,12 +29,6 @@ export default async function AnalyticsPage() {
   } catch {
     // API fallback
   }
-
-  const offsets = [-8, 5, -3, 12, -5, 8, -2, 10, -6, 4];
-  const chartItems = courses.slice(0, 10).map((c, i) => ({
-    label: c.title.slice(0, 6),
-    value: Math.round(Math.max(0, Math.min(100, overview.avg_score + offsets[i % offsets.length]))),
-  }));
 
   return (
     <div>
@@ -78,25 +71,25 @@ export default async function AnalyticsPage() {
 
       {/* Charts Grid */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-        <div className="lg:col-span-2">
-          <ScoreBarChart
-            title="Course Performance"
-            subtitle="Average quiz scores across your courses"
-            items={chartItems.length > 0 ? chartItems : [{ label: "—", value: 0 }]}
-          />
+        <div className="lg:col-span-2 bg-surface-card border border-hairline rounded-2xl p-6 flex flex-col justify-center items-center text-center">
+          <h2 className="text-title-lg font-semibold text-ink mb-2">
+            Course Performance
+          </h2>
+          <p className="text-body-md text-surface-tint max-w-md">Per-course averages will appear here once we expose them. For now, drill into any course below for its detailed metrics.</p>
         </div>
         <div className="bg-surface-card border border-hairline rounded-2xl p-6 flex flex-col">
-          <h3 className="text-title-lg font-semibold text-ink mb-2">
+          <h2 className="text-title-lg font-semibold text-ink mb-2">
             Key Metrics
-          </h3>
+          </h2>
           <p className="text-body-md text-surface-tint mb-8">
             Platform engagement breakdown
           </p>
           <div className="flex flex-col gap-6 flex-1 justify-center">
             <MetricsHorizontalBar
               label="Avg Score"
-              value={overview.avg_score}
+              value={Math.round(overview.avg_score)}
               maxValue={100}
+              unit="%"
               color="bg-brand-coral"
             />
             <MetricsHorizontalBar
@@ -118,9 +111,9 @@ export default async function AnalyticsPage() {
       {/* Course List */}
       <section>
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-title-lg font-semibold text-ink">
+          <h2 className="text-title-lg font-semibold text-ink">
             Your Courses
-          </h3>
+          </h2>
         </div>
         {courses.length === 0 ? (
           <div className="bg-surface-card border border-hairline rounded-2xl p-12 text-center">
@@ -148,7 +141,7 @@ export default async function AnalyticsPage() {
                 render: (c) => (
                   <Link
                     href={`/analytics/${c.id}`}
-                    className="inline-flex items-center gap-1 text-button font-semibold text-ink hover:text-surface-tint transition-colors"
+                    className="focus-ring inline-flex items-center gap-1 text-button font-semibold text-ink hover:text-surface-tint transition-colors"
                   >
                     View Details
                     <ArrowRight className="h-3.5 w-3.5" />

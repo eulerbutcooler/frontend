@@ -144,7 +144,9 @@ export function FileUploadZone({
   }
 
   return (
-    <div
+    <button
+      type="button"
+      aria-label={`Upload ${allowedFileType ?? "file"}`}
       onDragOver={(e) => {
         e.preventDefault();
         setDragOver(true);
@@ -152,14 +154,11 @@ export function FileUploadZone({
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
-      className={`
-        border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors
-        ${
-          dragOver
-            ? "border-brand-teal bg-brand-teal/5"
-            : "border-hairline hover:border-outline-variant hover:bg-surface-soft"
-        }
-      `}
+      className={`focus-ring grid w-full place-items-center border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-[border-color,background-color] duration-150 ease-snappy ${
+        dragOver
+          ? "border-brand-teal bg-brand-teal/5"
+          : "border-hairline hover:border-outline-variant hover:bg-surface-soft"
+      }`}
     >
       <input
         ref={inputRef}
@@ -170,10 +169,10 @@ export function FileUploadZone({
           allowedFileType === "docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : 
           ACCEPTED_MIME_TYPES
         }
-        className="hidden"
+        className="sr-only"
         onChange={handleSelect}
       />
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 pointer-events-none">
         {dragOver ? (
           <CloudUpload className="h-8 w-8 text-brand-teal" />
         ) : (
@@ -187,6 +186,6 @@ export function FileUploadZone({
           {allowedFileType === "pdf" ? "PDF" : allowedFileType === "ppt" ? "PPT, PPTX" : allowedFileType === "docx" ? "DOCX" : "PDF, PPT, PPTX, DOCX"}
         </p>
       </div>
-    </div>
+    </button>
   );
 }

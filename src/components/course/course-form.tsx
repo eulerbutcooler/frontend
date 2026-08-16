@@ -61,7 +61,7 @@ export function CourseForm({ initialData }: CourseFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      <div className="bg-white rounded-[24px] p-8 border border-hairline shadow-sm relative overflow-hidden">
+      <div className="bg-surface-card rounded-[24px] p-8 border border-hairline shadow-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-lavender to-brand-teal" />
 
         <h2 className="text-title-lg font-semibold text-ink mb-6">
@@ -69,7 +69,7 @@ export function CourseForm({ initialData }: CourseFormProps) {
         </h2>
 
         {serverError && (
-          <div className="bg-error/10 text-error text-body-sm p-4 rounded-xl mb-6">
+          <div role="alert" className="bg-error/10 text-error text-body-sm font-semibold p-4 rounded-xl mb-6">
             {serverError}
           </div>
         )}
@@ -81,10 +81,12 @@ export function CourseForm({ initialData }: CourseFormProps) {
               id="title"
               placeholder="e.g. Aerodynamics 101"
               className="mt-2"
+              aria-invalid={!!errors.title}
+              aria-describedby={errors.title ? "title-error" : undefined}
               {...register("title")}
             />
             {errors.title && (
-              <p className="text-body-sm text-error mt-1.5">
+              <p id="title-error" className="text-body-sm text-error font-semibold mt-1.5">
                 {errors.title.message}
               </p>
             )}
@@ -95,7 +97,9 @@ export function CourseForm({ initialData }: CourseFormProps) {
             <div className="relative mt-2">
               <select
                 id="rank"
-                className="w-full bg-canvas border border-hairline rounded-xl h-11 px-4 pr-10 text-body-md text-ink focus:border-ink focus:ring-1 focus:ring-ink transition-colors outline-none appearance-none cursor-pointer"
+                aria-invalid={!!errors.rank}
+                aria-describedby={errors.rank ? "rank-error" : undefined}
+                className="focus-ring w-full bg-canvas border border-hairline rounded-xl h-11 px-4 pr-10 text-body-md text-ink outline-none appearance-none cursor-pointer"
                 {...register("rank")}
               >
                 <option value="">Select rank...</option>
@@ -105,10 +109,10 @@ export function CourseForm({ initialData }: CourseFormProps) {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-outline" />
+              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-tint" />
             </div>
             {errors.rank && (
-              <p className="text-body-sm text-error mt-1.5">
+              <p id="rank-error" className="text-body-sm text-error font-semibold mt-1.5">
                 {errors.rank.message}
               </p>
             )}
@@ -120,11 +124,13 @@ export function CourseForm({ initialData }: CourseFormProps) {
               id="description"
               rows={4}
               placeholder="Describe the course content and objectives..."
-              className="mt-2 w-full bg-canvas border border-hairline rounded-xl p-4 text-body-md text-ink focus:border-ink focus:ring-1 focus:ring-ink transition-colors outline-none resize-none"
+              aria-invalid={!!errors.description}
+              aria-describedby={errors.description ? "description-error" : undefined}
+              className="focus-ring mt-2 w-full bg-canvas border border-hairline rounded-xl p-4 text-body-md text-ink outline-none resize-none"
               {...register("description")}
             />
             {errors.description && (
-              <p className="text-body-sm text-error mt-1.5">
+              <p id="description-error" className="text-body-sm text-error font-semibold mt-1.5">
                 {errors.description.message}
               </p>
             )}

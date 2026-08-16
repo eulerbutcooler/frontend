@@ -4,10 +4,11 @@ import { Suspense } from "react";
 import { api } from "@/lib/api-client";
 import Link from "next/link";
 import { ArrowRight, Pencil, ArrowLeft } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { LessonList } from "@/components/course/lesson-list";
 import { DeleteCourseButton } from "@/components/course/delete-course-button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { capitalize } from "@/lib/utils";
 import type { Course, Lesson } from "@/types/course";
 
@@ -41,7 +42,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       {/* Back link */}
       <Link
         href="/courses"
-        className="inline-flex items-center gap-2 text-button font-semibold text-surface-tint hover:text-ink transition-colors mb-8"
+        className="focus-ring inline-flex items-center gap-2 text-button font-semibold text-surface-tint hover:text-ink transition-colors mb-8"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Courses
@@ -65,7 +66,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
             {course.description}
           </p>
           {isCourseAuthor && !course.published && (
-            <div className="mt-6 inline-flex items-start gap-3 bg-warning/10 text-ink rounded-2xl px-4 py-3 max-w-xl">
+            <div className="mt-6 inline-flex items-start gap-3 bg-warning/15 rounded-2xl px-4 py-3 max-w-xl">
               <span className="w-2 h-2 rounded-full bg-warning mt-1.5 shrink-0" />
               <p className="text-body-sm text-surface-tint">
                 This course is a <span className="font-semibold text-ink">draft</span>. Add modules and files below — students see it only after you publish.
@@ -96,21 +97,29 @@ export default async function CourseDetailPage({ params }: PageProps) {
           </div>
         </div>
         <div className="md:col-span-5">
-          <div className="bg-brand-lavender rounded-[24px] aspect-[4/3] overflow-hidden relative shadow-sm border border-ink/5 flex items-center justify-center">
-            <div className="text-center p-8">
-              <Badge variant="ghost" className="mb-4">
-                {capitalize(course.rank)}
-              </Badge>
-              <h2 className="font-display text-display-sm text-ink">
-                {course.title}
-              </h2>
+          <div className="relative rounded-[24px] aspect-[4/3] overflow-hidden shadow-sm border border-hairline">
+            <Image
+              src="/Indian-Mig-29K-2(1).jpg"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 40vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 text-white">
+              <p className="text-caption-uppercase uppercase text-white/80 tracking-widest">
+                Training Material
+              </p>
+              <p className="font-display text-display-sm">
+                {capitalize(course.rank)} Curriculum
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Lessons — client-only to avoid hydration mismatch from useQueries */}
-      <Suspense fallback={<div className="h-40" />}>
+      <Suspense fallback={<Skeleton className="h-40 rounded-2xl" />}>
         <LessonList
           courseId={courseId}
           lessons={lessons}

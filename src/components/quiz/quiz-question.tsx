@@ -38,10 +38,10 @@ export function QuizQuestion({ question }: QuizQuestionProps) {
               <label
                 key={choice.label}
                 className={cn(
-                  "relative flex items-center p-6 rounded-2xl cursor-pointer transition-colors",
+                  "focus-within:ring-2 focus-within:ring-ink focus-within:outline-none relative flex items-center p-6 rounded-2xl cursor-pointer transition-colors",
                   isSelected
                     ? "bg-surface-soft border border-brand-coral ring-1 ring-brand-coral"
-                    : "bg-white border border-hairline hover:border-brand-coral hover:bg-surface-soft"
+                    : "bg-surface-card border border-hairline hover:border-brand-coral hover:bg-surface-soft"
                 )}
               >
                 <input
@@ -88,6 +88,7 @@ export function QuizQuestion({ question }: QuizQuestionProps) {
       </h2>
       <textarea
         rows={5}
+        aria-label="Your answer"
         placeholder="Type your answer here..."
         value={selectedAnswer}
         onChange={(e) => setAnswer(question.id, e.target.value)}

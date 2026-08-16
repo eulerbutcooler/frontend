@@ -87,21 +87,22 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   return (
     <div className="border-t border-hairline bg-white">
       <div className="p-4 md:p-6">
-        <div className="relative flex items-end gap-3 bg-surface-soft border border-hairline rounded-2xl p-2 focus-within:border-ink focus-within:ring-1 focus-within:ring-ink transition-colors shadow-sm">
+        <div className="relative flex items-end gap-3 bg-surface-soft border border-hairline rounded-2xl p-2 focus-within:border-ink focus-within:ring-2 focus-within:ring-ink transition-[border-color,box-shadow] shadow-sm">
           <textarea
             ref={textareaRef}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask a question about your course materials..."
+            aria-label="Chat message"
             rows={1}
             disabled={disabled}
             className="w-full bg-transparent border-none focus:ring-0 resize-none text-body-md text-ink py-3 px-2 min-h-[48px] max-h-[120px] outline-none disabled:opacity-50"
           />
           <button
             onClick={toggleListening}
-            title={isListening ? "Stop listening" : "Start speaking"}
-            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-[color,background-color,border-color,transform] duration-150 ease-snappy active:scale-95 shrink-0 shadow-sm cursor-pointer ${
+            aria-label={isListening ? "Stop listening" : "Start speaking"}
+            className={`focus-ring w-12 h-12 rounded-xl flex items-center justify-center transition-[color,background-color,border-color,transform] duration-150 ease-snappy active:scale-[0.97] shrink-0 shadow-sm cursor-pointer ${
               isListening ? "bg-error text-white animate-pulse" : "bg-white text-ink border border-hairline hover:bg-surface-card"
             }`}
           >
@@ -110,7 +111,8 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           <button
             onClick={handleSend}
             disabled={disabled || !value.trim()}
-            className="w-12 h-12 bg-ink text-white rounded-xl flex items-center justify-center hover:bg-ink/90 transition-[background-color,transform] duration-150 ease-snappy active:scale-95 shrink-0 shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            aria-label="Send message"
+            className="focus-ring w-12 h-12 bg-ink text-white rounded-xl flex items-center justify-center hover:bg-ink/90 transition-[background-color,transform] duration-150 ease-snappy active:scale-[0.97] shrink-0 shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {disabled ? (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -120,7 +122,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           </button>
         </div>
         <div className="text-center mt-3">
-          <span className="text-[11px] text-outline">
+          <span className="text-caption text-surface-tint">
             AeroMentor can make mistakes. Verify critical information.
           </span>
         </div>

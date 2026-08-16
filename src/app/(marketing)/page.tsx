@@ -52,7 +52,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 -z-20">
           <Image
             src="/images/navy-jet-takeoff.png"
-            alt="Naval aviation operations"
+            alt=""
             fill
             className="object-cover object-center"
             priority
@@ -329,7 +329,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 -z-20">
           <Image
             src="/images/navy-crew-deck.png"
-            alt="Navy crew on flight deck"
+            alt=""
             fill
             className="object-cover"
             sizes="100vw"

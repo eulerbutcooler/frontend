@@ -72,20 +72,22 @@ export default function QuizResultsPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
+      <h1 className="sr-only">Quiz Results</h1>
+
       {/* Score Card */}
       <div className="bg-brand-teal rounded-[24px] p-8 text-white text-center mb-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
         <div className="relative z-10">
-          <p className="text-caption-uppercase uppercase tracking-widest opacity-80 mb-4">
+          <p className="text-caption-uppercase uppercase tracking-widest text-white/80 mb-4">
             Your Score
           </p>
           <div className="flex items-end justify-center gap-1 mb-2">
-            <span className="font-display text-[80px] leading-none">
+            <span className="font-display text-display-xl leading-none">
               {score}
             </span>
             <span className="text-display-sm mb-2">%</span>
           </div>
-          <p className="text-body-md opacity-80">
+          <p className="text-body-md text-white/80">
             {attempt.total > 0
               ? `${Math.round((score / 100) * attempt.total)} of ${attempt.total} correct`
               : "No answers submitted"}
@@ -137,7 +139,7 @@ export default function QuizResultsPage() {
                   <XCircle className="h-6 w-6 text-error shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1">
-                  <p className="text-caption-uppercase uppercase text-outline mb-1">
+                  <p className="text-caption-uppercase uppercase text-surface-tint mb-1">
                     Question {i + 1}
                   </p>
                   <p className="text-title-md font-semibold text-ink mb-3">

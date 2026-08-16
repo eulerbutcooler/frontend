@@ -39,32 +39,28 @@ export default async function CourseAnalyticsPage({ params }: PageProps) {
   }
 
   let allFiles: (FileAsset & { lesson_title: string })[] = [];
-  for (const lesson of lessons) {
-    try {
-      const files = await api.get<FileAsset[]>(
-        `/api/v1/lessons/${lesson.id}/files`
-      );
-      allFiles = [
-        ...allFiles,
-        ...files.map((f) => ({ ...f, lesson_title: lesson.title })),
-      ];
-    } catch {
-      // Skip
-    }
+  const fileResults = await Promise.allSettled(
+    lessons.map((lesson) =>
+      api
+        .get<FileAsset[]>(`/api/v1/lessons/${lesson.id}/files`)
+        .then((files) => files.map((f) => ({ ...f, lesson_title: lesson.title })))
+    )
+  );
+  for (const r of fileResults) {
+    if (r.status === "fulfilled") allFiles = allFiles.concat(r.value);
   }
 
   const statusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      ready: "bg-success/10 text-success",
-      processing: "bg-warning/10 text-warning",
+      ready: "bg-success/15 text-success",
+      processing: "bg-warning/15 text-warning",
       pending: "bg-surface-card text-surface-tint",
-      failed: "bg-error/10 text-error",
-      generating: "bg-warning/10 text-warning",
+      failed: "bg-error/15 text-error",
+      generating: "bg-warning/15 text-warning",
     };
     return (
       <span
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[13px] font-medium ${styles[status] ?? styles.pending}`}
-      >
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-caption font-semibold ${styles[status] ?? styles.pending}`}>
         <span className="w-1.5 h-1.5 rounded-full bg-current" />
         {status ? status.charAt(0).toUpperCase() + status.slice(1) : "—"}
       </span>
@@ -76,7 +72,7 @@ export default async function CourseAnalyticsPage({ params }: PageProps) {
       {/* Back link */}
       <Link
         href="/analytics"
-        className="inline-flex items-center gap-2 text-button font-semibold text-surface-tint hover:text-ink transition-colors mb-8"
+        className="focus-ring inline-flex items-center gap-2 text-button font-semibold text-surface-tint hover:text-ink transition-colors mb-8"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Analytics
@@ -118,9 +114,9 @@ export default async function CourseAnalyticsPage({ params }: PageProps) {
 
       {/* File Ingest Table */}
       <section className="mb-12">
-        <h3 className="text-title-lg font-semibold text-ink mb-6">
+        <h2 className="text-title-lg font-semibold text-ink mb-6">
           Uploaded Files
-        </h3>
+        </h2>
         <DataTable
           columns={[
             {
@@ -158,9 +154,9 @@ export default async function CourseAnalyticsPage({ params }: PageProps) {
 
       {/* Quiz Performance */}
       <section>
-        <h3 className="text-title-lg font-semibold text-ink mb-6">
+        <h2 className="text-title-lg font-semibold text-ink mb-6">
           Quiz Performance
-        </h3>
+        </h2>
         <DataTable
           columns={[
             {

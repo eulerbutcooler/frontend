@@ -12,6 +12,7 @@ import {
   Eye,
   Trash2,
 } from "lucide-react";
+import { IconButton } from "@/components/ui/icon-button";
 import { IngestStatusBadge } from "./ingest-status-badge";
 import { FileViewer } from "./file-viewer";
 import { FileUploadZone } from "./file-upload-zone";
@@ -38,24 +39,24 @@ const CATEGORY_CONFIG: Record<
     title: "Books",
     fileType: "pdf",
     icon: BookOpen,
-    accent: "text-blue-600",
-    accentBg: "bg-blue-50",
+    accent: "text-brand-teal",
+    accentBg: "bg-brand-teal/10",
     description: "PDF textbooks and reading materials",
   },
   presentations: {
     title: "Presentations",
     fileType: "ppt",
     icon: Presentation,
-    accent: "text-amber-600",
-    accentBg: "bg-amber-50",
+    accent: "text-ink",
+    accentBg: "bg-brand-ochre/20",
     description: "PPT/PPTX slide decks",
   },
   plans: {
     title: "Plans",
     fileType: "docx",
     icon: ClipboardList,
-    accent: "text-emerald-600",
-    accentBg: "bg-emerald-50",
+    accent: "text-ink",
+    accentBg: "bg-brand-mint/25",
     description: "DOCX lesson plans and notes",
   },
 };
@@ -78,6 +79,16 @@ export function FileList({
     queryKey: ["files", lessonId],
     queryFn: () =>
       clientApi.get<FileAsset[]>(`/api/v1/lessons/${lessonId}/files`),
+    // Keep polling while any file is still pending/processing so ingest
+    // completions are reflected without a manual page refresh. Stop once every
+    // file has reached a terminal state (ready/failed).
+    refetchInterval: (query) => {
+      const fs = query.state.data ?? [];
+      const busy = fs.some(
+        (f) => f.ingest_status === "pending" || f.ingest_status === "processing"
+      );
+      return busy ? 3000 : false;
+    },
   });
 
   const visibleFiles = isInstructor
@@ -129,6 +140,12 @@ export function FileList({
           }
         `}
         onClick={isReady ? () => setViewingFile(file) : undefined}
+        onKeyDown={isReady ? (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setViewingFile(file);
+          }
+        } : undefined}
         role={isReady ? "button" : undefined}
         tabIndex={isReady ? 0 : undefined}
       >
@@ -148,30 +165,30 @@ export function FileList({
             />
           )}
         </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 transition-opacity">
           {isReady && (
-            <button
+            <IconButton
+              label={`View ${file.file_name}`}
               onClick={(e) => {
                 e.stopPropagation();
                 setViewingFile(file);
               }}
-              className="w-7 h-7 flex items-center justify-center text-surface-tint hover:text-ink rounded-md hover:bg-surface-container transition-colors"
-              title="View file"
+              className="size-8"
             >
               <Eye className="h-3.5 w-3.5" />
-            </button>
+            </IconButton>
           )}
           {isInstructor && (
-            <button
+            <IconButton
+              label={`Delete ${file.file_name}`}
               onClick={(e) => {
                 e.stopPropagation();
                 handleDelete(file.id);
               }}
-              className="w-7 h-7 flex items-center justify-center text-surface-tint hover:text-error rounded-md hover:bg-error/10 transition-colors"
-              title="Delete file"
+              className="size-8 hover:bg-error/10"
             >
               <Trash2 className="h-3.5 w-3.5" />
-            </button>
+            </IconButton>
           )}
         </div>
       </div>

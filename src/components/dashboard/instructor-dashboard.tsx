@@ -101,12 +101,12 @@ export function InstructorDashboard({
       {/* Your Courses Table */}
       <section>
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-title-lg font-semibold text-ink">
+          <h2 className="text-title-lg font-semibold text-ink">
             Your Courses
-          </h3>
+          </h2>
           <Link
             href="/courses"
-            className="text-button font-semibold text-ink underline underline-offset-4 hover:text-surface-tint transition-colors"
+            className="focus-ring text-button font-semibold text-ink underline underline-offset-4 hover:text-surface-tint transition-colors"
           >
             Manage All
           </Link>
@@ -153,7 +153,7 @@ export function InstructorDashboard({
                     <TableCell className="text-right">
                       <Link
                         href={`/courses/${course.id}`}
-                        className="text-button font-semibold text-ink hover:text-surface-tint transition-colors"
+                        className="focus-ring text-button font-semibold text-ink hover:text-surface-tint transition-colors"
                       >
                         View →
                       </Link>

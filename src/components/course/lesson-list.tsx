@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, Check, X, ChevronDown, ChevronRight } from "lucid
 import { FileList } from "./file-list";
 import { PublishBar } from "./publish-bar";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import {
@@ -92,7 +93,7 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
       <div className="space-y-4">
         {/* Add lesson inline form */}
         {showAdd && (
-          <div className="bg-white border-2 border-dashed border-brand-lavender rounded-[24px] p-6 flex gap-4 items-center animate-fade-in">
+          <div className="bg-surface-card border-2 border-dashed border-brand-lavender rounded-[24px] p-6 flex gap-4 items-center animate-fade-in">
             <div className="w-14 h-14 rounded-2xl bg-brand-lavender/20 flex items-center justify-center shrink-0">
               <Plus className="h-5 w-5 text-brand-lavender" />
             </div>
@@ -139,22 +140,14 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
         )}
 
         {lessons.map((lesson, i) => (
-          <div key={lesson.id} className="bg-white border border-hairline rounded-[24px] overflow-hidden hover:border-outline-variant transition-colors group">
-          <div
-            className="p-6 flex gap-6 items-center cursor-pointer"
-            onClick={() => setExpandedId(expandedId === lesson.id ? null : lesson.id)}
-          >
-            <div className="w-14 h-14 rounded-2xl bg-surface-card flex items-center justify-center shrink-0 border border-hairline text-ink font-display text-title-lg font-semibold">
-              {i + 1}
-            </div>
-            {expandedId === lesson.id ? (
-              <ChevronDown className="h-4 w-4 text-surface-tint shrink-0 md:hidden" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-surface-tint shrink-0 md:hidden" />
-            )}
-            <div className="flex-1 min-w-0">
-              {editingId === lesson.id ? (
-                <div className="flex gap-3 items-center">
+          <div key={lesson.id} className="bg-surface-card border border-hairline rounded-[24px] overflow-hidden hover:border-outline-variant transition-colors group">
+          <div className="p-6 flex gap-6 items-center">
+            {editingId === lesson.id ? (
+              <> 
+                <div className="w-14 h-14 rounded-2xl bg-surface-card flex items-center justify-center shrink-0 border border-hairline text-ink font-display text-title-lg font-semibold">
+                  {i + 1}
+                </div>
+                <div className="flex gap-3 items-center flex-1">
                   <Input
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
@@ -179,37 +172,54 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-              ) : (
-                <h3 className="text-title-lg font-semibold text-ink truncate">
-                  {lesson.title}
-                </h3>
-              )}
-            </div>
-
-            {isInstructor && editingId !== lesson.id && (
-              <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              </>
+            ) : (
+              <>
                 <button
-                  onClick={() => {
-                    setEditingId(lesson.id);
-                    setEditTitle(lesson.title);
-                  }}
-                  className="w-8 h-8 flex items-center justify-center text-surface-tint hover:text-ink rounded-lg hover:bg-surface-container transition-colors"
+                  onClick={() => setExpandedId(expandedId === lesson.id ? null : lesson.id)}
+                  aria-expanded={expandedId === lesson.id}
+                  aria-controls={`lesson-content-${lesson.id}`}
+                  className="focus-ring flex flex-1 items-center gap-4 cursor-pointer text-left"
                 >
-                  <Pencil className="h-4 w-4" />
+                  <div className="w-14 h-14 rounded-2xl bg-surface-card flex items-center justify-center shrink-0 border border-hairline text-ink font-display text-title-lg font-semibold">
+                    {i + 1}
+                  </div>
+                  {expandedId === lesson.id ? (
+                    <ChevronDown className="h-4 w-4 text-surface-tint shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-surface-tint shrink-0" />
+                  )}
+                  <h3 className="text-title-lg font-semibold text-ink truncate">
+                    {lesson.title}
+                  </h3>
                 </button>
-                <button
-                  onClick={() => handleDelete(lesson.id)}
-                  className="w-8 h-8 flex items-center justify-center text-surface-tint hover:text-error rounded-lg hover:bg-error/10 transition-colors"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
+                {isInstructor && (
+                  <div className="flex gap-1 shrink-0">
+                    <IconButton
+                      label="Edit lesson title"
+                      onClick={() => {
+                        setEditingId(lesson.id);
+                        setEditTitle(lesson.title);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </IconButton>
+                    <IconButton
+                      label="Delete lesson"
+                      onClick={() => handleDelete(lesson.id)}
+                      className="hover:bg-error/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </IconButton>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
           {/* Files section (expanded) */}
           {expandedId === lesson.id && (
-            <div className="px-6 pb-6 border-t border-hairline pt-4 animate-fade-in">
+            <div id={`lesson-content-${lesson.id}`} className="px-6 pb-6 border-t border-hairline pt-4 animate-fade-in">
               <FileList lessonId={lesson.id} isInstructor={isInstructor} instructorId={instructorId} />
             </div>
           )}

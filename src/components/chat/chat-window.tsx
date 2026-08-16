@@ -21,15 +21,27 @@ export function ChatWindow({
   onSend,
 }: ChatWindowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isNearBottom = useRef(true);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    const el = scrollRef.current;
+    if (!el) return;
+    // Only auto-scroll if the user is already near the bottom.
+    // If they scrolled up to read history, don't yank them down.
+    if (isNearBottom.current) {
+      el.scrollTop = el.scrollHeight;
     }
   }, [messages]);
 
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    isNearBottom.current =
+      el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+  };
+
   return (
-    <div className="bg-white rounded-[24px] border border-hairline flex flex-col h-[calc(100vh-12rem)] min-h-[600px] shadow-sm overflow-hidden">
+    <div className="bg-surface-card rounded-[24px] border border-hairline flex flex-col h-[calc(100dvh-12rem)] min-h-[500px] shadow-sm overflow-hidden">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-hairline bg-surface-soft">
         <div className="flex items-center gap-4">
@@ -43,7 +55,7 @@ export function ChatWindow({
             <h1 className="text-title-md font-semibold text-ink tracking-tight">
               AeroMentor AI
             </h1>
-            <p className="text-[13px] text-outline">
+            <p className="text-caption text-surface-tint">
               {sessionTitle
                 ? `Session: ${sessionTitle}`
                 : "Flight AI Assistant • Ready"}
@@ -55,6 +67,8 @@ export function ChatWindow({
       {/* Messages */}
       <div
         ref={scrollRef}
+        onScroll={handleScroll}
+        aria-live="polite"
         className="flex-1 overflow-y-auto p-6 md:p-8 flex flex-col gap-8 scrollbar-hide"
       >
         {messages.length === 0 && !isStreaming && (

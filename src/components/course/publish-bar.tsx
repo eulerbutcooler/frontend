@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { CheckCircle2, Loader2, AlertTriangle, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFinalizeCourse } from "@/hooks/use-courses";
@@ -23,8 +23,14 @@ export function PublishBar({ courseId, published, summary }: PublishBarProps) {
   const router = useRouter();
   const finalizeCourse = useFinalizeCourse();
   const [error, setError] = useState("");
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // useSyncExternalStore returns false during server render and true after
+  // hydration, which is exactly the "mounted" semantic without the
+  // setState-in-effect pattern the React Hooks rule flags.
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   const { total, ready, processing, failed, allReady } = summary;
 
@@ -50,7 +56,7 @@ export function PublishBar({ courseId, published, summary }: PublishBarProps) {
   };
 
   return (
-    <div className="sticky bottom-0 z-30 -mx-6 md:-mx-8 mt-8 border-t border-hairline bg-white/90 backdrop-blur-md px-6 md:px-8 py-4">
+    <div className="sticky bottom-0 z-30 -mx-6 md:-mx-8 mt-8 border-t border-hairline bg-surface-card/90 backdrop-blur-md px-6 md:px-8 py-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           {failed > 0 ? (

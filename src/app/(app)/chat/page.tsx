@@ -75,16 +75,16 @@ export default function ChatListPage() {
             <button
               key={session.id ?? idx}
               onClick={() => router.push(`/chat/${session.id}`)}
-              className="w-full bg-white border border-hairline rounded-2xl p-5 flex items-center gap-4 hover:border-outline-variant transition-colors text-left group"
+              className="focus-ring w-full bg-surface-card border border-hairline rounded-2xl p-5 flex items-center gap-4 hover:border-outline-variant transition-[border-color] text-left group cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-xl bg-surface-card flex items-center justify-center shrink-0 border border-hairline group-hover:bg-surface-soft transition-colors font-display font-bold text-sm text-surface-tint select-none">
+              <div className="w-10 h-10 rounded-xl bg-surface-soft flex items-center justify-center shrink-0 border border-hairline group-hover:bg-surface-strong transition-colors font-display font-bold text-sm text-surface-tint select-none" aria-hidden="true">
                 {session.title?.charAt(0)?.toUpperCase() ?? "—"}
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-title-md font-semibold text-ink truncate">
                   {session.title}
                 </h3>
-                <p className="text-caption text-outline mt-0.5">
+                <p className="text-caption text-surface-tint mt-0.5">
                   {formatDate(session.updated_at)}
                 </p>
               </div>

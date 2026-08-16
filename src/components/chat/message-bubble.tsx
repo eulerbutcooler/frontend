@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { SourceCitation } from "./source-citation";
+import { MarkdownRenderer } from "./markdown-renderer";
 import type { Citation } from "@/types/chat";
-import { Copy, Check, Volume2, Square, Loader2 } from "lucide-react";
+import { Copy, Check, Volume2, Square } from "lucide-react";
 
 interface MessageBubbleProps {
   role: "user" | "assistant";
@@ -100,13 +101,17 @@ export function MessageBubble({
       >
         <div
           className={cn(
-            "px-5 py-4 rounded-2xl text-ink text-[15px] leading-relaxed shadow-sm whitespace-pre-wrap",
+            "px-5 py-4 rounded-2xl text-ink text-body-md leading-relaxed shadow-sm",
             isUser
-              ? "bg-brand-peach rounded-tr-sm"
+              ? "bg-brand-peach rounded-tr-sm whitespace-pre-wrap"
               : "bg-surface-card rounded-tl-sm"
           )}
         >
-          {content}
+          {isUser ? (
+            content
+          ) : (
+            <MarkdownRenderer content={content} />
+          )}
           {isStreaming && !content && (
             <span className="inline-flex gap-1">
               <span className="w-1.5 h-1.5 bg-surface-tint rounded-full animate-bounce" />
@@ -120,7 +125,8 @@ export function MessageBubble({
           <div className="flex items-center gap-3 px-2 text-outline">
             <button 
               onClick={handleCopy} 
-              className="flex items-center gap-1.5 hover:text-ink transition-colors text-xs font-medium" 
+              aria-label="Copy response"
+              className="focus-ring flex items-center gap-1.5 hover:text-ink transition-colors text-xs font-medium px-2 py-1.5 rounded-md hover:bg-surface-card" 
               title="Copy response"
             >
               {isCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
@@ -128,8 +134,9 @@ export function MessageBubble({
             </button>
             <button 
               onClick={toggleSpeak} 
+              aria-label={isPlaying ? "Stop speaking" : "Listen to response"}
               className={cn(
-                "flex items-center gap-1.5 hover:text-ink transition-colors text-xs font-medium",
+                "focus-ring flex items-center gap-1.5 transition-colors text-xs font-medium px-2 py-1.5 rounded-md hover:bg-surface-card",
                 isPlaying && "text-brand-teal"
               )} 
               title={isPlaying ? "Stop speaking" : "Listen to response"}
@@ -137,11 +144,14 @@ export function MessageBubble({
               {isPlaying ? <Square className="h-3.5 w-3.5 fill-current" /> : <Volume2 className="h-3.5 w-3.5" />}
               {isPlaying ? "Stop" : "Listen"}
             </button>
+            {citations.length > 0 && (
+              <SourceCitation citations={citations} compact />
+            )}
           </div>
         )}
 
-        {citations.length > 0 && (
-          <SourceCitation citations={citations} />
+        {citations.length > 0 && isStreaming && (
+          <SourceCitation citations={citations} compact />
         )}
       </div>
     </div>
