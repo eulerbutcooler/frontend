@@ -22,7 +22,7 @@ export function ErrorContent({
   fallbackLabel,
   FallbackIcon,
   heading = "h1",
-  wrapperClass = "min-h-screen bg-canvas flex items-center justify-center p-6",
+  wrapperClass = "min-h-dvh bg-canvas flex items-center justify-center p-6",
 }: ErrorContentProps) {
   useEffect(() => {
     console.error("[Error]", error);

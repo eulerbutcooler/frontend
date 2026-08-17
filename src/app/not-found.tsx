@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-canvas flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-dvh bg-canvas flex items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-brand-lavender/15 rounded-full blur-3xl -z-10" />
       <div className="max-w-md w-full text-center">
         <h1 className="font-display text-[120px] leading-none text-ink mb-4">

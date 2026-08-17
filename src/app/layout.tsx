@@ -39,9 +39,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakarta.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${inter.variable} ${jetbrainsMono.variable} h-dvh antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-canvas text-ink">
+      <body className="min-h-dvh flex flex-col font-sans bg-canvas text-ink">
         <Providers>{children}</Providers>
       </body>
     </html>
