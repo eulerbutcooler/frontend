@@ -32,13 +32,14 @@ SelectTrigger.displayName = "SelectTrigger";
 const SelectContent = forwardRef<
   HTMLDivElement,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
+>(({ className, children, position = "popper", sideOffset = 4, ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
       position={position}
+      sideOffset={sideOffset}
       className={cn(
-        "relative z-50 max-h-72 min-w-[8rem] overflow-hidden bg-surface-card border border-hairline rounded-2xl shadow-lg animate-popover [transform-origin:var(--radix-select-content-transform-origin)]",
+        "relative z-50 max-h-72 min-w-[8rem] overflow-hidden bg-surface-card border border-hairline rounded-xl shadow-lg animate-popover [transform-origin:var(--radix-select-content-transform-origin)]",
         position === "popper" && "w-[var(--radix-select-trigger-width)]",
         className
       )}
@@ -59,7 +60,7 @@ const SelectItem = forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "focus-ring relative flex w-full cursor-pointer items-center rounded-lg py-2.5 px-3 font-sans text-body-sm text-ink outline-none select-none hover:bg-surface-soft data-[disabled]:opacity-50 data-[disabled]:pointer-events-none",
+      "relative flex w-full cursor-pointer items-center rounded-lg py-2.5 px-3 font-sans text-body-sm text-ink outline-none select-none hover:bg-surface-soft data-[highlighted]:bg-surface-soft data-[disabled]:opacity-50 data-[disabled]:pointer-events-none",
       className
     )}
     {...props}
