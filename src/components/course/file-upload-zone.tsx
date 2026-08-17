@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Upload, CloudUpload } from "lucide-react";
 import { UploadProgress } from "./upload-progress";
 import {
@@ -12,6 +12,8 @@ import {
   ACCEPTED_EXTENSIONS,
   ACCEPTED_MIME_TYPES,
 } from "@/lib/upload";
+import { clientApi } from "@/lib/api-client.client";
+import type { FileAsset } from "@/types/course";
 import type { Upload as TusUpload } from "tus-js-client";
 
 interface FileUploadZoneProps {
@@ -29,30 +31,66 @@ export function FileUploadZone({
   const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement>(null);
   const uploadRef = useRef<TusUpload | null>(null);
+  const existingFileIdsRef = useRef<Set<string>>(new Set());
 
   const [dragOver, setDragOver] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<
-    "idle" | "uploading" | "complete" | "error"
+    "idle" | "uploading" | "processing" | "complete" | "error"
   >("idle");
   const [fileName, setFileName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   const token = session?.user?.accessToken ?? "";
 
+  const { data: lessonFiles = [] } = useQuery({
+    queryKey: ["files", lessonId],
+    queryFn: () =>
+      clientApi.get<FileAsset[]>(`/api/v1/lessons/${lessonId}/files`),
+    enabled: status === "processing",
+    refetchInterval: status === "processing" ? 2000 : false,
+  });
+
+  useEffect(() => {
+    if (status !== "processing") return;
+
+    const uploadedFile = lessonFiles.find(
+      (file) =>
+        file.file_name === fileName && !existingFileIdsRef.current.has(file.id)
+    );
+    if (!uploadedFile) return;
+
+    if (uploadedFile.ingest_status === "ready") {
+      setProgress(100);
+      setStatus("complete");
+      queryClient.invalidateQueries({ queryKey: ["files", lessonId] });
+    } else if (uploadedFile.ingest_status === "failed") {
+      setStatus("error");
+      setErrorMsg("Upload succeeded, but processing and embedding failed.");
+    }
+  }, [fileName, lessonFiles, lessonId, queryClient, status]);
+
+  useEffect(() => {
+    if (status !== "complete") return;
+
+    const timeout = window.setTimeout(() => {
+      setStatus("idle");
+      setProgress(0);
+      setFileName("");
+    }, 1500);
+
+    return () => window.clearTimeout(timeout);
+  }, [status]);
+
   const startUpload = useCallback(
     (file: File) => {
       let allowedExts = ACCEPTED_EXTENSIONS;
-      let allowedMime = ACCEPTED_MIME_TYPES;
       if (allowedFileType === "pdf") {
-          allowedExts = [".pdf"];
-          allowedMime = "application/pdf";
+        allowedExts = [".pdf"];
       } else if (allowedFileType === "ppt") {
-          allowedExts = [".ppt", ".pptx"];
-          allowedMime = "application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation";
+        allowedExts = [".ppt", ".pptx"];
       } else if (allowedFileType === "docx") {
-          allowedExts = [".docx"];
-          allowedMime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        allowedExts = [".docx"];
       }
 
       const ext = getFileExtension(file.name);
@@ -62,6 +100,10 @@ export function FileUploadZone({
         setFileName(file.name);
         return;
       }
+
+      const existingFiles =
+        queryClient.getQueryData<FileAsset[]>(["files", lessonId]) ?? [];
+      existingFileIdsRef.current = new Set(existingFiles.map(({ id }) => id));
 
       setFileName(file.name);
       setProgress(0);
@@ -78,7 +120,7 @@ export function FileUploadZone({
         {
           onProgress: (pct) => setProgress(pct),
           onSuccess: () => {
-            setStatus("complete");
+            setStatus("processing");
             setProgress(100);
             // Force all consumers (FileList, useCourseFiles, publish bar)
             // to refetch immediately — not just on next poll tick.
@@ -90,13 +132,6 @@ export function FileUploadZone({
               queryKey: ["ingest-status"],
               refetchType: "all",
             });
-            // Brief "complete" flash then reset so next upload works.
-            // The file row will appear in FileList within ~3s via polling.
-            setTimeout(() => {
-              setStatus("idle");
-              setProgress(0);
-              setFileName("");
-            }, 1500);
           },
           onError: (err) => {
             setStatus("error");
@@ -109,7 +144,7 @@ export function FileUploadZone({
       uploadRef.current = upload;
       upload.start();
     },
-    [lessonId, instructorId, token, queryClient]
+    [allowedFileType, lessonId, instructorId, token, queryClient]
   );
 
   const handleCancel = () => {
@@ -136,7 +171,7 @@ export function FileUploadZone({
       <UploadProgress
         fileName={fileName}
         progress={progress}
-        status={status === "uploading" ? "uploading" : status === "complete" ? "complete" : "error"}
+        status={status}
         onCancel={status === "uploading" ? handleCancel : undefined}
         errorMessage={errorMsg}
       />

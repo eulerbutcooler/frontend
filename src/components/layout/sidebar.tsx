@@ -70,7 +70,7 @@ export function Sidebar({ user, className }: SidebarProps) {
                 "focus-ring flex items-center gap-3 px-4 py-3 rounded-xl text-button transition-[color,background-color] duration-150",
                 isActive
                   ? "bg-ink text-white"
-                  : "text-surface-tint [@media(hover:hover)and(pointer:fine)]:hover:bg-surface-strong"
+                  : "text-surface-tint hover:bg-surface-strong"
               )}
             >
               <item.icon

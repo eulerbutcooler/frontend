@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 interface UploadProgressProps {
   fileName: string;
   progress: number;
-  status: "uploading" | "complete" | "error";
+  status: "uploading" | "processing" | "complete" | "error";
   onCancel?: () => void;
   errorMessage?: string;
 }
@@ -18,6 +18,9 @@ export function UploadProgress({
   onCancel,
   errorMessage,
 }: UploadProgressProps) {
+  const overallProgress =
+    status === "complete" ? 100 : status === "processing" ? 50 : progress / 2;
+
   return (
     <div className="bg-white rounded-xl border border-hairline p-4 animate-fade-in">
       <div className="flex items-center justify-between mb-2">
@@ -27,12 +30,17 @@ export function UploadProgress({
         <div className="flex items-center gap-2">
           {status === "uploading" && (
             <span className="text-caption text-surface-tint">
-              {Math.round(progress)}%
+              Uploading {Math.round(progress)}%
+            </span>
+          )}
+          {status === "processing" && (
+            <span className="text-caption font-semibold text-warning">
+              Processing &amp; embedding…
             </span>
           )}
           {status === "complete" && (
             <span className="text-caption text-success font-semibold">
-              Complete
+              Ready
             </span>
           )}
           {status === "error" && (
@@ -50,17 +58,51 @@ export function UploadProgress({
           )}
         </div>
       </div>
-      <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+      <div
+        role="progressbar"
+        aria-label={`Preparing ${fileName}`}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={status === "processing" ? undefined : overallProgress}
+        aria-valuetext={
+          status === "processing"
+            ? "Upload complete; processing and embedding"
+            : status === "complete"
+              ? "Ready"
+              : undefined
+        }
+        className="relative h-2 w-full overflow-hidden rounded-full bg-surface-container"
+      >
         <div
           className={cn(
             "h-full rounded-full transition-[width] duration-300 ease-snappy",
             status === "uploading" && "bg-brand-teal",
+            status === "processing" && "bg-success",
             status === "complete" && "bg-success",
             status === "error" && "bg-error"
           )}
-          style={{ width: `${Math.min(progress, 100)}%` }}
+          style={{ width: `${Math.min(overallProgress, 100)}%` }}
         />
+        {status === "processing" && (
+          <div className="absolute inset-y-0 left-1/2 w-1/2 animate-pulse bg-warning/35" />
+        )}
       </div>
+      {status !== "error" && (
+        <div className="mt-1.5 grid grid-cols-2 text-[10px] font-medium text-outline">
+          <span className={status !== "uploading" ? "text-success" : undefined}>
+            Upload
+          </span>
+          <span
+            className={cn(
+              "text-right",
+              status === "processing" && "text-warning",
+              status === "complete" && "text-success"
+            )}
+          >
+            Process &amp; embed
+          </span>
+        </div>
+      )}
       {status === "error" && errorMessage && (
         <p className="text-caption text-error mt-2">{errorMessage}</p>
       )}

@@ -29,8 +29,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
           "transition-[color,background-color,transform] duration-150 ease-snappy",
           "active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink",
           "hover:text-ink disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
-          // Only apply hover-bg on fine-pointer devices (touch false-positives)
-          "[@media(hover:hover)and(pointer:fine)]:hover:bg-surface-card",
+          "hover:bg-surface-card",
           className
         )}
         {...props}
