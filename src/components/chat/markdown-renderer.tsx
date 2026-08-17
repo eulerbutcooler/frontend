@@ -18,7 +18,7 @@ interface MarkdownProps {
 export function MarkdownRenderer({ content }: MarkdownProps) {
   const blocks = parseBlocks(content);
   return (
-    <div className="space-y-3">
+    <div className="min-w-0 max-w-full space-y-3 [overflow-wrap:anywhere]">
       {blocks.map((block, i) => renderBlock(block, i))}
     </div>
   );
@@ -206,7 +206,7 @@ function renderInline(text: string): ReactNode[] {
     nodes.push(
       <code
         key={`c${key++}`}
-        className="px-1.5 py-0.5 rounded bg-surface-container text-[13px] font-mono text-brand-teal"
+        className="break-all px-1.5 py-0.5 rounded bg-surface-container text-[13px] font-mono text-brand-teal"
       >
         {m[1]}
       </code>
@@ -251,7 +251,7 @@ function renderEmphasis(text: string, baseKey: number): ReactNode[] {
           href={m[5]}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-brand-teal underline underline-offset-2 hover:text-ink"
+          className="break-all text-brand-teal underline underline-offset-2 hover:text-ink"
         >
           {m[4]}
         </a>
@@ -274,7 +274,7 @@ function CodeBlock({ lang, code }: { lang: string; code: string }) {
   };
 
   return (
-    <div className="group relative rounded-xl border border-hairline bg-ink overflow-hidden">
+    <div className="group relative min-w-0 max-w-full rounded-xl border border-hairline bg-ink overflow-hidden">
       <div className="flex items-center justify-between px-3 py-1.5 bg-ink/90 border-b border-white/10">
         <span className="text-[11px] font-mono text-canvas/60 uppercase tracking-wide select-none">
           {lang || "code"}

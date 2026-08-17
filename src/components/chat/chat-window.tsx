@@ -41,7 +41,7 @@ export function ChatWindow({
   };
 
   return (
-    <div className="bg-surface-card rounded-[24px] border border-hairline flex flex-col h-[calc(100dvh-12rem)] min-h-[500px] shadow-sm overflow-hidden">
+    <div className="flex h-[calc(100dvh-7rem)] min-h-125 flex-col overflow-hidden rounded-3xl border border-hairline bg-surface-card shadow-sm md:h-[calc(100dvh-6rem)]">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-hairline bg-surface-soft">
         <div className="flex items-center gap-4">
@@ -69,7 +69,7 @@ export function ChatWindow({
         ref={scrollRef}
         onScroll={handleScroll}
         aria-live="polite"
-        className="flex-1 overflow-y-auto p-6 md:p-8 flex flex-col gap-8 scrollbar-hide"
+        className="flex min-w-0 flex-1 flex-col gap-8 overflow-x-hidden overflow-y-auto p-6 md:p-8 scrollbar-hide"
       >
         {messages.length === 0 && !isStreaming && (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-16">

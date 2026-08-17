@@ -13,10 +13,31 @@ interface SourceCitationProps {
   compact?: boolean;
 }
 
-/** Truncate a file name to a max character length with an ellipsis. */
-function truncateName(name: string, max = 100): string {
+/** Truncate a file name to a max character length with three dots. */
+function truncateName(name: string, max = 50): string {
   if (name.length <= max) return name;
-  return name.slice(0, max - 1) + "…";
+  return `${name.slice(0, max - 3).trimEnd()}...`;
+}
+
+function SourceName({ name }: { name: string }) {
+  const isTruncated = name.length > 50;
+
+  return (
+    <span className="relative block min-w-0 flex-1 overflow-hidden whitespace-nowrap">
+      <span className={isTruncated ? "group-hover/source:invisible" : undefined}>
+        {truncateName(name)}
+      </span>
+      {isTruncated && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-y-0 left-0 hidden w-max animate-source-marquee group-hover/source:block"
+        >
+          <span className="pr-8">{name}</span>
+          <span className="pr-8">{name}</span>
+        </span>
+      )}
+    </span>
+  );
 }
 
 export function SourceCitation({ citations, compact = true }: SourceCitationProps) {
@@ -26,7 +47,7 @@ export function SourceCitation({ citations, compact = true }: SourceCitationProp
 
   if (compact) {
     return (
-      <div className="inline-flex flex-col items-start max-w-full">
+      <div className="inline-flex min-w-0 max-w-full flex-col items-start">
         <button
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
@@ -42,18 +63,18 @@ export function SourceCitation({ citations, compact = true }: SourceCitationProp
           />
         </button>
         {expanded && (
-          <div className="mt-1.5 max-w-[280px] bg-white border border-hairline rounded-lg shadow-md p-2.5 space-y-1.5 animate-fade-in">
+          <div className="mt-1.5 w-[280px] max-w-full space-y-1.5 rounded-lg border border-hairline bg-white p-2.5 shadow-md animate-fade-in">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-outline px-1">
               Referenced sources
             </p>
             {citations.map((citation, i) => (
               <div
                 key={`${citation.file_id}-${i}`}
-                className="flex items-center gap-2 text-xs text-ink/80 px-1 py-0.5 rounded-md hover:bg-surface-soft"
+                className="group/source flex min-w-0 items-center gap-2 rounded-md px-1 py-0.5 text-xs text-ink/80 hover:bg-surface-soft"
                 title={citation.file_name}
               >
                 <FileText className="h-3 w-3 shrink-0 text-surface-tint" />
-                <span className="truncate flex-1">{truncateName(citation.file_name)}</span>
+                <SourceName name={citation.file_name} />
                 {citation.score != null && (
                   <span className="text-[10px] text-outline shrink-0">
                     {Math.round(citation.score * 100)}%
@@ -85,11 +106,11 @@ export function SourceCitation({ citations, compact = true }: SourceCitationProp
           {citations.map((citation, i) => (
             <div
               key={`${citation.file_id}-${i}`}
-              className="flex items-center gap-2 text-sm text-ink/80"
+              className="group/source flex min-w-0 items-center gap-2 text-sm text-ink/80"
               title={citation.file_name}
             >
               <FileText className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">{truncateName(citation.file_name)}</span>
+              <SourceName name={citation.file_name} />
               {citation.score != null && (
                 <span className="text-[11px] text-outline ml-auto shrink-0">
                   {Math.round(citation.score * 100)}% match

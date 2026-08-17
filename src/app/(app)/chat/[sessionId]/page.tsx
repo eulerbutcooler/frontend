@@ -68,14 +68,14 @@ function ChatSessionView({ sessionId }: { sessionId: string }) {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto animate-fade-in">
-        <Skeleton className="h-[calc(100vh-12rem)] rounded-[24px]" />
+      <div className="w-full animate-fade-in">
+        <Skeleton className="h-[calc(100dvh-7rem)] min-h-125 rounded-3xl md:h-[calc(100dvh-6rem)]" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl xl:max-w-5xl mx-auto">
+    <div className="w-full">
       <ChatWindow
         sessionTitle={session?.title}
         messages={messages}

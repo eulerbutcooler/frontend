@@ -77,8 +77,8 @@ export function MessageBubble({
   return (
     <div
       className={cn(
-        "flex gap-4 max-w-[85%] animate-fade-in",
-        isUser && "self-end flex-row-reverse"
+        "flex gap-4 min-w-0 max-w-[85%] animate-fade-in",
+        isUser ? "self-end flex-row-reverse" : "w-full"
       )}
     >
       <div
@@ -95,13 +95,13 @@ export function MessageBubble({
       </div>
       <div
         className={cn(
-          "flex flex-col gap-2",
-          isUser && "items-end"
+          "flex min-w-0 max-w-full flex-col gap-2",
+          isUser ? "items-end" : "w-full"
         )}
       >
         <div
           className={cn(
-            "px-5 py-4 rounded-2xl text-ink text-body-md leading-relaxed shadow-sm",
+            "min-w-0 max-w-full px-5 py-4 rounded-2xl text-ink text-body-md leading-relaxed shadow-sm",
             isUser
               ? "bg-brand-peach rounded-tr-sm whitespace-pre-wrap"
               : "bg-surface-card rounded-tl-sm"
@@ -122,7 +122,7 @@ export function MessageBubble({
         </div>
         
         {!isUser && !isStreaming && content && (
-          <div className="flex items-center gap-3 px-2 text-outline">
+          <div className="flex min-w-0 max-w-full flex-wrap items-center gap-3 px-2 text-outline">
             <button 
               onClick={handleCopy} 
               aria-label="Copy response"
