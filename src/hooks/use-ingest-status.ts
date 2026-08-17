@@ -15,7 +15,9 @@ export function useIngestStatus(fileId: string | null) {
     refetchInterval: (query) => {
       const status = query.state.data?.status;
       if (status === "ready" || status === "failed") return false;
-      return 3000;
+      return 1500;
     },
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   });
 }

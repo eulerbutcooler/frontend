@@ -48,7 +48,9 @@ export function FileUploadZone({
     queryFn: () =>
       clientApi.get<FileAsset[]>(`/api/v1/lessons/${lessonId}/files`),
     enabled: status === "processing",
-    refetchInterval: status === "processing" ? 2000 : false,
+    refetchInterval: status === "processing" ? 1000 : false,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {

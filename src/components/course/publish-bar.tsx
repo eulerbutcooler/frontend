@@ -37,10 +37,10 @@ export function PublishBar({ courseId, published, summary }: PublishBarProps) {
   let hint = "";
   if (total === 0) {
     hint = "Upload at least one file before publishing.";
-  } else if (processing > 0) {
-    hint = `${processing} file${processing === 1 ? "" : "s"} still processing…`;
   } else if (failed > 0) {
     hint = `${failed} file${failed === 1 ? "" : "s"} failed — remove or re-upload to continue.`;
+  } else if (processing > 0) {
+    hint = `${processing} file${processing === 1 ? "" : "s"} still processing…`;
   }
 
   const canPublish = mounted && allReady && !finalizeCourse.isPending;
@@ -56,51 +56,66 @@ export function PublishBar({ courseId, published, summary }: PublishBarProps) {
   };
 
   return (
-    <div className="sticky bottom-0 z-30 -mx-6 md:-mx-8 mt-8 border-t border-hairline bg-surface-card/90 backdrop-blur-md px-6 md:px-8 py-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3 min-w-0">
+    <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        aria-live="polite"
+        className={`inline-flex w-fit max-w-full items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm ${
+          failed > 0
+            ? "border-error/25 bg-error/5"
+            : processing > 0
+              ? "border-warning/25 bg-warning/5"
+              : allReady
+                ? "border-success/25 bg-success/5"
+                : "border-hairline bg-surface-card"
+        }`}
+      >
+        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/70">
           {failed > 0 ? (
-            <AlertTriangle className="h-5 w-5 text-error shrink-0" />
+            <AlertTriangle className="size-4.5 text-error" />
           ) : processing > 0 ? (
-            <Loader2 className="h-5 w-5 text-warning animate-spin shrink-0" />
+            <Loader2 className="size-4.5 animate-spin text-warning" />
           ) : allReady ? (
-            <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
+            <CheckCircle2 className="size-4.5 text-success" />
           ) : (
-            <Rocket className="h-5 w-5 text-surface-tint shrink-0" />
+            <Rocket className="size-4.5 text-surface-tint" />
           )}
-          <div className="min-w-0">
-            <p className="text-body-sm font-semibold text-ink">
-              {total} file{total === 1 ? "" : "s"} · {ready} ready
-              {processing > 0 && ` · ${processing} processing`}
-              {failed > 0 && ` · ${failed} failed`}
+        </span>
+        <div className="min-w-0 pr-1">
+          <p className="text-body-sm font-semibold text-ink">
+            {allReady
+              ? `${ready} file${ready === 1 ? "" : "s"} ready to publish`
+              : failed > 0
+                ? `${failed} file${failed === 1 ? "" : "s"} need attention`
+                : processing > 0
+                  ? `${processing} of ${total} file${total === 1 ? "" : "s"} processing`
+                  : "Course not ready to publish"}
+          </p>
+          {(hint || error) && (
+            <p
+              className={`mt-0.5 text-caption ${error || failed > 0 ? "text-error" : "text-surface-tint"}`}
+            >
+              {error || hint}
             </p>
-            {(hint || error) && (
-              <p
-                className={`text-caption mt-0.5 ${error || failed > 0 ? "text-error" : "text-surface-tint"}`}
-              >
-                {error || hint}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <Button
-          className="gap-2 shrink-0"
-          disabled={!canPublish}
-          onClick={handlePublish}
-        >
-          {finalizeCourse.isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Rocket className="h-4 w-4" />
           )}
-          {finalizeCourse.isPending
-            ? "Publishing…"
-            : published
-              ? "Re-publish & Regenerate Quizzes"
-              : "Publish Course"}
-        </Button>
+        </div>
       </div>
+
+      <Button
+        className="w-full shrink-0 gap-2 shadow-sm sm:w-auto"
+        disabled={!canPublish}
+        onClick={handlePublish}
+      >
+        {finalizeCourse.isPending ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Rocket className="h-4 w-4" />
+        )}
+        {finalizeCourse.isPending
+          ? "Publishing…"
+          : published
+            ? "Re-publish & Regenerate Quizzes"
+            : "Publish Course"}
+      </Button>
     </div>
   );
 }

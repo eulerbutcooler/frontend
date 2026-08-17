@@ -25,8 +25,17 @@ export function useCourseFiles(lessons: Lesson[]): CourseFilesSummary {
       queryKey: ["files", lesson.id],
       queryFn: () =>
         clientApi.get<FileAsset[]>(`/api/v1/lessons/${lesson.id}/files`),
-      refetchInterval: 3000,
-    })),
+      refetchInterval: (query: { state: { data?: FileAsset[] } }) => {
+        const files = query.state.data ?? [];
+        const busy = files.some(
+          (file) =>
+            file.ingest_status === "pending" || file.ingest_status === "processing"
+        );
+        return busy ? 1500 : false;
+      },
+      refetchIntervalInBackground: true,
+      refetchOnWindowFocus: true,
+    })), 
   });
 
   const files = results.flatMap((r) => r.data ?? []);

@@ -87,8 +87,10 @@ export function FileList({
       const busy = fs.some(
         (f) => f.ingest_status === "pending" || f.ingest_status === "processing"
       );
-      return busy ? 3000 : false;
+      return busy ? 1500 : false;
     },
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   });
 
   const visibleFiles = isInstructor
