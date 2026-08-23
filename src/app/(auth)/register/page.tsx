@@ -77,10 +77,10 @@ export default function RegisterPage() {
     <>
       <div className="mb-8">
         <h2 className="font-display text-display-sm text-ink">
-          Join the Academy.
+          Join the training
         </h2>
         <p className="text-body-md text-surface-tint mt-2">
-          Create your cadet credentials.
+          Create your credentials.
         </p>
       </div>
 
