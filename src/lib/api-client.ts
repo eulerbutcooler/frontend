@@ -2,7 +2,11 @@ import { auth } from "@/lib/auth";
 import { ApiClientError } from "@/types/api";
 import type { ApiEnvelope } from "@/types/api";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL!;
+const BASE_URL = (
+  process.env.API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8080"
+).replace(/\/+$/, "");
 
 class ApiClient {
   private async getHeaders(opts?: RequestInit): Promise<HeadersInit> {
@@ -18,7 +22,8 @@ class ApiClient {
 
   async fetch<T>(path: string, opts?: RequestInit): Promise<T> {
     const headers = await this.getHeaders(opts);
-    const res = await fetch(`${BASE_URL}${path}`, {
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    const res = await fetch(`${BASE_URL}${cleanPath}`, {
       ...opts,
       headers,
     });

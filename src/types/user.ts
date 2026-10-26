@@ -11,7 +11,26 @@ export interface User {
 
 export type Role = "student" | "instructor";
 
-/** Rank values used by the backend validator */
-export const RANKS = ["officer", "agniveer"] as const;
+/** Indian Navy Officer Ranks in order from Sub Lieutenant to Admiral */
+export const INDIAN_NAVY_RANKS = [
+  "Sub Lieutenant",
+  "Lieutenant",
+  "Lieutenant Commander",
+  "Commander",
+  "Captain",
+  "Commodore",
+  "Rear Admiral",
+  "Vice Admiral",
+  "Admiral",
+] as const;
 
-export type Rank = (typeof RANKS)[number];
+export type IndianNavyRank = (typeof INDIAN_NAVY_RANKS)[number];
+
+/** Allowed ranks for forms and validations */
+export const RANKS = [
+  ...INDIAN_NAVY_RANKS,
+  "officer",
+  "agniveer",
+] as const;
+
+export type Rank = string;

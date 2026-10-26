@@ -11,6 +11,8 @@ import {
   ClipboardList,
   Eye,
   Trash2,
+  Download,
+  ExternalLink,
 } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { IngestStatusBadge } from "./ingest-status-badge";
@@ -21,6 +23,7 @@ import type { FileAsset, FileType } from "@/types/course";
 export const FILE_ICONS: Record<FileType, React.ElementType> = {
   pdf: FileText,
   ppt: FileSpreadsheet,
+  pptx: FileSpreadsheet,
   docx: FileText,
 };
 
@@ -36,28 +39,28 @@ const CATEGORY_CONFIG: Record<
   }
 > = {
   books: {
-    title: "Books",
+    title: "Reference Manuals & Books",
     fileType: "pdf",
     icon: BookOpen,
-    accent: "text-brand-teal",
-    accentBg: "bg-brand-teal/10",
-    description: "PDF textbooks and reading materials",
+    accent: "text-blue-600",
+    accentBg: "bg-blue-50 border-blue-100",
+    description: "PDF flight manuals, SOPs, and technical handbooks",
   },
   presentations: {
-    title: "Presentations",
+    title: "Briefing Presentations",
     fileType: "ppt",
     icon: Presentation,
-    accent: "text-ink",
-    accentBg: "bg-brand-ochre/20",
-    description: "PPT/PPTX slide decks",
+    accent: "text-amber-600",
+    accentBg: "bg-amber-50 border-amber-100",
+    description: "Slide decks and visual briefing modules",
   },
   plans: {
-    title: "Plans",
+    title: "Lesson Plans & Notes",
     fileType: "docx",
     icon: ClipboardList,
-    accent: "text-ink",
-    accentBg: "bg-brand-mint/25",
-    description: "DOCX lesson plans and notes",
+    accent: "text-emerald-600",
+    accentBg: "bg-emerald-50 border-emerald-100",
+    description: "DOCX flight syllabi, lesson summaries, and study guides",
   },
 };
 
@@ -119,9 +122,9 @@ export function FileList({
   // Students: show nothing if no files at all
   if (!isInstructor && visibleFiles.length === 0) {
     return (
-      <div className="py-8 text-center">
-        <p className="text-body-md text-surface-tint">
-          No materials available yet for this lesson.
+      <div className="py-6 text-center">
+        <p className="text-[13px] text-gray-500">
+          No study documents uploaded for this lesson yet.
         </p>
       </div>
     );
@@ -130,15 +133,24 @@ export function FileList({
   const renderFileRow = (file: FileAsset) => {
     const Icon = FILE_ICONS[file.file_type] ?? FileText;
     const isReady = file.ingest_status === "ready";
+
+    // Visual badge styles for file extension
+    const typeStyle =
+      file.file_type === "pdf"
+        ? "bg-rose-50 text-rose-600 border-rose-100"
+        : file.file_type === "docx"
+        ? "bg-blue-50 text-blue-600 border-blue-100"
+        : "bg-amber-50 text-amber-600 border-amber-100";
+
     return (
       <div
         key={file.id}
         className={`
-          flex items-center justify-between px-4 py-3 rounded-xl border transition-colors group
+          flex items-center justify-between px-3.5 py-2.5 rounded-xl border transition-all group
           ${
             isReady
-              ? "bg-white border-hairline hover:border-outline-variant hover:shadow-sm cursor-pointer"
-              : "bg-surface-soft border-hairline"
+              ? "bg-white border-gray-200 hover:border-blue-400 hover:shadow-xs cursor-pointer"
+              : "bg-gray-50/70 border-gray-200"
           }
         `}
         onClick={isReady ? () => setViewingFile(file) : undefined}
@@ -152,11 +164,11 @@ export function FileList({
         tabIndex={isReady ? 0 : undefined}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-surface-card flex items-center justify-center shrink-0 border border-hairline">
-            <Icon className="h-4 w-4 text-surface-tint" />
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${typeStyle}`}>
+            <Icon className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <span className="text-body-sm text-ink font-medium truncate block">
+            <span className="text-[13px] text-gray-900 font-medium truncate block group-hover:text-blue-600 transition-colors">
               {file.file_name}
             </span>
           </div>
@@ -167,7 +179,8 @@ export function FileList({
             />
           )}
         </div>
-        <div className="flex items-center gap-1 transition-opacity">
+
+        <div className="flex items-center gap-1.5 shrink-0 ml-2">
           {isReady && (
             <IconButton
               label={`View ${file.file_name}`}
@@ -175,11 +188,14 @@ export function FileList({
                 e.stopPropagation();
                 setViewingFile(file);
               }}
-              className="size-8"
+              className="h-7 px-2.5 rounded-lg text-[12px] font-medium text-gray-700 bg-gray-100 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-1 transition-colors cursor-pointer"
+              title="Preview document"
             >
               <Eye className="h-3.5 w-3.5" />
-            </IconButton>
+              <span>View</span>
+            </button>
           )}
+
           {isInstructor && (
             <IconButton
               label={`Delete ${file.file_name}`}
@@ -187,7 +203,8 @@ export function FileList({
                 e.stopPropagation();
                 handleDelete(file.id);
               }}
-              className="size-8 hover:bg-error/10"
+              className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+              title="Delete file"
             >
               <Trash2 className="h-3.5 w-3.5" />
             </IconButton>
@@ -199,7 +216,7 @@ export function FileList({
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-5">
         {Object.entries(CATEGORY_CONFIG).map(([key, config]) => {
           const groupFiles = groupMap[key] ?? [];
           const CategoryIcon = config.icon;
@@ -210,24 +227,19 @@ export function FileList({
           return (
             <div key={key}>
               {/* Category Header */}
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-2.5 mb-2.5">
                 <div
-                  className={`w-7 h-7 rounded-lg ${config.accentBg} flex items-center justify-center`}
+                  className={`w-6 h-6 rounded-md border ${config.accentBg} flex items-center justify-center`}
                 >
-                  <CategoryIcon className={`h-3.5 w-3.5 ${config.accent}`} />
+                  <CategoryIcon className={`h-3 w-3 ${config.accent}`} />
                 </div>
                 <div>
-                  <h4 className="text-body-sm font-semibold text-ink leading-none">
+                  <h4 className="text-[13px] font-semibold text-gray-800 leading-none">
                     {config.title}
                   </h4>
-                  {isInstructor && groupFiles.length === 0 && (
-                    <p className="text-caption text-outline mt-0.5">
-                      {config.description}
-                    </p>
-                  )}
                 </div>
                 {groupFiles.length > 0 && (
-                  <span className="text-caption text-surface-tint bg-surface-card px-2 py-0.5 rounded-full border border-hairline">
+                  <span className="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
                     {groupFiles.length}
                   </span>
                 )}
@@ -235,7 +247,7 @@ export function FileList({
 
               {/* File Items */}
               {groupFiles.length > 0 && (
-                <div className="space-y-2 mb-3">
+                <div className="space-y-1.5 mb-3">
                   {groupFiles.map(renderFileRow)}
                 </div>
               )}

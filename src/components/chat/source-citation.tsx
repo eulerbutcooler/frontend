@@ -13,37 +13,11 @@ interface SourceCitationProps {
   compact?: boolean;
 }
 
-/** Truncate a file name to a max character length with three dots. */
-function truncateName(name: string, max = 50): string {
-  if (name.length <= max) return name;
-  return `${name.slice(0, max - 3).trimEnd()}...`;
-}
-
-function SourceName({ name }: { name: string }) {
-  const isTruncated = name.length > 50;
-
-  return (
-    <span className="relative block min-w-0 flex-1 overflow-hidden whitespace-nowrap">
-      <span className={isTruncated ? "group-hover/source:invisible" : undefined}>
-        {truncateName(name)}
-      </span>
-      {isTruncated && (
-        <span
-          aria-hidden="true"
-          className="absolute inset-y-0 left-0 hidden w-max animate-source-marquee group-hover/source:block"
-        >
-          <span className="pr-8">{name}</span>
-          <span className="pr-8">{name}</span>
-        </span>
-      )}
-    </span>
-  );
-}
-
-export function SourceCitation({ citations, compact = true }: SourceCitationProps) {
+export function SourceCitation({ citations = [] }: SourceCitationProps) {
   const [expanded, setExpanded] = useState(false);
 
-  if (citations.length === 0) return null;
+  const safeCitations = Array.isArray(citations) ? citations : [];
+  if (safeCitations.length === 0) return null;
 
   if (compact) {
     return (
@@ -96,14 +70,16 @@ export function SourceCitation({ citations, compact = true }: SourceCitationProp
         aria-expanded={expanded}
         className="focus-ring flex items-center gap-2 font-semibold text-sm w-full"
       >
-        <ChevronDown
-          className={`h-4 w-4 transition-transform ${expanded ? "" : "-rotate-90"}`}
-        />
-        {citations.length} {citations.length === 1 ? "source" : "sources"} referenced
+        {expanded ? (
+          <ChevronDown className="h-4 w-4" />
+        ) : (
+          <ChevronRight className="h-4 w-4" />
+        )}
+        {safeCitations.length} {safeCitations.length === 1 ? "source" : "sources"} referenced
       </button>
       {expanded && (
         <div className="mt-3 space-y-2 animate-fade-in">
-          {citations.map((citation, i) => (
+          {safeCitations.map((citation, i) => (
             <div
               key={`${citation.file_id}-${i}`}
               className="group/source flex min-w-0 items-center gap-2 text-sm text-ink/80"

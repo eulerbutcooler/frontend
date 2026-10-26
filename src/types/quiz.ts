@@ -2,8 +2,12 @@
 export interface Quiz {
   id: string;
   course_id: string;
+  lesson_id?: string | null;
   difficulty: Difficulty;
   status: QuizStatus;
+  question_count?: number;
+  last_score?: number | null;
+  is_attempted?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -23,11 +27,34 @@ export interface Question {
   type: QuestionType;
   question: string;
   choices: Choice[];
-  answer: string;
+  answer?: string;
   order_idx: number;
+  explanation?: string;
+  difficulty?: "easy" | "medium" | "hard";
+  topic_phrase?: string;
 }
 
 export type QuestionType = "mcq" | "open_ended";
+
+export interface TopicSlide {
+  slide_number: number;
+  slide_type: "concept" | "technical_limits" | "diagram" | "emergency" | "summary";
+  title: string;
+  bullets: string[];
+  formula_or_rule?: string;
+  diagram_mermaid?: string;
+  warning?: string;
+}
+
+export interface LessonTopic {
+  id: string;
+  lesson_id: string;
+  title: string;
+  order_index: number;
+  slides: TopicSlide[];
+  created_at?: string;
+  updated_at?: string;
+}
 
 /** Matches backend domain.Attempt */
 export interface Attempt {

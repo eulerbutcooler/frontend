@@ -16,32 +16,32 @@ export function QuizQuestion({ question }: QuizQuestionProps) {
     const choices = question.choices ?? [];
     if (choices.length === 0) {
       return (
-        <div className="flex flex-col gap-10 mt-8">
-          <h2 className="font-display text-display-md text-ink text-center">
+        <div className="flex flex-col gap-6 my-6 text-center">
+          <h2 className="text-[20px] font-bold text-gray-900">
             {question.question}
           </h2>
-          <p className="text-body-md text-surface-tint text-center">
-            This question has no options available.
+          <p className="text-[14px] text-gray-500">
+            No options available for this question.
           </p>
         </div>
       );
     }
     return (
-      <div className="flex flex-col gap-10 mt-8">
-        <h2 className="font-display text-display-md text-ink text-center">
+      <div className="flex flex-col gap-6 my-4 w-full max-w-2xl mx-auto">
+        <h2 className="text-[19px] font-bold text-gray-900 leading-snug">
           {question.question}
         </h2>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {choices.map((choice) => {
             const isSelected = selectedAnswer === choice.label;
             return (
               <label
                 key={choice.label}
                 className={cn(
-                  "focus-within:ring-2 focus-within:ring-ink focus-within:outline-none relative flex items-center p-6 rounded-2xl cursor-pointer transition-colors",
+                  "relative flex items-center p-4 rounded-xl cursor-pointer border transition-all",
                   isSelected
-                    ? "bg-surface-soft border border-brand-coral ring-1 ring-brand-coral"
-                    : "bg-surface-card border border-hairline hover:border-brand-coral hover:bg-surface-soft"
+                    ? "border-blue-600 bg-blue-50/40 ring-1 ring-blue-600 shadow-none"
+                    : "border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50/70"
                 )}
               >
                 <input
@@ -50,29 +50,44 @@ export function QuizQuestion({ question }: QuizQuestionProps) {
                   value={choice.label}
                   checked={isSelected}
                   onChange={() => setAnswer(question.id, choice.label)}
-                  className="absolute opacity-0"
+                  className="sr-only"
                 />
+
+                {/* Choice Pill (A, B, C, D) */}
                 <div
                   className={cn(
-                    "w-6 h-6 rounded-full border-2 mr-4 shrink-0 flex items-center justify-center",
-                    isSelected ? "border-brand-coral" : "border-outline"
+                    "w-7 h-7 rounded-lg text-[13px] font-bold flex items-center justify-center mr-3.5 shrink-0 transition-colors",
+                    isSelected
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700"
                   )}
                 >
-                  <div
-                    className={cn(
-                      "w-3 h-3 rounded-full bg-brand-coral transition-opacity",
-                      isSelected ? "opacity-100" : "opacity-0"
-                    )}
-                  />
+                  {choice.label}
                 </div>
+
+                {/* Text */}
                 <span
                   className={cn(
-                    "text-body-md text-ink",
-                    isSelected && "font-semibold"
+                    "text-[15px] flex-1",
+                    isSelected
+                      ? "font-semibold text-gray-900"
+                      : "text-gray-700"
                   )}
                 >
                   {choice.text}
                 </span>
+
+                {/* Radio Circle */}
+                <div
+                  className={cn(
+                    "w-5 h-5 rounded-full border-2 ml-3 shrink-0 flex items-center justify-center transition-colors",
+                    isSelected ? "border-blue-600" : "border-gray-300"
+                  )}
+                >
+                  {isSelected && (
+                    <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                  )}
+                </div>
               </label>
             );
           })}
@@ -82,8 +97,8 @@ export function QuizQuestion({ question }: QuizQuestionProps) {
   }
 
   return (
-    <div className="flex flex-col gap-10 mt-8">
-      <h2 className="font-display text-display-md text-ink text-center">
+    <div className="flex flex-col gap-6 my-4 w-full max-w-2xl mx-auto">
+      <h2 className="text-[19px] font-bold text-gray-900 leading-snug">
         {question.question}
       </h2>
       <textarea
@@ -92,7 +107,7 @@ export function QuizQuestion({ question }: QuizQuestionProps) {
         placeholder="Type your answer here..."
         value={selectedAnswer}
         onChange={(e) => setAnswer(question.id, e.target.value)}
-        className="w-full bg-canvas border border-hairline rounded-2xl p-6 text-body-md text-ink focus:border-ink focus:ring-1 focus:ring-ink transition-colors outline-none resize-none"
+        className="w-full bg-white border border-gray-200 rounded-xl p-4 text-[15px] text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors outline-none resize-none"
       />
     </div>
   );

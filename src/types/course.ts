@@ -32,7 +32,7 @@ export interface FileAsset {
   updated_at: string;
 }
 
-export type FileType = "pdf" | "ppt" | "docx";
+export type FileType = "pdf" | "ppt" | "pptx" | "docx";
 
 /** Backend uses "ready" (not "done") for completed ingestion */
 export type IngestStatus = "pending" | "processing" | "ready" | "failed";

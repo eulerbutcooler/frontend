@@ -24,45 +24,32 @@ export function Topbar({ user }: TopbarProps) {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
 
   return (
-    <header className="fixed top-0 w-full z-40 border-b border-hairline bg-canvas flex items-center justify-between h-16 px-6 md:hidden">
+    <header className="h-16 flex items-center justify-between px-6 md:px-8 border-b border-gray-200 bg-[#f3f4f6] z-10 shrink-0 font-sans">
       <div className="flex items-center gap-3">
         <button
           onClick={toggleSidebar}
-          className="focus-ring w-10 h-10 rounded-xl flex items-center justify-center hover:bg-surface-strong transition-[background-color,transform] duration-150 ease-snappy active:scale-[0.97] cursor-pointer"
-          aria-label="Toggle navigation"
+          className="md:hidden w-10 h-10 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
         >
-          <Menu className="h-5 w-5 text-ink" />
+          <Menu className="h-6 w-6 text-gray-700" />
         </button>
-        <span className="text-title-md font-bold tracking-tight text-ink font-display">
-          AeroMentor
-        </span>
+        
+        {/* Left side tag */}
+        <div className="hidden md:flex items-center px-3 py-1 bg-gray-200 rounded-lg border border-gray-300">
+          <span className="text-[14px] font-semibold text-gray-800">
+            {user.role === "instructor" ? "Instructor's Portal" : "Trainee's Portal"}
+          </span>
+        </div>
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className="focus-ring w-10 h-10 rounded-full bg-brand-teal flex items-center justify-center text-white text-caption font-semibold transition-transform duration-150 ease-snappy active:scale-[0.97] cursor-pointer" aria-label="Account menu">
-            {user.name?.charAt(0)?.toUpperCase() ?? "U"}
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <div className="px-3 py-2">
-            <p className="text-body-sm font-semibold text-ink">
-              {user.name ?? "User"}
-            </p>
-            <p className="text-caption text-surface-tint capitalize">
-              {user.role}
-            </p>
-          </div>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            className="text-error focus:text-error"
-          >
-            <LogOut className="h-4 w-4" />
-            Sign Out
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {/* Right side links */}
+      <div className="hidden md:flex items-center gap-6">
+        <a href="#" className="text-[14px] font-semibold text-gray-600 hover:text-gray-900 flex items-center gap-1.5">
+          Help
+        </a>
+        <a href="#" className="text-[14px] font-semibold text-gray-600 hover:text-gray-900 flex items-center gap-1.5">
+          Docs <span className="text-gray-400">↗</span>
+        </a>
+      </div>
     </header>
   );
 }

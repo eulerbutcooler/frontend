@@ -19,6 +19,15 @@ export function capitalize(str?: string | null): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+export function toTitleCase(str?: string | null): string {
+  if (!str) return "";
+  return str
+    .trim()
+    .split(/\s+/)
+    .map((word) => (word ? word.charAt(0).toUpperCase() + word.slice(1) : ""))
+    .join(" ");
+}
+
 export const BRAND_COLORS = [
   "bg-brand-pink",
   "bg-brand-teal",

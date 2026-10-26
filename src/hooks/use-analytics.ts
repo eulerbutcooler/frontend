@@ -1,6 +1,11 @@
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery, queryOptions } from "@tanstack/react-query";
 import { clientApi } from "@/lib/api-client.client";
-import type { AnalyticsOverview, CourseMetric } from "@/types/analytics";
+import type {
+  AnalyticsOverview,
+  CourseMetric,
+  StudentAnalytics,
+  InstructorAnalytics,
+} from "@/types/analytics";
 
 const analyticsOverviewOptions = () =>
   queryOptions({
@@ -22,4 +27,19 @@ export function useAnalyticsOverview() {
 
 export function useCourseMetrics(courseId: string) {
   return useSuspenseQuery(courseMetricsOptions(courseId));
+}
+
+export function useStudentAnalytics() {
+  return useQuery({
+    queryKey: ["analytics", "student"],
+    queryFn: () => clientApi.get<StudentAnalytics>("/api/v1/analytics/student"),
+  });
+}
+
+export function useInstructorAnalytics() {
+  return useQuery({
+    queryKey: ["analytics", "instructor"],
+    queryFn: () =>
+      clientApi.get<InstructorAnalytics>("/api/v1/analytics/instructor"),
+  });
 }

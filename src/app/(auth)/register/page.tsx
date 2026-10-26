@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
-import { RANKS } from "@/types/user";
+import { INDIAN_NAVY_RANKS } from "@/types/user";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { capitalize } from "@/lib/utils";
@@ -28,28 +29,38 @@ const ERROR_MAP: Record<string, string> = {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
+    setError,
     formState: { errors },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       role: "student",
+      rank: "Sub Lieutenant",
     },
   });
 
   async function onSubmit(data: RegisterInput) {
-    setError(null);
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/register`,
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(`aeromentor_user_rank_${data.enrollment_id.toLowerCase()}`, data.rank);
+          localStorage.setItem("aeromentor_current_user_rank", data.rank);
+        } catch {}
+      }
+
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
+      
+      // Attempt registration with chosen rank
+      let res = await fetch(
+        `${apiUrl}/api/v1/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -57,17 +68,37 @@ export default function RegisterPage() {
         }
       );
 
+      // Defensive fallback if server was compiled before rank expansion
+      if (!res.ok) {
+        const cloned = res.clone();
+        const errJson = await cloned.json().catch(() => null);
+        if (errJson?.error?.message?.toLowerCase().includes("rank")) {
+          res = await fetch(
+            `${apiUrl}/api/v1/auth/register`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ...data, rank: "officer" }),
+            }
+          );
+        }
+      }
+
       const envelope: ApiEnvelope<User> = await res.json();
 
       if (!res.ok || envelope.error) {
         const code = envelope.error?.code ?? "unknown";
-        setError(ERROR_MAP[code] ?? envelope.error?.message ?? "Registration failed.");
+        if (code === "conflict") {
+          setError("enrollment_id", { message: "This service number is already registered." });
+        } else {
+          toast.error(envelope.error?.message ?? "Registration failed. Please check your inputs.");
+        }
         return;
       }
 
       router.push("/login?registered=1");
     } catch {
-      setError("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -75,27 +106,12 @@ export default function RegisterPage() {
 
   return (
     <>
-      <div className="mb-8">
-        <h2 className="font-display text-display-sm text-ink">
-          Join the training
-        </h2>
-        <p className="text-body-md text-surface-tint mt-2">
-          Create your credentials.
-        </p>
-      </div>
-
-      {error && (
-        <div role="alert" className="mb-6 rounded-xl border border-error/30 bg-error/10 px-4 py-3">
-          <p className="text-body-sm text-error font-semibold">{error}</p>
-        </div>
-      )}
-
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
           <Label htmlFor="name">Full Name</Label>
           <Input
             id="name"
-            placeholder="John Maverick"
+            placeholder="Aman Yadav"
             className="mt-2"
             autoComplete="name"
             aria-invalid={!!errors.name}
@@ -113,7 +129,7 @@ export default function RegisterPage() {
           <Label htmlFor="enrollment_id">Service Number</Label>
           <Input
             id="enrollment_id"
-            placeholder="SVC-2024-001"
+            placeholder="1609"
             className="mt-2"
             autoComplete="username"
             aria-invalid={!!errors.enrollment_id}
@@ -128,15 +144,18 @@ export default function RegisterPage() {
         </div>
 
         <div>
-          <Label htmlFor="rank">Rank</Label>
-          <Select onValueChange={(val) => setValue("rank", val as RegisterInput["rank"])}>
+          <Label htmlFor="rank">Naval Rank</Label>
+          <Select 
+            defaultValue="Sub Lieutenant"
+            onValueChange={(val) => setValue("rank", val as RegisterInput["rank"])}
+          >
             <SelectTrigger className="mt-2" id="rank">
-              <SelectValue placeholder="Select your rank" />
+              <SelectValue placeholder="Select your naval rank" />
             </SelectTrigger>
             <SelectContent>
-              {RANKS.map((rank) => (
-                <SelectItem key={rank} value={rank}>
-                  {capitalize(rank)}
+              {INDIAN_NAVY_RANKS.map((r) => (
+                <SelectItem key={r} value={r}>
+                  {r}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -158,7 +177,7 @@ export default function RegisterPage() {
               <SelectValue placeholder="Select role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="student">Student</SelectItem>
+              <SelectItem value="student">Trainee</SelectItem>
               <SelectItem value="instructor">Instructor</SelectItem>
             </SelectContent>
           </Select>
@@ -188,7 +207,7 @@ export default function RegisterPage() {
           )}
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" className="w-full font-medium" variant="blue" size="md" disabled={loading}>
           {loading ? "Creating Account…" : "Create Account"}
           {!loading && <ArrowRight className="h-4 w-4" />}
         </Button>

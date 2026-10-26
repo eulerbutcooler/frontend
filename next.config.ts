@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: "http",
@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: { bodySizeLimit: "10mb" },
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/landing",
+        destination: "/supermemory.html",
+      },
+    ];
   },
 };
 

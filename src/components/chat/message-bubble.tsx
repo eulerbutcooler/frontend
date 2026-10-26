@@ -48,7 +48,7 @@ export function MessageBubble({
         const res = await fetch("/api/audio/speak", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: content, voice: "hf_beta", speed: 0.9 }),
+          body: JSON.stringify({ text: content, voice: "bm_george", speed: 1.0, stream: false }),
         });
         
         if (res.ok) {

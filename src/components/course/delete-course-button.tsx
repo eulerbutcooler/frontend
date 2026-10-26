@@ -14,7 +14,7 @@ export function DeleteCourseButton({ courseId }: DeleteCourseButtonProps) {
   const deleteCourse = useDeleteCourse();
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this course?")) return;
+    if (!confirm("Are you sure you want to delete this subject?")) return;
     await deleteCourse.mutateAsync(courseId);
     router.push("/courses");
   };

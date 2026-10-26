@@ -4,7 +4,11 @@ import { NextResponse } from "next/server";
 // Extend the route handler timeout so slow LLM streaming doesn't 504.
 export const maxDuration = 300;
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const API_URL = (
+  process.env.API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8080"
+).replace(/\/+$/, "");
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -13,10 +17,8 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { sessionId, query } = body as {
-    sessionId: string;
-    query: string;
-  };
+  const sessionId = body.sessionId;
+  const query = body.query || body.message;
 
   if (!sessionId || !query) {
     return NextResponse.json(
@@ -38,9 +40,18 @@ export async function POST(req: Request) {
   );
 
   if (!upstream.ok) {
-    const text = await upstream.text();
+    let errMsg = "Upstream error";
+    try {
+      const errJson = await upstream.json();
+      errMsg =
+        errJson.error?.message ||
+        errJson.message ||
+        (typeof errJson.error === "string" ? errJson.error : JSON.stringify(errJson));
+    } catch {
+      errMsg = await upstream.text();
+    }
     return NextResponse.json(
-      { error: text || "Upstream error" },
+      { error: errMsg || "Upstream error" },
       { status: upstream.status }
     );
   }

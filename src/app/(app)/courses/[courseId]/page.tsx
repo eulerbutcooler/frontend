@@ -1,16 +1,19 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { api } from "@/lib/api-client";
 import Link from "next/link";
-import { ArrowRight, Pencil, ArrowLeft } from "lucide-react";
-import Image from "next/image";
+import { ArrowRight, Pencil, ArrowLeft, Play } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LessonList } from "@/components/course/lesson-list";
 import { DeleteCourseButton } from "@/components/course/delete-course-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { capitalize } from "@/lib/utils";
 import type { Course, Lesson } from "@/types/course";
+import { SubjectSyllabusRoadmap, type LessonWithTopics } from "@/components/course/subject-syllabus-roadmap";
+import { cleanSubjectDescription } from "@/lib/course-utils";
 
 interface PageProps {
   params: Promise<{ courseId: string }>;
@@ -19,115 +22,113 @@ interface PageProps {
 export default async function CourseDetailPage({ params }: PageProps) {
   const { courseId } = await params;
   const session = await auth();
-  if (!session) redirect("/login");
+  if (!session) return null;
 
   const isInstructor = session.user.role === "instructor";
 
   let course: Course;
   let lessons: Lesson[] = [];
+  let lessonsWithTopics: LessonWithTopics[] = [];
 
   try {
     [course, lessons] = await Promise.all([
       api.get<Course>(`/api/v1/courses/${courseId}`),
       api.get<Lesson[]>(`/api/v1/courses/${courseId}/lessons`),
     ]);
-  } catch {
+    lessons = Array.isArray(lessons) ? lessons : [];
+
+    lessonsWithTopics = await Promise.all(
+      lessons.map(async (l) => {
+        try {
+          const topics = await api.get<any[]>(`/api/v1/lessons/${l.id}/topics`);
+          return { ...l, topics: Array.isArray(topics) ? topics : [] };
+        } catch {
+          return { ...l, topics: [] };
+        }
+      })
+    );
+  } catch (e) {
+    console.error("Failed to fetch course:", e);
     notFound();
   }
 
-  const isCourseAuthor = isInstructor && course.instructor_id === session.user.id;
+  const isCourseAuthor = isInstructor;
 
   return (
-    <div>
-      {/* Back link */}
-      <Link
-        href="/courses"
-        className="focus-ring inline-flex items-center gap-2 text-button font-semibold text-surface-tint hover:text-ink transition-colors mb-8"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Courses
-      </Link>
+    <div className="h-[calc(100vh-4rem)] -mx-6 -my-6 flex flex-col font-sans bg-[#f3f4f6] p-6">
+      {/* Top Bar */}
+      <div className="flex justify-between items-center mb-6 px-2 shrink-0">
+        <Link
+          href="/courses"
+          className="inline-flex items-center gap-2 text-[20px] font-bold text-gray-900 tracking-tight hover:text-blue-600 transition-colors"
+        >
+          <ArrowLeft className="h-5 w-5" />
+          Back to Subjects
+        </Link>
 
-      {/* Hero Section */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16 items-center">
-        <div className="md:col-span-7">
-          <div className="inline-flex items-center gap-2 bg-surface-card px-3 py-1.5 rounded-full mb-6 border border-hairline">
-            <span className={`w-2 h-2 rounded-full ${course.published ? "bg-success" : "bg-warning"}`} />
-            <span className="text-caption-uppercase uppercase text-ink">
-              {capitalize(course.rank)} · {lessons.length}{" "}
-              {lessons.length === 1 ? "lesson" : "lessons"}
-              {!course.published && " · Draft"}
-            </span>
-          </div>
-          <h1 className="font-display text-display-xl text-ink mb-6 leading-tight">
-            {course.title}
-          </h1>
-          <p className="text-body-md text-surface-tint max-w-xl">
-            {course.description}
-          </p>
-          {isCourseAuthor && !course.published && (
-            <div className="mt-6 inline-flex items-start gap-3 bg-warning/15 rounded-2xl px-4 py-3 max-w-xl">
-              <span className="w-2 h-2 rounded-full bg-warning mt-1.5 shrink-0" />
-              <p className="text-body-sm text-surface-tint">
-                This course is a <span className="font-semibold text-ink">draft</span>. Add modules and files below — students see it only after you publish.
-              </p>
-            </div>
+        <div className="flex items-center gap-3">
+          {isCourseAuthor && (
+            <Link
+              href={`/courses/${courseId}/edit`}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg transition-colors cursor-pointer shadow-xs"
+            >
+              <Pencil className="h-4 w-4" />
+              Edit Subject
+            </Link>
           )}
-          <div className="mt-8 flex gap-4">
-            {isInstructor ? (
-              <>
-                {isCourseAuthor && (
-                  <>
-                    <Link href={`/courses/${courseId}/edit`}>
-                      <Button className="gap-2">
-                        <Pencil className="h-4 w-4" />
-                        Edit Course
-                      </Button>
-                    </Link>
-                    <DeleteCourseButton courseId={courseId} />
-                  </>
-                )}
-              </>
-            ) : (
-              <Button className="gap-2">
-                Continue Learning
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        </div>
-        <div className="md:col-span-5">
-          <div className="relative rounded-[24px] aspect-[4/3] overflow-hidden shadow-sm border border-hairline">
-            <Image
-              src="/Indian-Mig-29K-2(1).jpg"
-              alt=""
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 40vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4 text-white">
-              <p className="text-caption-uppercase uppercase text-white/80 tracking-widest">
-                Training Material
-              </p>
-              <p className="font-display text-display-sm">
-                {capitalize(course.rank)} Curriculum
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Lessons — client-only to avoid hydration mismatch from useQueries */}
-      <Suspense fallback={<Skeleton className="h-40 rounded-2xl" />}>
-        <LessonList
-          courseId={courseId}
-          lessons={lessons}
-          isInstructor={isCourseAuthor}
-          instructorId={course.instructor_id}
-          published={course.published}
-        />
-      </Suspense>
+      {/* Giant White Block containing everything */}
+      <div className="flex-1 min-h-0 bg-white border border-gray-200 rounded-xl overflow-hidden flex flex-col md:flex-row shadow-xs">
+
+        {/* Left Column: Subject Details & Lesson Materials */}
+        <div className="w-full md:w-[55%] lg:w-[58%] p-8 overflow-y-auto flex flex-col">
+          {isCourseAuthor && !course.published && (
+            <div className="mb-6 inline-flex items-start gap-3 bg-yellow-50/50 text-gray-900 rounded-lg px-4 py-3 border border-yellow-100 shrink-0">
+              <span className="w-2 h-2 rounded-full bg-yellow-400 mt-1.5 shrink-0" />
+              <p className="text-[13px] text-gray-600">
+                This subject is a <span className="font-semibold text-gray-900">draft</span>. Add modules and files below — trainees see it only after you publish.
+              </p>
+            </div>
+          )}
+
+          <h1 className="text-[22px] font-bold text-gray-900 tracking-tight mb-3 shrink-0">
+            {course.title}
+          </h1>
+          <p className="text-gray-500 text-[14px] leading-relaxed mb-6 shrink-0">
+            {cleanSubjectDescription(course.description)}
+          </p>
+
+          {/* Start Learning Button */}
+          <Link
+            href={`/courses/${courseId}/learn`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[14px] font-semibold rounded-lg transition-colors mb-8 shrink-0 w-fit shadow-xs hover:shadow-md cursor-pointer"
+          >
+            <Play className="h-4 w-4" fill="white" />
+            Start Learning
+          </Link>
+
+          <div className="flex-1 min-h-0 pb-2 flex flex-col justify-start">
+            {/* Lessons */}
+            <Suspense fallback={<div className="h-40" />}>
+              <LessonList
+                courseId={courseId}
+                lessons={lessons}
+                isInstructor={false}
+                instructorId={course.instructor_id}
+                published={course.published}
+              />
+            </Suspense>
+          </div>
+        </div>
+
+        {/* Right Column: AI Executive Summary & Lesson-by-Lesson Syllabus Roadmap */}
+        <div className="hidden md:block md:w-[45%] lg:w-[42%] h-full overflow-hidden">
+          <SubjectSyllabusRoadmap course={course} lessons={lessonsWithTopics} />
+        </div>
+
+      </div>
     </div>
   );
 }

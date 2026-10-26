@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
@@ -15,19 +16,18 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered");
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
 
   async function onSubmit(data: LoginInput) {
-    setError(null);
     setLoading(true);
 
     try {
@@ -38,14 +38,19 @@ function LoginForm() {
       });
 
       if (result?.error) {
-        setError("Invalid service number or password. Please try again.");
+        if (result.error === "CredentialsSignin" || result.error.includes("unauthorized") || result.error.toLowerCase().includes("credentials")) {
+          setError("enrollment_id", { message: "Invalid service number or password." });
+          setError("password", { message: "Invalid service number or password." });
+        } else {
+          toast.error("Login failed. Please try again.");
+        }
         return;
       }
 
       router.push("/dashboard");
       router.refresh();
     } catch {
-      setError("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -53,26 +58,13 @@ function LoginForm() {
 
   return (
     <>
-      <div className="mb-8">
-        <h2 className="font-display text-display-sm text-ink">
-          Welcome Back, Cadet.
-        </h2>
-        <p className="text-body-md text-surface-tint mt-2">
-          Sign in to continue your mission.
-        </p>
-      </div>
+
 
       {registered && (
-        <div className="mb-6 rounded-xl border border-success/30 bg-success/10 px-4 py-3">
-          <p className="text-body-sm text-success font-semibold">
+        <div className="mb-6 rounded-md border border-success/30 bg-success/5 px-4 py-3">
+          <p className="text-body-sm text-success font-medium">
             Account created successfully. Sign in with your credentials.
           </p>
-        </div>
-      )}
-
-      {error && (
-        <div role="alert" className="mb-6 rounded-xl border border-error/30 bg-error/10 px-4 py-3">
-          <p className="text-body-sm text-error font-semibold">{error}</p>
         </div>
       )}
 
@@ -81,15 +73,12 @@ function LoginForm() {
           <Label htmlFor="enrollment_id">Service Number</Label>
           <Input
             id="enrollment_id"
-            placeholder="SVC-2024-001"
+            placeholder="e.g. 12345678"
             className="mt-2"
-            autoComplete="username"
-            aria-invalid={!!errors.enrollment_id}
-            aria-describedby={errors.enrollment_id ? "enrollment_id-error" : undefined}
             {...register("enrollment_id")}
           />
           {errors.enrollment_id && (
-            <p id="enrollment_id-error" className="text-body-sm text-error font-semibold mt-1.5">
+            <p className="mt-1.5 text-body-sm text-error">
               {errors.enrollment_id.message}
             </p>
           )}
@@ -102,21 +91,18 @@ function LoginForm() {
             type="password"
             placeholder="••••••••"
             className="mt-2"
-            autoComplete="current-password"
-            aria-invalid={!!errors.password}
-            aria-describedby={errors.password ? "password-error" : undefined}
             {...register("password")}
           />
           {errors.password && (
-            <p id="password-error" className="text-body-sm text-error font-semibold mt-1.5">
+            <p className="mt-1.5 text-body-sm text-error">
               {errors.password.message}
             </p>
           )}
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Signing in…" : "Sign In"}
-          {!loading && <ArrowRight className="h-4 w-4" />}
+        <Button type="submit" className="w-full font-medium" variant="blue" size="md" disabled={loading}>
+          {loading ? "Signing in..." : "Sign in"}
+          {!loading && <ArrowRight className="h-4 w-4 ml-2" />}
         </Button>
       </form>
 

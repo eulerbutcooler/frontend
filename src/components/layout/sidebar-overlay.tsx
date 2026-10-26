@@ -10,6 +10,7 @@ interface SidebarOverlayProps {
     name?: string | null;
     role: string;
     rank: string;
+    serviceNumber?: string | null;
   };
 }
 

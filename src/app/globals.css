@@ -43,9 +43,19 @@
   --color-warning: #d97706;
   --color-error: #dc2626;
 
+  /* ─── Global Blue Override (Cornflower) ─── */
+  --color-blue-50: #eff4fe;
+  --color-blue-100: #e2ebfd;
+  --color-blue-200: #cbdcfa;
+  --color-blue-300: #a9c5f6;
+  --color-blue-400: #88a7ef;
+  --color-blue-500: #6495ed;
+  --color-blue-600: #4a75dc;
+  --color-blue-700: #3b5cbd;
+
   /* ─── Typography ─── */
   --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
   /* ─── Display sizes (Plus Jakarta Sans) ─── */
@@ -204,4 +214,18 @@
 @layer utilities {
   .text-balance { text-wrap: balance; }
   .font-display { font-family: var(--font-display); }
+}
+
+/* Hide pixel canvas when not hovered */
+.pixel-hover-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.surface-card:hover .pixel-hover-canvas,
+.surface-card:focus-within .pixel-hover-canvas {
+  opacity: 1;
 }

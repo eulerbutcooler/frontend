@@ -1,4 +1,5 @@
 "use client";
+
 import { Home } from "lucide-react";
 import { ErrorContent } from "@/components/error-content";
 

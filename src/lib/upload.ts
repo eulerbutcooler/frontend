@@ -1,8 +1,7 @@
 import * as tus from "tus-js-client";
 
-const TUS_ENDPOINT =
-  (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080") +
-  "/api/v1/files/tus/";
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080").replace(/\/+$/, "");
+const TUS_ENDPOINT = `${API_BASE}/api/v1/files/tus/`;
 
 interface UploadMetadata {
   lessonId: string;

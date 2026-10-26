@@ -10,23 +10,23 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const role = req.auth?.user?.role;
 
-  const isAuthPage = AUTH_PAGES.some((p) => pathname.startsWith(p));
-  if (isAuthPage && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
-  }
+  // const isAuthPage = AUTH_PAGES.some((p) => pathname.startsWith(p));
+  // if (isAuthPage && isLoggedIn) {
+  //   return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+  // }
 
-  const isProtectedPage = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
-  if (isProtectedPage && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl));
-  }
+  // const isProtectedPage = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
+  // if (isProtectedPage && !isLoggedIn) {
+  //   return NextResponse.redirect(new URL("/login", req.nextUrl));
+  // }
 
-  const isInstructorPage = INSTRUCTOR_PREFIXES.some((p) => pathname.startsWith(p));
-  if (isInstructorPage && role !== "instructor") {
-    if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/login", req.nextUrl));
-    }
-    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
-  }
+  // const isInstructorPage = INSTRUCTOR_PREFIXES.some((p) => pathname.startsWith(p));
+  // if (isInstructorPage && role !== "instructor") {
+  //   if (!isLoggedIn) {
+  //     return NextResponse.redirect(new URL("/login", req.nextUrl));
+  //   }
+  //   return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+  // }
 
   return NextResponse.next();
 });

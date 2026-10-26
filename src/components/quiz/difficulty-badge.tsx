@@ -1,13 +1,33 @@
 import { cn } from "@/lib/utils";
 import type { Difficulty } from "@/types/quiz";
 
-const STYLES: Record<Difficulty, { bg: string; text: string }> = {
-  easy: { bg: "bg-success/15", text: "text-success" },
-  medium: { bg: "bg-warning/15", text: "text-warning" },
-  hard: { bg: "bg-error/15", text: "text-error" },
+const STYLES: Record<Difficulty, { bg: string; text: string; border: string; dot: string }> = {
+  easy: {
+    bg: "bg-emerald-50",
+    text: "text-emerald-700",
+    border: "border-emerald-200",
+    dot: "bg-emerald-500",
+  },
+  medium: {
+    bg: "bg-blue-50",
+    text: "text-blue-700",
+    border: "border-blue-200",
+    dot: "bg-blue-500",
+  },
+  hard: {
+    bg: "bg-amber-50",
+    text: "text-amber-800",
+    border: "border-amber-200",
+    dot: "bg-amber-500",
+  },
 };
 
-const DEFAULT_STYLE = { bg: "bg-surface-soft", text: "text-surface-tint" };
+const DEFAULT_STYLE = {
+  bg: "bg-gray-100",
+  text: "text-gray-700",
+  border: "border-gray-200",
+  dot: "bg-gray-400",
+};
 
 interface DifficultyBadgeProps {
   difficulty: Difficulty | string;
@@ -19,13 +39,14 @@ export function DifficultyBadge({ difficulty, className }: DifficultyBadgeProps)
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-caption font-semibold capitalize",
+        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] font-semibold capitalize border",
         style.bg,
         style.text,
+        style.border,
         className
       )}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+      <span className={cn("w-1.5 h-1.5 rounded-full", style.dot)} />
       {difficulty}
     </span>
   );

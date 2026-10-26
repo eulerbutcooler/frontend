@@ -65,15 +65,15 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
+    <div className="flex flex-col max-h-full min-h-0">
+      <div className="flex items-center justify-between mb-6 shrink-0">
         <div>
-          <h2 className="font-display text-display-md text-ink">
-            Course Modules
+          <h2 className="text-[16px] font-semibold text-gray-900">
+            Lessons
           </h2>
           {isInstructor && (
-            <p className="text-body-sm text-surface-tint mt-1">
-              Add modules and upload files. Each file ingests on its own — publish once all are ready.
+            <p className="text-[13px] text-gray-500 mt-1">
+              Add lessons and upload files. Each file ingests on its own — publish once all are ready.
             </p>
           )}
         </div>
@@ -90,19 +90,16 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
         )}
       </div>
 
-      <div className="space-y-4">
+      <div className="border border-gray-200 rounded-xl overflow-hidden flex flex-col min-h-0">
         {/* Add lesson inline form */}
         {showAdd && (
-          <div className="bg-surface-card border-2 border-dashed border-brand-lavender rounded-[24px] p-6 flex gap-4 items-center animate-fade-in">
-            <div className="w-14 h-14 rounded-2xl bg-brand-lavender/20 flex items-center justify-center shrink-0">
-              <Plus className="h-5 w-5 text-brand-lavender" />
-            </div>
+          <div className="bg-gray-50 border-b border-gray-200 p-4 flex gap-3 items-center animate-fade-in shrink-0">
             <Input
               placeholder="Lesson title..."
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-              className="flex-1"
+              className="flex-1 bg-white"
               autoFocus
             />
             <Button
@@ -125,116 +122,105 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
           </div>
         )}
 
-        {/* Lesson items */}
-        {lessons.length === 0 && !showAdd && (
-          <div className="bg-surface-card rounded-2xl border border-hairline p-12 text-center">
-            <p className="text-title-md font-semibold text-ink mb-1">
-              No lessons yet
-            </p>
-            <p className="text-body-md text-surface-tint">
-              {isInstructor
-                ? "Add lessons to build your course curriculum."
-                : "Lessons will appear here once the instructor adds them."}
-            </p>
-          </div>
-        )}
+        <div className="overflow-y-auto scrollbar-hide flex-1 min-h-0">
+          {/* Lesson items */}
+          {lessons.length === 0 && !showAdd && (
+            <div className="bg-gray-50 p-12 text-center">
+              <p className="text-[15px] font-semibold text-gray-900 mb-1">
+                No lessons yet
+              </p>
+              <p className="text-[13px] text-gray-500">
+                {isInstructor
+                  ? "Add lessons to build your course curriculum."
+                  : "Lessons will appear here once the instructor adds them."}
+              </p>
+            </div>
+          )}
 
-        {lessons.map((lesson, i) => (
-          <div key={lesson.id} className="bg-surface-card border border-hairline rounded-[24px] overflow-hidden hover:border-outline-variant transition-colors group">
-          <div className="p-6 flex gap-6 items-center">
-            {editingId === lesson.id ? (
-              <> 
-                <div className="w-14 h-14 rounded-2xl bg-surface-card flex items-center justify-center shrink-0 border border-hairline text-ink font-display text-title-lg font-semibold">
-                  {i + 1}
-                </div>
-                <div className="flex gap-3 items-center flex-1">
-                  <Input
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && handleUpdate(lesson.id)
-                    }
-                    className="flex-1"
-                    autoFocus
-                  />
-                  <Button
-                    size="sm"
-                    onClick={() => handleUpdate(lesson.id)}
-                    disabled={updateLesson.isPending}
-                  >
-                    <Check className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setEditingId(null)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => setExpandedId(expandedId === lesson.id ? null : lesson.id)}
-                  aria-expanded={expandedId === lesson.id}
-                  aria-controls={`lesson-content-${lesson.id}`}
-                  className="focus-ring flex flex-1 items-center gap-4 cursor-pointer text-left"
-                >
-                  <div className="w-14 h-14 rounded-2xl bg-surface-card flex items-center justify-center shrink-0 border border-hairline text-ink font-display text-title-lg font-semibold">
-                    {i + 1}
-                  </div>
-                  {expandedId === lesson.id ? (
-                    <ChevronDown className="h-4 w-4 text-surface-tint shrink-0" />
+          {lessons.map((lesson, i) => (
+            <div key={lesson.id} className="bg-white border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors group">
+              <div
+                className="px-6 py-4 flex gap-4 items-center cursor-pointer"
+                onClick={() => setExpandedId(expandedId === lesson.id ? null : lesson.id)}
+              >
+                <div className="flex-1 min-w-0">
+                  {editingId === lesson.id ? (
+                    <div className="flex gap-3 items-center" onClick={e => e.stopPropagation()}>
+                      <Input
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        onKeyDown={(e) =>
+                          e.key === "Enter" && handleUpdate(lesson.id)
+                        }
+                        className="flex-1 bg-white"
+                        autoFocus
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => handleUpdate(lesson.id)}
+                        disabled={updateLesson.isPending}
+                      >
+                        <Check className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditingId(null)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-surface-tint shrink-0" />
+                    <div className="flex items-center gap-3">
+                      <span className="text-[13px] font-medium text-gray-400 w-5">
+                        {i + 1}.
+                      </span>
+                      <h3 className="text-[15px] font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                        {lesson.title}
+                      </h3>
+                    </div>
                   )}
-                  <h3 className="text-title-lg font-semibold text-ink truncate">
-                    {lesson.title}
-                  </h3>
-                </button>
-                {isInstructor && (
-                  <div className="flex gap-1 shrink-0">
-                    <IconButton
-                      label="Edit lesson title"
+                </div>
+
+                {isInstructor && editingId !== lesson.id && (
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+                    <button
                       onClick={() => {
                         setEditingId(lesson.id);
                         setEditTitle(lesson.title);
                       }}
+                      className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
                     >
                       <Pencil className="h-4 w-4" />
-                    </IconButton>
-                    <IconButton
-                      label="Delete lesson"
+                    </button>
+                    <button
                       onClick={() => handleDelete(lesson.id)}
-                      className="hover:bg-error/10"
+                      className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />
-                    </IconButton>
+                    </button>
                   </div>
                 )}
-              </>
-            )}
-          </div>
 
-          {/* Files section (expanded) */}
-          {expandedId === lesson.id && (
-            <div id={`lesson-content-${lesson.id}`} className="px-6 pb-6 border-t border-hairline pt-4 animate-fade-in">
-              <FileList lessonId={lesson.id} isInstructor={isInstructor} instructorId={instructorId} />
+                <div className="shrink-0 flex items-center justify-center text-gray-400 group-hover:text-gray-900 transition-colors ml-2">
+                  {expandedId === lesson.id ? (
+                    <X className="h-4 w-4" />
+                  ) : (
+                    <Plus className="h-4 w-4" />
+                  )}
+                </div>
+              </div>
+
+              {/* Files section (expanded) */}
+              {expandedId === lesson.id && (
+                <div className="px-6 pb-6 bg-gray-50/50 pt-2 animate-fade-in">
+                  <FileList lessonId={lesson.id} isInstructor={isInstructor} instructorId={instructorId} />
+                </div>
+              )}
             </div>
-          )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-
-      {/* Sticky publish gate — only enabled once every file is ingested */}
-      {isInstructor && (
-        <PublishBar
-          courseId={courseId}
-          published={!!published}
-          summary={fileSummary}
-        />
-      )}
     </div>
   );
 }

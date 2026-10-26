@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useFileViewUrl } from "@/hooks/use-file-url";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Download, X, FileText, ExternalLink } from "lucide-react";
+import { Download, X, FileText, ExternalLink, Sparkles } from "lucide-react";
 import { FILE_ICONS } from "./file-list";
 import type { FileType } from "@/types/course";
 
@@ -41,89 +41,101 @@ export function FileViewer({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-ink/40 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
-      <div className="relative bg-canvas rounded-[24px] border border-hairline shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-modal">
+      <div className="relative bg-white rounded-2xl border border-gray-200 shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-hairline">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-surface-card flex items-center justify-center border border-hairline shrink-0">
-              <Icon className="h-5 w-5 text-surface-tint" />
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+              <Icon className="h-5 w-5 text-blue-600" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-title-md font-semibold text-ink truncate">
+              <h3 className="text-[15px] font-semibold text-gray-900 truncate">
                 {fileName}
               </h3>
-              <p className="text-caption text-surface-tint uppercase tracking-wider">
+              <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
                 {fileType} document
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {data?.url && (
-              <a href={data.url} target="_blank" rel="noopener noreferrer">
-                <Button variant="secondary" size="sm" className="gap-2">
-                  <Download className="h-4 w-4" />
-                  Download
-                </Button>
-              </a>
+              <>
+                <a href={data.url} target="_blank" rel="noopener noreferrer">
+                  <Button variant="secondary" size="sm" className="gap-1.5 text-[12px] h-8">
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Open in New Tab
+                  </Button>
+                </a>
+                <a href={data.url} download={fileName} target="_blank" rel="noopener noreferrer">
+                  <Button variant="secondary" size="sm" className="gap-1.5 text-[12px] h-8">
+                    <Download className="h-3.5 w-3.5" />
+                    Download
+                  </Button>
+                </a>
+              </>
             )}
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-surface-strong transition-colors border border-hairline"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
             >
-              <X className="h-4 w-4 text-ink" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-6 bg-slate-50/50">
           {isLoading ? (
-            <Skeleton className="w-full h-[60vh] rounded-xl" />
+            <Skeleton className="w-full h-[65vh] rounded-xl bg-gray-200" />
           ) : canPreviewPdf ? (
-            <iframe
-              src={data.url}
-              className="w-full h-[65vh] rounded-xl border border-hairline"
-              title={fileName}
-              onError={() => setIframeError(true)}
-            />
+            <div className="w-full h-[68vh] rounded-xl overflow-hidden border border-gray-200 bg-white shadow-xs">
+              <iframe
+                src={data.url}
+                className="w-full h-full"
+                title={fileName}
+                onError={() => setIframeError(true)}
+              />
+            </div>
           ) : canPreviewOffice ? (
-            <iframe
-              src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(data!.url)}`}
-              className="w-full h-[65vh] rounded-xl border border-hairline"
-              title={fileName}
-              onError={() => setIframeError(true)}
-            />
+            <div className="w-full h-[68vh] rounded-xl overflow-hidden border border-gray-200 bg-white shadow-xs">
+              <iframe
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(data!.url)}`}
+                className="w-full h-full"
+                title={fileName}
+                onError={() => setIframeError(true)}
+              />
+            </div>
           ) : (
-            /* Fallback: download prompt */
-            <div className="flex flex-col items-center justify-center h-[40vh] text-center">
-              <div className="w-20 h-20 rounded-2xl bg-surface-card flex items-center justify-center border border-hairline mb-6">
-                <Icon className="h-10 w-10 text-outline" />
+            /* Fallback: Document Details & Instant Access */
+            <div className="flex flex-col items-center justify-center h-[50vh] text-center max-w-md mx-auto">
+              <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4">
+                <Icon className="h-8 w-8 text-blue-600" />
               </div>
-              <h4 className="text-title-md font-semibold text-ink mb-2">
+              <h4 className="text-[17px] font-semibold text-gray-900 mb-1.5">
                 {fileName}
               </h4>
-              <p className="text-body-md text-surface-tint mb-6 max-w-md">
+              <p className="text-[13px] text-gray-500 mb-6 leading-relaxed">
                 {iframeError
-                  ? "Unable to preview this file inline."
+                  ? "Inline browser preview unavailable for this file format. You can open it in a new window or download it directly."
                   : isLocalUrl && (fileType === "ppt" || fileType === "docx")
-                    ? "Office documents can only be previewed when hosted on a public URL. Download the file to view it locally."
-                    : `Preview is not available for .${fileType} files.`}
+                    ? "This document has been ingested into AeroMentor's AI Flight Briefing engine. You can download the original copy or inspect its AI synthesized slides."
+                    : `Direct preview is not available for .${fileType} files.`}
               </p>
               {data?.url && (
-                <div className="flex gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   <a href={data.url} target="_blank" rel="noopener noreferrer">
-                    <Button className="gap-2">
-                      <Download className="h-4 w-4" />
-                      Download File
+                    <Button className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-xs">
+                      <ExternalLink className="h-4 w-4" />
+                      Open File
                     </Button>
                   </a>
-                  <a href={data.url} target="_blank" rel="noopener noreferrer">
+                  <a href={data.url} download={fileName} target="_blank" rel="noopener noreferrer">
                     <Button variant="secondary" className="gap-2">
-                      <ExternalLink className="h-4 w-4" />
-                      Open in New Tab
+                      <Download className="h-4 w-4" />
+                      Download Copy
                     </Button>
                   </a>
                 </div>

@@ -2,7 +2,7 @@ import { forwardRef, type InputHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const inputBase =
-  "w-full bg-canvas text-ink font-sans text-body-md border border-hairline rounded-xl px-4 placeholder:text-surface-tint/60 transition-[border-color,box-shadow] duration-150 ease-snappy focus:outline-none focus:border-ink focus:ring-2 focus:ring-ink disabled:opacity-50 disabled:cursor-not-allowed";
+  "w-full bg-white text-[#0a0a0a] font-sans text-[15px] border border-gray-200 rounded-lg px-4 placeholder:text-gray-400 transition-colors focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm";
 
 const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   ({ className, type = "text", ...props }, ref) => (
@@ -23,7 +23,7 @@ const Label = forwardRef<HTMLLabelElement, LabelProps>(
     <label
       ref={ref}
       className={cn(
-        "text-caption-uppercase uppercase text-body font-sans",
+        "text-[13px] font-medium text-gray-700 font-sans mb-1.5 block",
         className
       )}
       {...props}

@@ -1,27 +1,26 @@
 import Link from "next/link";
 import { Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="min-h-dvh bg-canvas flex items-center justify-center p-6 relative overflow-hidden">
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-brand-lavender/15 rounded-full blur-3xl -z-10" />
-      <div className="max-w-md w-full text-center">
-        <h1 className="font-display text-[120px] leading-none text-ink mb-4">
+    <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-6 font-sans">
+      <div className="max-w-md w-full bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-none">
+        <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center mx-auto mb-5 font-black text-xl">
           404
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">
+          Page Not Found
         </h1>
-        <h2 className="font-display text-display-sm text-ink mb-3">
-          Page not found
-        </h2>
-        <p className="text-body-md text-surface-tint mb-8">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved.
+        <p className="text-sm text-gray-500 mb-8 leading-relaxed">
+          The page you are looking for doesn&apos;t exist, has been moved, or is temporarily unavailable.
         </p>
-        <Button asChild>
-          <Link href="/">
-            <Home className="h-4 w-4" />
-            Go Home
-          </Link>
-        </Button>
+        <Link
+          href="/"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-none w-full"
+        >
+          <Home className="h-4 w-4" />
+          Go Home
+        </Link>
       </div>
     </div>
   );

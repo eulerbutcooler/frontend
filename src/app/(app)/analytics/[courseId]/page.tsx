@@ -19,7 +19,8 @@ interface PageProps {
 export default async function CourseAnalyticsPage({ params }: PageProps) {
   const { courseId } = await params;
   const session = await auth();
-  if (!session) redirect("/login");
+  if (!session) return null;
+  
   if (session.user.role !== "instructor") redirect("/dashboard");
 
   let course: Course;
@@ -39,15 +40,20 @@ export default async function CourseAnalyticsPage({ params }: PageProps) {
   }
 
   let allFiles: (FileAsset & { lesson_title: string })[] = [];
-  const fileResults = await Promise.allSettled(
-    lessons.map((lesson) =>
-      api
-        .get<FileAsset[]>(`/api/v1/lessons/${lesson.id}/files`)
-        .then((files) => files.map((f) => ({ ...f, lesson_title: lesson.title })))
-    )
-  );
-  for (const r of fileResults) {
-    if (r.status === "fulfilled") allFiles = allFiles.concat(r.value);
+  const safeLessons = Array.isArray(lessons) ? lessons : [];
+  for (const lesson of safeLessons) {
+    try {
+      const files = await api.get<FileAsset[]>(
+        `/api/v1/lessons/${lesson.id}/files`
+      );
+      const safeFiles = Array.isArray(files) ? files : [];
+      allFiles = [
+        ...allFiles,
+        ...safeFiles.map((f) => ({ ...f, lesson_title: lesson.title })),
+      ];
+    } catch {
+      // Skip
+    }
   }
 
   const statusBadge = (status: string) => {
@@ -91,7 +97,7 @@ export default async function CourseAnalyticsPage({ params }: PageProps) {
       {/* KPI Cards */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         <KpiCard
-          label="Students"
+          label="Trainees"
           value={metrics.total_students}
           color="bg-brand-lavender"
         />

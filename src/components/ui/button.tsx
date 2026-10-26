@@ -12,9 +12,11 @@ const buttonVariants = cva(
         ghost: "text-ink hover:bg-surface-card",
         "on-color": "bg-white text-ink hover:bg-surface-soft",
         destructive: "bg-error text-white hover:bg-error/90",
+        blue: "bg-[#3b82f6] text-white hover:bg-[#2563eb]",
       },
       size: {
         sm: "h-9 px-4 rounded-lg text-[13px]",
+        md: "h-11 px-5 rounded-lg text-[15px]",
         default: "h-11 px-5 rounded-xl",
         lg: "h-12 px-6 rounded-xl text-[15px]",
         icon: "h-11 w-11 rounded-xl",

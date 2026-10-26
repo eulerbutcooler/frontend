@@ -4,7 +4,11 @@ import { isTokenExpired } from "./auth-utils";
 import type { ApiEnvelope } from "@/types/api";
 import type { User } from "@/types/user";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const API_URL = (
+  process.env.API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8080"
+).replace(/\/+$/, "");
 
 interface TokenPair {
   access_token: string;
@@ -58,7 +62,7 @@ async function refreshAccessToken(refreshToken: string): Promise<string | null> 
   return envelope.data.access_token;
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const nextAuthResult = NextAuth({
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   providers: [
@@ -81,6 +85,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           name: result.user.name,
           role: result.user.role,
           rank: result.user.rank,
+          enrollment_id: result.user.enrollment_id,
+          serviceNumber: result.user.enrollment_id,
           accessToken: result.tokens.access_token,
           refreshToken: result.tokens.refresh_token,
         };
@@ -93,6 +99,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id!;
         token.role = (user as Record<string, unknown>).role as string;
         token.rank = (user as Record<string, unknown>).rank as string;
+        token.enrollment_id = (user as Record<string, unknown>).enrollment_id as string;
+        token.serviceNumber = (user as Record<string, unknown>).serviceNumber as string;
         token.accessToken = (user as Record<string, unknown>).accessToken as string;
         token.refreshToken = (user as Record<string, unknown>).refreshToken as string;
       }
@@ -112,8 +120,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = token.id as string;
       session.user.role = (token.role as string) ?? "student";
       session.user.rank = (token.rank as string) ?? "";
+      session.user.enrollment_id = (token.enrollment_id as string) ?? "";
+      session.user.serviceNumber = (token.serviceNumber as string) ?? (token.enrollment_id as string) ?? "";
       session.user.accessToken = token.accessToken as string;
       return session;
     },
   },
 });
+
+export const { handlers, signIn, signOut, auth: realAuth } = nextAuthResult;
+
+export const auth = realAuth;
