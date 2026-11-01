@@ -26,7 +26,7 @@ interface NavItem {
 
 const OVERVIEW_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Subjects", href: "/courses", icon: BookOpen },
+  { label: "Courses", href: "/courses", icon: BookOpen },
   { label: "Quizzes", href: "/quizzes", icon: ListTodo },
   { label: "Chat", href: "/chat", icon: MessageSquare },
 ];

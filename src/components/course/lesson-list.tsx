@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, Pencil, Trash2, Check, X, ChevronDown, ChevronRight } from "lucide-react";
 import { FileList } from "./file-list";
-import { PublishBar } from "./publish-bar";
+import { LessonPlanButton } from "./lesson-plan-button";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
@@ -69,11 +69,11 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
       <div className="flex items-center justify-between mb-6 shrink-0">
         <div>
           <h2 className="text-[16px] font-semibold text-gray-900">
-            Lessons
+            Lectures
           </h2>
           {isInstructor && (
             <p className="text-[13px] text-gray-500 mt-1">
-              Add lessons and upload files. Each file ingests on its own — publish once all are ready.
+              Add lectures and upload files. Each file ingests on its own — publish once all are ready.
             </p>
           )}
         </div>
@@ -85,7 +85,7 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
-            Add Lesson
+            Add Lecture
           </Button>
         )}
       </div>
@@ -95,7 +95,7 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
         {showAdd && (
           <div className="bg-gray-50 border-b border-gray-200 p-4 flex gap-3 items-center animate-fade-in shrink-0">
             <Input
-              placeholder="Lesson title..."
+              placeholder="Lecture title..."
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAdd()}
@@ -127,12 +127,12 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
           {lessons.length === 0 && !showAdd && (
             <div className="bg-gray-50 p-12 text-center">
               <p className="text-[15px] font-semibold text-gray-900 mb-1">
-                No lessons yet
+                No lectures yet
               </p>
               <p className="text-[13px] text-gray-500">
                 {isInstructor
-                  ? "Add lessons to build your course curriculum."
-                  : "Lessons will appear here once the instructor adds them."}
+                  ? "Add lectures to build your course curriculum."
+                  : "Lectures will appear here once the instructor adds them."}
               </p>
             </div>
           )}
@@ -172,12 +172,13 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
                     </div>
                   ) : (
                     <div className="flex items-center gap-3">
-                      <span className="text-[13px] font-medium text-gray-400 w-5">
+                      <span className="text-[13px] font-medium text-gray-400 w-5 shrink-0">
                         {i + 1}.
                       </span>
-                      <h3 className="text-[15px] font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                      <h3 className="min-w-0 flex-1 text-[15px] font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
                         {lesson.title}
                       </h3>
+                      <LessonPlanButton lesson={lesson} compact />
                     </div>
                   )}
                 </div>

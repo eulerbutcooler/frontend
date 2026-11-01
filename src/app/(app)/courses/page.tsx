@@ -5,7 +5,7 @@ import { api } from "@/lib/api-client";
 import { CoursePhasesView } from "@/components/course/course-phases-view";
 import type { Course } from "@/types/course";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 
 export default async function CoursesPage() {
   const session = await auth();
@@ -34,17 +34,26 @@ export default async function CoursesPage() {
             All your learning essentials...
           </h1>
           <p className="text-[13px] text-gray-500 mt-0.5">
-            Explore available subjects, follow your curriculum, and access study materials
+            Explore available courses, follow your curriculum, and access study materials
           </p>
         </div>
         {isInstructor && (
-          <Link 
-            href="/courses/new"
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg transition-colors cursor-pointer shadow-xs"
-          >
-            <Plus className="h-4 w-4" />
-            Create Subject
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/courses/import"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-[13px] font-medium rounded-lg transition-colors cursor-pointer shadow-xs"
+            >
+              <Upload className="h-4 w-4" />
+              Import Master Syllabus
+            </Link>
+            <Link
+              href="/courses/new"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg transition-colors cursor-pointer shadow-xs"
+            >
+              <Plus className="h-4 w-4" />
+              Create Course
+            </Link>
+          </div>
         )}
       </div>
 

@@ -22,9 +22,10 @@ interface QuizDetail {
 interface QuizViewerProps {
   quiz: Quiz;
   onPass?: (score: number) => void;
+  isInstructor?: boolean;
 }
 
-export function QuizViewer({ quiz, onPass }: QuizViewerProps) {
+export function QuizViewer({ quiz, onPass, isInstructor }: QuizViewerProps) {
   const {
     attemptId,
     currentQuestion,
@@ -50,7 +51,7 @@ export function QuizViewer({ quiz, onPass }: QuizViewerProps) {
   const { data: quizDetail, isLoading: isLoadingDetail } = useQuery({
     queryKey: ["quizzes", "detail", quiz.id],
     queryFn: () => clientApi.get<QuizDetail>(`/api/v1/quizzes/${quiz.id}`),
-    enabled: state !== "idle",
+    enabled: state !== "idle" || !!isInstructor,
   });
 
   // Reset store if quiz changes
@@ -132,6 +133,91 @@ export function QuizViewer({ quiz, onPass }: QuizViewerProps) {
   const seconds = timeLeft % 60;
   const timeString = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   const isUrgent = timeLeft < 120;
+
+  const renderInstructorPreview = () => {
+    if (isLoadingDetail || !quizDetail) {
+      return (
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+        </div>
+      );
+    }
+
+    const questions = quizDetail.questions ?? [];
+    return (
+      <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex items-center justify-between pb-3 border-b border-gray-100 shrink-0">
+          <div>
+            <span className="inline-flex text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-full">
+              Instructor Preview
+            </span>
+            <h2 className="text-[15px] font-bold text-gray-900 mt-1">
+              {quiz.lesson_id
+                ? "Lesson Knowledge Check"
+                : "Course Final Assessment"}
+            </h2>
+          </div>
+          <span className="text-[11px] font-semibold text-gray-500">
+            {questions.length} questions
+          </span>
+        </div>
+
+        <div className="flex-1 overflow-y-auto py-3 space-y-3">
+          {questions.map((question, index) => (
+            <div
+              key={question.id}
+              className="border border-gray-200 rounded-xl p-3.5"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-[13px] font-semibold text-gray-900 leading-snug">
+                  <span className="text-gray-400 mr-1.5">Q{index + 1}.</span>
+                  {question.question}
+                </p>
+                <span className="shrink-0 text-[10px] font-semibold uppercase text-gray-500 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded">
+                  {question.difficulty || quiz.difficulty}
+                </span>
+              </div>
+
+              {question.choices && question.choices.length > 0 ? (
+                <div className="mt-2.5 grid grid-cols-1 gap-1.5">
+                  {question.choices.map((choice) => {
+                    const isCorrect =
+                      choice.label === question.answer ||
+                      choice.text === question.answer;
+                    return (
+                      <div
+                        key={choice.label}
+                        className={cn(
+                          "text-[12px] rounded-lg border px-2.5 py-1.5",
+                          isCorrect
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-900 font-medium"
+                            : "border-gray-100 bg-gray-50 text-gray-600"
+                        )}
+                      >
+                        <span className="font-semibold">{choice.label}.</span>{" "}
+                        {choice.text}
+                        {isCorrect ? " ✓" : ""}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="mt-2 text-[12px] text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-lg px-2.5 py-2">
+                  Reference answer: {question.answer}
+                </p>
+              )}
+
+              {question.explanation && (
+                <p className="mt-2 text-[11px] text-gray-500 leading-relaxed">
+                  {question.explanation}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   const renderIdle = () => (
     <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
@@ -363,14 +449,23 @@ export function QuizViewer({ quiz, onPass }: QuizViewerProps) {
   return (
     <div className="w-full h-full flex items-center justify-center p-6 bg-gray-50/50 overflow-hidden">
       <div className="w-full max-w-3xl bg-white rounded-xl border border-gray-200 shadow-none h-[500px] flex flex-col p-7 overflow-hidden shrink-0">
-        {state === "idle" && renderIdle()}
-        {(state === "loading" || (state === "attempting" && isLoadingDetail)) && (
-          <div className="flex-1 flex items-center justify-center">
-            <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
-          </div>
+        {isInstructor ? (
+          renderInstructorPreview()
+        ) : (
+          <>
+            {state === "idle" && renderIdle()}
+            {(state === "loading" ||
+              (state === "attempting" && isLoadingDetail)) && (
+              <div className="flex-1 flex items-center justify-center">
+                <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+              </div>
+            )}
+            {(state === "attempting" || state === "submitting") &&
+              !isLoadingDetail &&
+              renderAttempting()}
+            {state === "results" && renderResults()}
+          </>
         )}
-        {(state === "attempting" || state === "submitting") && !isLoadingDetail && renderAttempting()}
-        {state === "results" && renderResults()}
       </div>
     </div>
   );

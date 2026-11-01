@@ -12,6 +12,12 @@ export async function GET(request: NextRequest) {
     const minioHost = process.env.NEXT_PUBLIC_MINIO_HOST || "localhost";
     const minioPort = process.env.NEXT_PUBLIC_MINIO_PORT || "9000";
 
+    // Only proxy storage hosts; never expose the server as an open proxy.
+    const allowedHosts = new Set([minioHost, "localhost", "127.0.0.1"]);
+    if (!allowedHosts.has(targetUrl.hostname)) {
+      return new NextResponse("URL host is not allowed", { status: 400 });
+    }
+
     // In server environment, ensure we reach local SeaweedFS / MinIO
     if (
       targetUrl.hostname === "localhost" ||

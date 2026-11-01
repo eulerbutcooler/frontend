@@ -1,34 +1,51 @@
 import type { Course } from "@/types/course";
 
-export type SpecializationBranch = "aeo" | "alo";
+export type SpecializationBranch = "aeo" | "alo" | "agniveer";
 
 /**
- * Determines whether a course/subject belongs to AEO or ALO.
+ * Determines whether a course/subject belongs to AEO, ALO, or Agniveer.
  * Priority:
- * 1. Client-side localStorage override (for immediate visual consistency)
- * 2. Explicit [AEO] or [ALO] tag in description or title
- * 3. Domain keyword heuristics
- * 4. Default: "aeo"
+ * 1. Explicit [AEO] / [ALO] / [AGNIVEER] tag in description or title
+ * 2. Apprentice rank or Agniveer/apprentice wording
+ * 3. Legacy client-side localStorage override
+ * 4. Domain keyword heuristics
+ * 5. Default: "aeo"
  */
 export function getCourseBranch(course: Course): SpecializationBranch {
-  if (typeof window !== "undefined") {
-    try {
-      const stored = localStorage.getItem(`aeromentor_branch_${course.id}`);
-      if (stored === "alo" || stored === "aeo") {
-        return stored;
-      }
-    } catch {
-      // ignore localStorage errors
-    }
-  }
-
   const combined = `${course.title} ${course.description || ""}`.toLowerCase();
 
+  if (
+    combined.includes("[agniveer]") ||
+    combined.includes("branch: agniveer") ||
+    combined.includes("branch:agniveer")
+  ) {
+    return "agniveer";
+  }
   if (combined.includes("[alo]") || combined.includes("branch: alo") || combined.includes("branch:alo")) {
     return "alo";
   }
   if (combined.includes("[aeo]") || combined.includes("branch: aeo") || combined.includes("branch:aeo")) {
     return "aeo";
+  }
+
+  if (
+    course.rank === "apprentice" ||
+    course.rank === "agniveer" ||
+    combined.includes("agniveer") ||
+    combined.includes("apprentice")
+  ) {
+    return "agniveer";
+  }
+
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem(`aeromentor_branch_${course.id}`);
+      if (stored === "alo" || stored === "aeo" || stored === "agniveer") {
+        return stored;
+      }
+    } catch {
+      // ignore localStorage errors
+    }
   }
 
   const aloKeywords = [
@@ -55,11 +72,11 @@ export function getCourseBranch(course: Course): SpecializationBranch {
 }
 
 /**
- * Strips the [AEO] / [ALO] prefix from description for clean presentation.
+ * Strips the [AEO] / [ALO] / [AGNIVEER] prefix from description for clean presentation.
  */
 export function cleanSubjectDescription(desc?: string): string {
   if (!desc) return "No description provided.";
-  return desc.replace(/^\[(AEO|ALO)\]\s*/i, "").trim();
+  return desc.replace(/^\[(AEO|ALO|AGNIVEER)\]\s*/i, "").trim();
 }
 
 /**

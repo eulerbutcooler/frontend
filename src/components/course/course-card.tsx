@@ -27,8 +27,9 @@ export const getCourseImage = (id: string) => {
 };
 
 export function CourseCard({ course, index }: CourseCardProps) {
-  const bgImage = getCourseImage(course.id);
-  const branch = getCourseBranch(course).toUpperCase();
+  const bgImage = course.thumbnail_url || getCourseImage(course.id);
+  const branchId = getCourseBranch(course);
+  const branch = branchId === "agniveer" ? "AVR" : branchId.toUpperCase();
 
   return (
     <Link href={`/courses/${course.id}`} className="block w-full">
@@ -42,6 +43,7 @@ export function CourseCard({ course, index }: CourseCardProps) {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             priority={index < 4}
+            unoptimized={!!course.thumbnail_url}
             className="object-cover object-center scale-[1.15] group-hover:scale-[1.22] group-hover:-translate-y-2 transition-transform duration-300 ease-out"
           />
         </div>

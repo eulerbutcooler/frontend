@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { clientApi } from "@/lib/api-client.client";
 import { formatDate, cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useDeleteChatSession } from "@/hooks/use-chat";
 import {
   Plus,
   ArrowUp,
@@ -17,6 +19,7 @@ import {
   Mic,
   Square,
   Loader2,
+  Trash2,
 } from "lucide-react";
 import { MarkdownRenderer } from "./markdown-renderer";
 import type { ChatSession, Message, Citation } from "@/types/chat";
@@ -103,6 +106,10 @@ export function ChatView({ initialSessionId }: ChatViewProps) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [deletingSessionId, setDeletingSessionId] = useState<string | null>(
+    null
+  );
+  const deleteSession = useDeleteChatSession();
 
   // Audio / TTS State
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
@@ -507,6 +514,28 @@ export function ChatView({ initialSessionId }: ChatViewProps) {
     setMessages([]);
     setError(null);
     router.push(`/chat/${sessionId}`);
+  };
+
+  const handleDeleteSession = async (sessionId: string, title: string) => {
+    const label = formatTabTitle(title) || "this conversation";
+    if (!window.confirm(`Delete “${label}”? This cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingSessionId(sessionId);
+    try {
+      await deleteSession.mutateAsync(sessionId);
+      if (sessionId === currentSessionId) {
+        handleStartNewChat();
+      }
+      toast.success("Conversation deleted");
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Could not delete conversation."
+      );
+    } finally {
+      setDeletingSessionId(null);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -1037,20 +1066,23 @@ export function ChatView({ initialSessionId }: ChatViewProps) {
                 const formattedTitle = formatTabTitle(session.title);
 
                 return (
-                  <button
+                  <div
                     key={session.id}
-                    onClick={() => handleSelectSession(session.id)}
                     className={cn(
-                      "w-full text-left px-3 py-2 rounded-lg flex flex-col gap-0.5 transition-colors duration-150 cursor-pointer shadow-none",
+                      "relative w-full rounded-lg border transition-colors duration-150",
                       isActive
-                        ? "bg-gradient-to-b from-blue-50/50 to-blue-100/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_0_1px_2px_rgba(0,0,0,0.05)] text-blue-700 font-semibold border border-blue-200/60"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 border border-transparent"
+                        ? "bg-gradient-to-b from-blue-50/50 to-blue-100/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_0_1px_2px_rgba(0,0,0,0.05)] border-blue-200/60"
+                        : "border-transparent hover:bg-gray-100"
                     )}
                   >
-                    <div className="flex items-center justify-between gap-1 w-full min-w-0">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectSession(session.id)}
+                      className="w-full text-left pl-3 pr-9 py-2 flex flex-col gap-0.5 cursor-pointer shadow-none"
+                    >
                       <h3
                         className={cn(
-                          "text-[13px] truncate leading-tight",
+                          "w-full text-[13px] truncate leading-tight",
                           isActive
                             ? "text-blue-800 font-semibold"
                             : "text-gray-800 font-medium"
@@ -1059,16 +1091,33 @@ export function ChatView({ initialSessionId }: ChatViewProps) {
                       >
                         {formattedTitle}
                       </h3>
-                    </div>
-                    <p
-                      className={cn(
-                        "text-[11px]",
-                        isActive ? "text-blue-500/80" : "text-gray-400"
-                      )}
+                      <p
+                        className={cn(
+                          "text-[11px]",
+                          isActive ? "text-blue-500/80" : "text-gray-400"
+                        )}
+                      >
+                        {formatDate(session.updated_at)}
+                      </p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteSession(session.id, session.title);
+                      }}
+                      disabled={deletingSessionId === session.id}
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md flex items-center justify-center text-gray-300 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                      title="Delete conversation"
+                      aria-label={`Delete conversation ${formattedTitle}`}
                     >
-                      {formatDate(session.updated_at)}
-                    </p>
-                  </button>
+                      {deletingSessionId === session.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                  </div>
                 );
               })
             )}

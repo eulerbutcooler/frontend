@@ -3,6 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { toast } from "sonner";
 import { Input, Label } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { capitalize } from "@/lib/utils";
@@ -10,10 +12,14 @@ import {
   createCourseSchema,
   type CreateCourseInput,
 } from "@/lib/validations/course";
-import { useCreateCourse, useUpdateCourse } from "@/hooks/use-courses";
+import {
+  useCreateCourse,
+  useUpdateCourse,
+  useUploadCourseThumbnail,
+} from "@/hooks/use-courses";
 import { cleanSubjectDescription, getCourseBranch, type SpecializationBranch } from "@/lib/course-utils";
 import type { Course } from "@/types/course";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ImagePlus } from "lucide-react";
 
 interface CourseFormProps {
@@ -26,13 +32,21 @@ export function CourseForm({ initialData }: CourseFormProps) {
   const isEdit = !!initialData;
   const createMutation = useCreateCourse();
   const updateMutation = useUpdateCourse();
+  const uploadThumbnail = useUploadCourseThumbnail();
   const [serverError, setServerError] = useState("");
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(
+    initialData?.thumbnail_url ?? null
+  );
+  const [thumbnailError, setThumbnailError] = useState("");
 
   const paramBranch = searchParams?.get("branch");
   const initialBranch: SpecializationBranch = initialData
     ? getCourseBranch(initialData)
     : paramBranch === "alo"
     ? "alo"
+    : paramBranch === "agniveer"
+    ? "agniveer"
     : "aeo";
 
   const [branch, setBranch] = useState<SpecializationBranch>(initialBranch);
@@ -55,6 +69,38 @@ export function CourseForm({ initialData }: CourseFormProps) {
         },
   });
 
+  useEffect(() => {
+    return () => {
+      if (thumbnailPreview?.startsWith("blob:")) {
+        URL.revokeObjectURL(thumbnailPreview);
+      }
+    };
+  }, [thumbnailPreview]);
+
+  const handleThumbnailChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowed = ["image/png", "image/jpeg", "image/webp"];
+    if (!allowed.includes(file.type)) {
+      setThumbnailError("Use a PNG, JPG, or WEBP image.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setThumbnailError("Image must be 2 MB or smaller.");
+      e.target.value = "";
+      return;
+    }
+
+    setThumbnailError("");
+    setThumbnailFile(file);
+    setThumbnailPreview(URL.createObjectURL(file));
+    e.target.value = "";
+  };
+
   const onSubmit = async (data: CreateCourseInput) => {
     setServerError("");
     try {
@@ -63,27 +109,44 @@ export function CourseForm({ initialData }: CourseFormProps) {
       const taggedDescription = `${branchTag} ${cleanDesc}`;
       const payload: CreateCourseInput = {
         ...data,
-        rank: data.rank || initialData?.rank || "officer",
+        rank:
+          branch === "agniveer"
+            ? "apprentice"
+            : data.rank || initialData?.rank || "officer",
         description: taggedDescription,
       };
 
+      let courseId: string;
+
       if (isEdit) {
         await updateMutation.mutateAsync({ id: initialData.id, data: payload });
-        if (typeof window !== "undefined") {
-          try {
-            localStorage.setItem(`aeromentor_branch_${initialData.id}`, branch);
-          } catch {}
-        }
-        router.push(`/courses/${initialData.id}/edit`);
+        courseId = initialData.id;
       } else {
         const course = await createMutation.mutateAsync(payload);
-        if (typeof window !== "undefined") {
-          try {
-            localStorage.setItem(`aeromentor_branch_${course.id}`, branch);
-          } catch {}
-        }
-        router.push(`/courses/${course.id}/edit`);
+        courseId = course.id;
       }
+
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(`aeromentor_branch_${courseId}`, branch);
+        } catch {}
+      }
+
+      if (thumbnailFile) {
+        try {
+          await uploadThumbnail.mutateAsync({
+            courseId,
+            file: thumbnailFile,
+          });
+          setThumbnailFile(null);
+        } catch (err) {
+          toast.error(
+            err instanceof Error ? err.message : "Thumbnail upload failed."
+          );
+        }
+      }
+
+      router.push(`/courses/${courseId}/edit`);
     } catch (err) {
       setServerError(
         err instanceof Error ? err.message : "Something went wrong."
@@ -118,7 +181,7 @@ export function CourseForm({ initialData }: CourseFormProps) {
               <p className="text-[13px] text-gray-500 mt-1">Assign this subject to a naval engineering specialization branch.</p>
             </div>
             <div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() => setBranch("aeo")}
@@ -162,6 +225,28 @@ export function CourseForm({ initialData }: CourseFormProps) {
                     <p className="text-[11px] text-gray-500 truncate">Air Electrical Officer</p>
                   </div>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setBranch("agniveer")}
+                  className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
+                    branch === "agniveer"
+                      ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600 shadow-2xs"
+                      : "border-gray-200 bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 text-[12px] font-extrabold ${
+                    branch === "agniveer" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
+                  }`}>
+                    AVR
+                  </div>
+                  <div className="min-w-0">
+                    <p className={`text-[13px] font-bold ${branch === "agniveer" ? "text-blue-950" : "text-gray-900"}`}>
+                      Agniveer Branch
+                    </p>
+                    <p className="text-[11px] text-gray-500 truncate">Agniveer Apprentice</p>
+                  </div>
+                </button>
               </div>
             </div>
           </div>
@@ -193,13 +278,52 @@ export function CourseForm({ initialData }: CourseFormProps) {
               <p className="text-[13px] text-gray-500 mt-1">This is used in subject cards and catalog sections.</p>
             </div>
             <div>
-              <div className="w-full h-[140px] border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors group relative overflow-hidden">
-                <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <ImagePlus className="w-4 h-4 text-gray-500" />
-                </div>
-                <p className="text-[13px] font-medium text-gray-900 mb-1">Click to upload image</p>
-                <p className="text-[11px] text-gray-500">PNG, JPG or WEBP (Max 2MB)</p>
-              </div>
+              <label
+                htmlFor="course-thumbnail"
+                className="relative w-full h-[140px] border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors group overflow-hidden"
+              >
+                <input
+                  id="course-thumbnail"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="sr-only"
+                  onChange={handleThumbnailChange}
+                />
+
+                {thumbnailPreview ? (
+                  <>
+                    <Image
+                      src={thumbnailPreview}
+                      alt="Subject thumbnail preview"
+                      fill
+                      unoptimized
+                      sizes="(max-width: 768px) 100vw, 320px"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-white text-[12px] font-semibold">
+                        Click to replace
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                      <ImagePlus className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <p className="text-[13px] font-medium text-gray-900 mb-1">
+                      Click to upload image
+                    </p>
+                    <p className="text-[11px] text-gray-500">
+                      PNG, JPG or WEBP (Max 2MB)
+                    </p>
+                  </>
+                )}
+              </label>
+
+              {thumbnailError && (
+                <p className="text-[11px] text-red-500 mt-1">{thumbnailError}</p>
+              )}
             </div>
           </div>
 
@@ -225,6 +349,14 @@ export function CourseForm({ initialData }: CourseFormProps) {
           </div>
         </div>
       </div>
+
+      {isEdit && (
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save details"}
+          </Button>
+        </div>
+      )}
     </form>
   );
 }

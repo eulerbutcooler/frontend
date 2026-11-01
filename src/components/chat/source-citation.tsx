@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, FileText } from "lucide-react";
+import { ChevronDown, ChevronRight, FileText } from "lucide-react";
 import type { Citation } from "@/types/chat";
 
 interface SourceCitationProps {
@@ -13,7 +13,10 @@ interface SourceCitationProps {
   compact?: boolean;
 }
 
-export function SourceCitation({ citations = [] }: SourceCitationProps) {
+export function SourceCitation({
+  citations = [],
+  compact = true,
+}: SourceCitationProps) {
   const [expanded, setExpanded] = useState(false);
 
   const safeCitations = Array.isArray(citations) ? citations : [];
@@ -97,5 +100,12 @@ export function SourceCitation({ citations = [] }: SourceCitationProps) {
         </div>
       )}
     </div>
+  );
+}
+function SourceName({ name }: { name: string }) {
+  return (
+    <span className="min-w-0 truncate" title={name}>
+      {name}
+    </span>
   );
 }

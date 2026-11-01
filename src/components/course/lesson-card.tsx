@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Upload } from "tus-js-client";
 import { Move, FileText, CheckCircle2, Loader2, Plus, Edit2 } from "lucide-react";
 import { useUpdateLesson } from "@/hooks/use-courses";
+import { LessonPlanButton } from "./lesson-plan-button";
 import type { Lesson, FileAsset } from "@/types/course";
 import { clientApi } from "@/lib/api-client.client";
 import { useQuery } from "@tanstack/react-query";
@@ -68,9 +69,10 @@ export function LessonCard({ lesson, courseId, instructorId }: LessonCardProps) 
       let fileType = "pdf";
       if (ext === "docx" || ext === "doc") fileType = "docx";
       else if (ext === "pptx" || ext === "ppt" || ext === "ppsx") fileType = "ppt";
+      else if (["mp4", "mov", "webm", "mkv"].includes(ext ?? "")) fileType = "video";
 
       const upload = new Upload(file, {
-        endpoint: `${process.env.NEXT_PUBLIC_API_URL}/api/v1/files/tus/`,
+        endpoint: `${process.env.NEXT_PUBLIC_UPLOAD_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/files/tus/`,
         headers: {
           Authorization: `Bearer ${(session?.user as any)?.accessToken}`,
         },
@@ -130,14 +132,17 @@ export function LessonCard({ lesson, courseId, instructorId }: LessonCardProps) 
             <span className="flex-1 truncate">{lesson.title}</span>
           )}
         </div>
-        {!isEditing && (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
-          >
-            <Edit2 className="w-3.5 h-3.5" />
-          </button>
-        )}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <LessonPlanButton lesson={lesson} compact />
+          {!isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+            >
+              <Edit2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Body */}
@@ -188,7 +193,7 @@ export function LessonCard({ lesson, courseId, instructorId }: LessonCardProps) 
         <label className="flex items-center gap-2 p-3 border border-dashed border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors cursor-pointer group/lesson text-gray-500 hover:text-gray-900">
           <Plus className="w-4 h-4" />
           <span className="text-[13px] font-medium">Add Material</span>
-          <input type="file" multiple className="hidden" onChange={onFileDrop} accept=".pdf,.pptx,.ppsx,.docx" />
+          <input type="file" multiple className="hidden" onChange={onFileDrop} accept=".pdf,.pptx,.ppsx,.mp4,.mov,.webm,.mkv" />
         </label>
       </div>
     </div>

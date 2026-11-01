@@ -32,6 +32,12 @@ const SPECIALIZATIONS: SpecializationItem[] = [
     code: "ALO",
     description: "Avionics architecture, electrical power distribution, airborne radar systems, and sensor telemetry.",
   },
+  {
+    id: "agniveer",
+    name: "Agniveer",
+    code: "AVR",
+    description: "Apprentice engineering foundation covering aircraft systems, maintenance practices, and naval aviation fundamentals.",
+  },
 ];
 
 export function CoursePhasesView({ courses, isInstructor }: CoursePhasesViewProps) {
@@ -41,10 +47,16 @@ export function CoursePhasesView({ courses, isInstructor }: CoursePhasesViewProp
   const safeCourses = Array.isArray(courses) ? courses : [];
   const aeoCourses = safeCourses.filter((c) => getCourseBranch(c) === "aeo");
   const aloCourses = safeCourses.filter((c) => getCourseBranch(c) === "alo");
+  const agniveerCourses = safeCourses.filter((c) => getCourseBranch(c) === "agniveer");
+  const coursesByBranch: Record<SpecializationBranch, Course[]> = {
+    aeo: aeoCourses,
+    alo: aloCourses,
+    agniveer: agniveerCourses,
+  };
 
   if (selectedBranch) {
     const currentSpec = SPECIALIZATIONS.find((s) => s.id === selectedBranch) || SPECIALIZATIONS[0];
-    const branchCourses = selectedBranch === "aeo" ? aeoCourses : aloCourses;
+    const branchCourses = coursesByBranch[selectedBranch];
 
     return (
       <div className="h-full flex flex-col">
@@ -67,7 +79,7 @@ export function CoursePhasesView({ courses, isInstructor }: CoursePhasesViewProp
                 {currentSpec.name} ({currentSpec.code})
               </span>
               <span className="text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full">
-                {branchCourses.length} {branchCourses.length === 1 ? "Subject" : "Subjects"}
+                {branchCourses.length} {branchCourses.length === 1 ? "Course" : "Courses"}
               </span>
             </div>
           </div>
@@ -78,7 +90,7 @@ export function CoursePhasesView({ courses, isInstructor }: CoursePhasesViewProp
               className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="h-4 w-4" />
-              <span>Create Subject</span>
+              <span>Create Course</span>
             </Link>
           )}
         </div>
@@ -110,7 +122,7 @@ export function CoursePhasesView({ courses, isInstructor }: CoursePhasesViewProp
       {/* Two Full Stretching Tabs Stacked Vertically */}
       <div className="flex flex-col gap-3.5 w-full">
         {SPECIALIZATIONS.map((spec) => {
-          const count = spec.id === "aeo" ? aeoCourses.length : aloCourses.length;
+          const count = coursesByBranch[spec.id].length;
 
           return (
             <button
@@ -141,7 +153,7 @@ export function CoursePhasesView({ courses, isInstructor }: CoursePhasesViewProp
 
               <div className="flex items-center gap-3 shrink-0">
                 <span className="text-[12px] font-semibold text-blue-700 bg-blue-50/80 border border-blue-200 px-3 py-1 rounded-full hidden sm:inline-block">
-                  {count} {count === 1 ? "Subject" : "Subjects"}
+                  {count} {count === 1 ? "Course" : "Courses"}
                 </span>
                 <div className="w-8 h-8 rounded-lg bg-gray-50 group-hover:bg-blue-100 flex items-center justify-center text-gray-400 group-hover:text-blue-700 transition-colors">
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />

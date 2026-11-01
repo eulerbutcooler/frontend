@@ -20,6 +20,14 @@ const nextConfig: NextConfig = {
         source: "/landing",
         destination: "/supermemory.html",
       },
+      {
+        // Keep browser API calls same-origin so the app works behind the
+        // public tunnel without CORS or mixed-content failures.
+        source: "/api/v1/:path*",
+        destination: `${(
+          process.env.API_URL || "http://localhost:8080"
+        ).replace(/\/+$/, "")}/api/v1/:path*`,
+      },
     ];
   },
 };

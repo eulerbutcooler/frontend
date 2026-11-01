@@ -8,12 +8,12 @@ import {
   FileSpreadsheet,
   BookOpen,
   Presentation,
-  ClipboardList,
+  Video,
   Eye,
   Trash2,
-  Download,
-  ExternalLink,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { IconButton } from "@/components/ui/icon-button";
 import { IngestStatusBadge } from "./ingest-status-badge";
 import { FileViewer } from "./file-viewer";
@@ -25,13 +25,14 @@ export const FILE_ICONS: Record<FileType, React.ElementType> = {
   ppt: FileSpreadsheet,
   pptx: FileSpreadsheet,
   docx: FileText,
+  video: Video,
 };
 
 const CATEGORY_CONFIG: Record<
   string,
   {
     title: string;
-    fileType: "pdf" | "ppt" | "docx";
+    fileType: "pdf" | "ppt" | "video";
     icon: React.ElementType;
     accent: string;
     accentBg: string;
@@ -54,13 +55,13 @@ const CATEGORY_CONFIG: Record<
     accentBg: "bg-amber-50 border-amber-100",
     description: "Slide decks and visual briefing modules",
   },
-  plans: {
-    title: "Lesson Plans & Notes",
-    fileType: "docx",
-    icon: ClipboardList,
-    accent: "text-emerald-600",
-    accentBg: "bg-emerald-50 border-emerald-100",
-    description: "DOCX flight syllabi, lesson summaries, and study guides",
+  videos: {
+    title: "Video Clips",
+    fileType: "video",
+    icon: Video,
+    accent: "text-purple-600",
+    accentBg: "bg-purple-50 border-purple-100",
+    description: "Subject reference videos and demonstrations",
   },
 };
 
@@ -77,6 +78,7 @@ export function FileList({
 }: FileListProps) {
   const queryClient = useQueryClient();
   const [viewingFile, setViewingFile] = useState<FileAsset | null>(null);
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
   const { data: files = [] } = useQuery({
     queryKey: ["files", lessonId],
@@ -90,7 +92,9 @@ export function FileList({
       const busy = fs.some(
         (f) => f.ingest_status === "pending" || f.ingest_status === "processing"
       );
-      return busy ? 1500 : false;
+      // Keep a slow idle poll so a file created by the async TUS completion
+      // hook still appears even if the upload-time invalidation raced it.
+      return busy ? 1500 : 10000;
     },
     refetchIntervalInBackground: true,
     refetchOnWindowFocus: true,
@@ -100,23 +104,43 @@ export function FileList({
     ? files
     : files.filter((f) => f.ingest_status === "ready");
 
-  const handleDelete = async (fileId: string) => {
+  const handleDelete = async (file: FileAsset) => {
+    const stillProcessing =
+      file.ingest_status === "pending" || file.ingest_status === "processing";
+    const message = stillProcessing
+      ? `Delete "${file.file_name}"? It is still being processed; the ingest job may finish in the background. Its search index will be cleaned up.`
+      : `Delete "${file.file_name}"? Its uploaded file and search index will also be removed.`;
+
+    if (!window.confirm(message)) {
+      return;
+    }
+
+    setDeletingIds((prev) => new Set(prev).add(file.id));
     try {
-      await clientApi.del(`/api/v1/files/${fileId}`);
+      await clientApi.del(`/api/v1/files/${file.id}`);
+      toast.success(`Deleted ${file.file_name}`);
       queryClient.invalidateQueries({ queryKey: ["files", lessonId] });
-    } catch {
-      // Handle silently
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to delete the file"
+      );
+    } finally {
+      setDeletingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(file.id);
+        return next;
+      });
     }
   };
 
   const books = visibleFiles.filter((f) => f.file_type === "pdf");
   const presentations = visibleFiles.filter((f) => f.file_type === "ppt");
-  const plans = visibleFiles.filter((f) => f.file_type === "docx");
+  const videos = visibleFiles.filter((f) => f.file_type === "video");
 
   const groupMap: Record<string, typeof visibleFiles> = {
     books,
     presentations,
-    plans,
+    videos,
   };
 
   // Students: show nothing if no files at all
@@ -140,6 +164,8 @@ export function FileList({
         ? "bg-rose-50 text-rose-600 border-rose-100"
         : file.file_type === "docx"
         ? "bg-blue-50 text-blue-600 border-blue-100"
+        : file.file_type === "video"
+        ? "bg-purple-50 text-purple-600 border-purple-100"
         : "bg-amber-50 text-amber-600 border-amber-100";
 
     return (
@@ -173,10 +199,7 @@ export function FileList({
             </span>
           </div>
           {file.ingest_status !== "ready" && (
-            <IngestStatusBadge
-              fileId={file.id}
-              initialStatus={file.ingest_status}
-            />
+            <IngestStatusBadge status={file.ingest_status} />
           )}
         </div>
 
@@ -193,7 +216,7 @@ export function FileList({
             >
               <Eye className="h-3.5 w-3.5" />
               <span>View</span>
-            </button>
+            </IconButton>
           )}
 
           {isInstructor && (
@@ -201,12 +224,17 @@ export function FileList({
               label={`Delete ${file.file_name}`}
               onClick={(e) => {
                 e.stopPropagation();
-                handleDelete(file.id);
+                void handleDelete(file);
               }}
+              disabled={deletingIds.has(file.id)}
               className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
-              title="Delete file"
+              title="Delete file and search index"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              {deletingIds.has(file.id) ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5" />
+              )}
             </IconButton>
           )}
         </div>

@@ -4,10 +4,10 @@ import { getSession, signOut } from "next-auth/react";
 import { ApiClientError } from "@/types/api";
 import type { ApiEnvelope } from "@/types/api";
 
-const BASE_URL = (
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8080"
-).replace(/\/+$/, "");
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(
+  /\/+$/,
+  ""
+);
 
 async function getAccessToken(): Promise<string | null> {
   const session = await getSession();
@@ -83,6 +83,62 @@ class ClientApiClient {
 
   async del(path: string): Promise<void> {
     await this.fetch<void>(path, { method: "DELETE" });
+  }
+
+  /**
+   * Multipart upload. The browser must set the multipart boundary, so this
+   * intentionally does not set Content-Type.
+   */
+  async upload<T>(
+    path: string,
+    file: File,
+    fieldName = "thumbnail",
+    fields?: Record<string, string>
+  ): Promise<T> {
+    const form = new FormData();
+    form.append(fieldName, file);
+    for (const [key, value] of Object.entries(fields ?? {})) {
+      form.append(key, value);
+    }
+
+    const send = async (token: string | null) => {
+      const cleanPath = path.startsWith("/") ? path : `/${path}`;
+      return fetch(`${BASE_URL}${cleanPath}`, {
+        method: "POST",
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: form,
+      });
+    };
+
+    const token = await getAccessToken();
+    let res = await send(token);
+
+    if (res.status === 401) {
+      const refreshed = await getSession();
+      const newToken = refreshed?.user?.accessToken ?? null;
+      if (newToken && newToken !== token) {
+        res = await send(newToken);
+      } else if (typeof window !== "undefined") {
+        if (!(window as any)._isSigningOut) {
+          (window as any)._isSigningOut = true;
+          signOut({ callbackUrl: "/login" }).catch(console.error);
+        }
+      }
+    }
+
+    if (res.status === 204) return undefined as T;
+
+    const envelope: ApiEnvelope<T> = await res.json();
+    if (envelope.error) {
+      throw new ApiClientError(
+        envelope.error.code,
+        envelope.error.message,
+        res.status
+      );
+    }
+    return envelope.data as T;
   }
 }
 

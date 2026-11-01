@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
-import { INDIAN_NAVY_RANKS } from "@/types/user";
+import { SIGNUP_RANKS } from "@/types/user";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { capitalize } from "@/lib/utils";
@@ -153,7 +153,7 @@ export default function RegisterPage() {
               <SelectValue placeholder="Select your naval rank" />
             </SelectTrigger>
             <SelectContent>
-              {INDIAN_NAVY_RANKS.map((r) => (
+              {SIGNUP_RANKS.map((r) => (
                 <SelectItem key={r} value={r}>
                   {r}
                 </SelectItem>

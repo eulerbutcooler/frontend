@@ -1,6 +1,5 @@
 "use client";
 
-import { useIngestStatus } from "@/hooks/use-ingest-status";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import type { IngestStatus } from "@/types/course";
@@ -32,17 +31,15 @@ const STATUS_STYLES: Record<
 };
 
 interface IngestStatusBadgeProps {
-  fileId: string;
-  initialStatus: IngestStatus;
+  status: IngestStatus;
 }
 
-export function IngestStatusBadge({
-  fileId,
-  initialStatus,
-}: IngestStatusBadgeProps) {
-  const shouldPoll = initialStatus === "pending" || initialStatus === "processing";
-  const { data } = useIngestStatus(shouldPoll ? fileId : null);
-  const status = data?.status ?? initialStatus;
+/**
+ * Presentational only. The parent file list already polls every 1.5s while a
+ * file is busy; polling again per badge created one request per file every
+ * 1.5s during bulk uploads.
+ */
+export function IngestStatusBadge({ status }: IngestStatusBadgeProps) {
   const style = STATUS_STYLES[status];
 
   return (

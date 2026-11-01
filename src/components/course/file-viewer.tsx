@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFileViewUrl } from "@/hooks/use-file-url";
+import { toFileProxyUrl } from "@/lib/file-url";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Download, X, FileText, ExternalLink, Sparkles } from "lucide-react";
@@ -24,6 +25,11 @@ export function FileViewer({
   const { data, isLoading } = useFileViewUrl(fileId);
   const [iframeError, setIframeError] = useState(false);
   const Icon = FILE_ICONS[fileType] ?? FileText;
+  const viewUrl = toFileProxyUrl(data?.url);
+  const officeUrl =
+    viewUrl && typeof window !== "undefined"
+      ? new URL(viewUrl, window.location.origin).toString()
+      : viewUrl;
 
   /* Office Online viewer only works with publicly accessible URLs.
      For local dev (localhost/127.0.0.1), fall back to download. */
@@ -31,10 +37,11 @@ export function FileViewer({
     data?.url &&
     (data.url.includes("localhost") || data.url.includes("127.0.0.1"));
 
-  const canPreviewPdf = fileType === "pdf" && data?.url && !iframeError;
+  const canPreviewPdf = fileType === "pdf" && !!viewUrl && !iframeError;
+  const canPreviewVideo = fileType === "video" && !!viewUrl;
   const canPreviewOffice =
     (fileType === "ppt" || fileType === "docx") &&
-    data?.url &&
+    !!officeUrl &&
     !iframeError &&
     !isLocalUrl;
 
@@ -61,15 +68,15 @@ export function FileViewer({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {data?.url && (
+            {viewUrl && (
               <>
-                <a href={data.url} target="_blank" rel="noopener noreferrer">
+                <a href={viewUrl} target="_blank" rel="noopener noreferrer">
                   <Button variant="secondary" size="sm" className="gap-1.5 text-[12px] h-8">
                     <ExternalLink className="h-3.5 w-3.5" />
                     Open in New Tab
                   </Button>
                 </a>
-                <a href={data.url} download={fileName} target="_blank" rel="noopener noreferrer">
+                <a href={viewUrl} download={fileName} target="_blank" rel="noopener noreferrer">
                   <Button variant="secondary" size="sm" className="gap-1.5 text-[12px] h-8">
                     <Download className="h-3.5 w-3.5" />
                     Download
@@ -90,10 +97,19 @@ export function FileViewer({
         <div className="flex-1 overflow-auto p-6 bg-slate-50/50">
           {isLoading ? (
             <Skeleton className="w-full h-[65vh] rounded-xl bg-gray-200" />
+          ) : canPreviewVideo ? (
+            <div className="w-full h-[68vh] rounded-xl overflow-hidden border border-gray-200 bg-black shadow-xs">
+              <video
+                src={viewUrl}
+                controls
+                className="w-full h-full"
+                preload="metadata"
+              />
+            </div>
           ) : canPreviewPdf ? (
             <div className="w-full h-[68vh] rounded-xl overflow-hidden border border-gray-200 bg-white shadow-xs">
               <iframe
-                src={data.url}
+                src={viewUrl}
                 className="w-full h-full"
                 title={fileName}
                 onError={() => setIframeError(true)}
@@ -102,7 +118,7 @@ export function FileViewer({
           ) : canPreviewOffice ? (
             <div className="w-full h-[68vh] rounded-xl overflow-hidden border border-gray-200 bg-white shadow-xs">
               <iframe
-                src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(data!.url)}`}
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(officeUrl!)}`}
                 className="w-full h-full"
                 title={fileName}
                 onError={() => setIframeError(true)}
@@ -124,15 +140,15 @@ export function FileViewer({
                     ? "This document has been ingested into AeroMentor's AI Flight Briefing engine. You can download the original copy or inspect its AI synthesized slides."
                     : `Direct preview is not available for .${fileType} files.`}
               </p>
-              {data?.url && (
+              {viewUrl && (
                 <div className="flex flex-wrap items-center justify-center gap-3">
-                  <a href={data.url} target="_blank" rel="noopener noreferrer">
+                  <a href={viewUrl} target="_blank" rel="noopener noreferrer">
                     <Button className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-xs">
                       <ExternalLink className="h-4 w-4" />
                       Open File
                     </Button>
                   </a>
-                  <a href={data.url} download={fileName} target="_blank" rel="noopener noreferrer">
+                  <a href={viewUrl} download={fileName} target="_blank" rel="noopener noreferrer">
                     <Button variant="secondary" className="gap-2">
                       <Download className="h-4 w-4" />
                       Download Copy

@@ -15,27 +15,37 @@ export interface CourseFilesSummary {
 
 /**
  * Aggregates ingest status across every file in every lesson of a course.
- * Always polls every 3 seconds while mounted so the publish bar and file
- * list react to uploads and ingest completions without waiting for a
- * full page refresh.
+ * Polls quickly while any file is processing, and slowly while idle so the
+ * publish bar still notices files created by the async upload hook.
  */
-export function useCourseFiles(lessons: Lesson[]): CourseFilesSummary {
+export function useCourseFiles(
+  lessons: Lesson[],
+  extraLessonId?: string
+): CourseFilesSummary {
+  const lessonIds = Array.from(
+    new Set([
+      ...lessons.map((lesson) => lesson.id),
+      ...(extraLessonId ? [extraLessonId] : []),
+    ])
+  );
   const results = useQueries({
-    queries: lessons.map((lesson) => ({
-      queryKey: ["files", lesson.id],
+    queries: lessonIds.map((lessonId) => ({
+      queryKey: ["files", lessonId],
       queryFn: () =>
-        clientApi.get<FileAsset[]>(`/api/v1/lessons/${lesson.id}/files`),
+        clientApi.get<FileAsset[]>(`/api/v1/lessons/${lessonId}/files`),
       refetchInterval: (query: { state: { data?: FileAsset[] } }) => {
         const files = query.state.data ?? [];
         const busy = files.some(
           (file) =>
             file.ingest_status === "pending" || file.ingest_status === "processing"
         );
-        return busy ? 1500 : false;
+        // Slow idle poll catches files created by the async TUS completion
+        // hook even when no upload is currently in flight.
+        return busy ? 1500 : 10000;
       },
       refetchIntervalInBackground: true,
       refetchOnWindowFocus: true,
-    })), 
+    })),
   });
 
   const files = results.flatMap((r) => r.data ?? []);

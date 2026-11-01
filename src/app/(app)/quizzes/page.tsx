@@ -20,6 +20,8 @@ export default async function QuizzesPage() {
     redirect("/login");
   }
 
+  const isInstructor = session.user.role === "instructor";
+
   let courses: Course[] = [];
   try {
     const fetchedCourses = await api.get<Course[]>("/api/v1/courses");
@@ -107,8 +109,8 @@ export default async function QuizzesPage() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
-                      {renderQuizBox("basic", basicQuiz)}
-                      {renderQuizBox("advanced", advancedQuiz)}
+                      {renderQuizBox("basic", basicQuiz, isInstructor)}
+                      {renderQuizBox("advanced", advancedQuiz, isInstructor)}
                     </div>
                   </div>
                 </div>
@@ -121,7 +123,11 @@ export default async function QuizzesPage() {
   );
 }
 
-function renderQuizBox(tier: "basic" | "advanced", quiz?: Quiz) {
+function renderQuizBox(
+  tier: "basic" | "advanced",
+  quiz?: Quiz,
+  isInstructor?: boolean
+) {
   const isBasic = tier === "basic";
 
   if (!quiz) {
@@ -192,7 +198,11 @@ function renderQuizBox(tier: "basic" | "advanced", quiz?: Quiz) {
           <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
             Last Attempt
           </span>
-          {isAttempted && lastScore !== undefined && lastScore !== null ? (
+          {isInstructor ? (
+            <p className="text-[13px] text-purple-700 font-medium mt-0.5">
+              Instructor preview — no attempt required
+            </p>
+          ) : isAttempted && lastScore !== undefined && lastScore !== null ? (
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="text-[18px] font-black text-gray-900">
                 {Math.round(lastScore)}%
@@ -241,7 +251,11 @@ function renderQuizBox(tier: "basic" | "advanced", quiz?: Quiz) {
                 : "bg-purple-600 hover:bg-purple-700 text-white"
             )}
           >
-            {isAttempted ? "Retake Examination" : "Start Examination"}
+            {isInstructor
+              ? "View Questions"
+              : isAttempted
+                ? "Retake Examination"
+                : "Start Examination"}
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         ) : isGenerating ? (

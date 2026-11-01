@@ -1,6 +1,10 @@
 import * as tus from "tus-js-client";
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080").replace(/\/+$/, "");
+const API_BASE = (
+  process.env.NEXT_PUBLIC_UPLOAD_URL ??
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:8080"
+).replace(/\/+$/, "");
 const TUS_ENDPOINT = `${API_BASE}/api/v1/files/tus/`;
 
 interface UploadMetadata {
@@ -46,13 +50,26 @@ export function getFileExtension(fileName: string): string {
 export function mapExtensionToFileType(ext: string): string {
   const map: Record<string, string> = {
     pdf: "pdf",
-    ppt: "ppt",
     pptx: "ppt",
+    ppsx: "ppt",
     docx: "docx",
+    mp4: "video",
+    mov: "video",
+    webm: "video",
+    mkv: "video",
   };
   return map[ext] ?? ext;
 }
 
-export const ACCEPTED_EXTENSIONS = [".pdf", ".ppt", ".pptx", ".docx"];
+export const ACCEPTED_EXTENSIONS = [
+  ".pdf",
+  ".pptx",
+  ".ppsx",
+  ".docx",
+  ".mp4",
+  ".mov",
+  ".webm",
+  ".mkv",
+];
 export const ACCEPTED_MIME_TYPES =
-  "application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  "application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,video/quicktime,video/webm,video/x-matroska";

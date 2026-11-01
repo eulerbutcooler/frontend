@@ -440,6 +440,7 @@ export function CoursePlayer({
             <QuizViewer
               key={`quiz-${currentLesson?.id}`}
               quiz={currentLesson.quiz}
+              isInstructor={isInstructor}
               onPass={(score) => {
                 if (currentLesson) {
                   markLessonComplete(currentLesson.id);
