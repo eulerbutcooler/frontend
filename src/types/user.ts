@@ -15,7 +15,7 @@ export type Role = "student" | "instructor";
 export const INDIAN_NAVY_SAILOR_RANKS = [
   "Seaman II",
   "Seaman I",
-  "Leading Seaman / Leading Rate",
+  "Leading Seaman",
   "Petty Officer (PO)",
   "Chief Petty Officer (CPO)",
   "Master Chief Petty Officer II (MCPO II)",
