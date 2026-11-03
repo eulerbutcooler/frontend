@@ -83,16 +83,18 @@ export function QuizViewer({ quiz, onPass, isInstructor }: QuizViewerProps) {
     setState("submitting");
 
     try {
-      const submitPromises = Object.entries(answers).map(([questionId, answer]) =>
-        submitAnswer
-          .mutateAsync({
-            attemptId,
-            data: { question_id: questionId, answer },
-          })
-          .catch((err) => {
-            console.warn("Failed to submit answer for", questionId, err);
-          })
-      );
+      const submitPromises = Object.entries(answers)
+        .filter(([, answer]) => answer.trim().length > 0)
+        .map(([questionId, answer]) =>
+          submitAnswer
+            .mutateAsync({
+              attemptId,
+              data: { question_id: questionId, answer },
+            })
+            .catch((err) => {
+              console.warn("Failed to submit answer for", questionId, err);
+            })
+        );
       await Promise.all(submitPromises);
 
       const resultAttempt = await finishAttempt.mutateAsync(attemptId);
@@ -271,6 +273,8 @@ export function QuizViewer({ quiz, onPass, isInstructor }: QuizViewerProps) {
     const isFirst = currentQuestion === 0;
     const isLast = currentQuestion === total - 1;
     const selectedAnswer = answers[current.id] ?? "";
+    const isOpenEnded =
+      current.type === "open_ended" || !current.choices || current.choices.length === 0;
 
     return (
       <div className="flex-1 flex flex-col justify-between min-h-0">
@@ -312,40 +316,50 @@ export function QuizViewer({ quiz, onPass, isInstructor }: QuizViewerProps) {
           </h2>
 
           <div className="flex flex-col gap-2">
-            {current.choices?.map((choice) => {
-              const isSelected = selectedAnswer === choice.text || selectedAnswer === choice.label;
-              return (
-                <label
-                  key={choice.label}
-                  className={cn(
-                    "flex items-center px-3.5 py-2.5 rounded-lg border cursor-pointer transition-colors text-[13px]",
-                    isSelected
-                      ? "border-blue-500 bg-blue-50/50 text-blue-900 font-medium"
-                      : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/60 text-gray-800"
-                  )}
-                >
-                  <input
-                    type="radio"
-                    name={`question-${current.id}`}
-                    value={choice.text || choice.label}
-                    checked={isSelected}
-                    onChange={() => setAnswer(current.id, choice.text || choice.label)}
-                    className="sr-only"
-                  />
-                  <div
+            {isOpenEnded ? (
+              <textarea
+                value={selectedAnswer}
+                onChange={(event) => setAnswer(current.id, event.target.value)}
+                rows={6}
+                placeholder="Type your answer here…"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-3 text-[13px] text-gray-800 placeholder:text-gray-400 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
+              />
+            ) : (
+              current.choices?.map((choice) => {
+                const isSelected = selectedAnswer === choice.text || selectedAnswer === choice.label;
+                return (
+                  <label
+                    key={choice.label}
                     className={cn(
-                      "w-4 h-4 rounded-full border flex items-center justify-center mr-3 shrink-0 transition-colors",
-                      isSelected ? "border-blue-600" : "border-gray-300"
+                      "flex items-center px-3.5 py-2.5 rounded-lg border cursor-pointer transition-colors text-[13px]",
+                      isSelected
+                        ? "border-blue-500 bg-blue-50/50 text-blue-900 font-medium"
+                        : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/60 text-gray-800"
                     )}
                   >
-                    {isSelected && (
-                      <div className="w-2 h-2 rounded-full bg-blue-600" />
-                    )}
-                  </div>
-                  <span>{choice.text}</span>
-                </label>
-              );
-            })}
+                    <input
+                      type="radio"
+                      name={`question-${current.id}`}
+                      value={choice.text || choice.label}
+                      checked={isSelected}
+                      onChange={() => setAnswer(current.id, choice.text || choice.label)}
+                      className="sr-only"
+                    />
+                    <div
+                      className={cn(
+                        "w-4 h-4 rounded-full border flex items-center justify-center mr-3 shrink-0 transition-colors",
+                        isSelected ? "border-blue-600" : "border-gray-300"
+                      )}
+                    >
+                      {isSelected && (
+                        <div className="w-2 h-2 rounded-full bg-blue-600" />
+                      )}
+                    </div>
+                    <span>{choice.text}</span>
+                  </label>
+                );
+              })
+            )}
           </div>
         </div>
 

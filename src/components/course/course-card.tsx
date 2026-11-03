@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn, capitalize } from "@/lib/utils";
-import { cleanSubjectDescription, getCourseBranch } from "@/lib/course-utils";
+import { toFileProxyUrl } from "@/lib/file-url";
+import { cleanSubjectDescription, getCourseBranch, getSpecializationMeta } from "@/lib/course-utils";
 import type { Course } from "@/types/course";
 
 interface CourseCardProps {
@@ -27,9 +28,12 @@ export const getCourseImage = (id: string) => {
 };
 
 export function CourseCard({ course, index }: CourseCardProps) {
-  const bgImage = course.thumbnail_url || getCourseImage(course.id);
+  // Presigned MinIO URLs point at localhost:9000, which a remote browser
+  // cannot reach. Route thumbnails through the same-origin storage proxy.
+  const bgImage =
+    toFileProxyUrl(course.thumbnail_url) || getCourseImage(course.id);
   const branchId = getCourseBranch(course);
-  const branch = branchId === "agniveer" ? "AVR" : branchId.toUpperCase();
+  const branch = getSpecializationMeta(branchId).badge;
 
   return (
     <Link href={`/courses/${course.id}`} className="block w-full">

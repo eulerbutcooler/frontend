@@ -15,7 +15,11 @@ import {
   Trophy,
 } from "lucide-react";
 import { capitalize, cn } from "@/lib/utils";
-import { formatNavalGreeting, getUserNavalRank } from "@/lib/course-utils";
+import {
+  formatCourseRank,
+  formatNavalGreeting,
+  getUserNavalRank,
+} from "@/lib/course-utils";
 import { Logo } from "@/components/icons/Logo";
 import type { StudentAnalytics } from "@/types/analytics";
 import type { Course } from "@/types/course";
@@ -514,7 +518,7 @@ export function StudentDashboard({
                       </p>
                     </div>
                     <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-gray-200/70 text-gray-700 shrink-0">
-                      {item.rank || "General"}
+                      {formatCourseRank(item.rank)}
                     </span>
                   </div>
 

@@ -17,7 +17,8 @@ import {
   useUpdateCourse,
   useUploadCourseThumbnail,
 } from "@/hooks/use-courses";
-import { cleanSubjectDescription, getCourseBranch, type SpecializationBranch } from "@/lib/course-utils";
+import { toFileProxyUrl } from "@/lib/file-url";
+import { cleanSubjectDescription, getCourseBranch, getSpecializationMeta, isSpecializationBranch, SPECIALIZATION_BRANCHES, type SpecializationBranch } from "@/lib/course-utils";
 import type { Course } from "@/types/course";
 import { useEffect, useState } from "react";
 import { ImagePlus } from "lucide-react";
@@ -36,18 +37,18 @@ export function CourseForm({ initialData }: CourseFormProps) {
   const [serverError, setServerError] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(
-    initialData?.thumbnail_url ?? null
+    toFileProxyUrl(initialData?.thumbnail_url) ?? null
   );
   const [thumbnailError, setThumbnailError] = useState("");
 
   const paramBranch = searchParams?.get("branch");
   const initialBranch: SpecializationBranch = initialData
     ? getCourseBranch(initialData)
-    : paramBranch === "alo"
-    ? "alo"
     : paramBranch === "agniveer"
-    ? "agniveer"
-    : "aeo";
+      ? "avr_ae"
+      : isSpecializationBranch(paramBranch)
+        ? paramBranch
+        : "aeo";
 
   const [branch, setBranch] = useState<SpecializationBranch>(initialBranch);
 
@@ -104,15 +105,15 @@ export function CourseForm({ initialData }: CourseFormProps) {
   const onSubmit = async (data: CreateCourseInput) => {
     setServerError("");
     try {
-      const branchTag = `[${branch.toUpperCase()}]`;
+      const branchMeta = getSpecializationMeta(branch);
+      const branchTag = `[${branchMeta.tag}]`;
       const cleanDesc = cleanSubjectDescription(data.description);
       const taggedDescription = `${branchTag} ${cleanDesc}`;
       const payload: CreateCourseInput = {
         ...data,
-        rank:
-          branch === "agniveer"
-            ? "apprentice"
-            : data.rank || initialData?.rank || "officer",
+        rank: branch.startsWith("avr_")
+          ? "apprentice"
+          : data.rank || initialData?.rank || "officer",
         description: taggedDescription,
       };
 
@@ -181,72 +182,45 @@ export function CourseForm({ initialData }: CourseFormProps) {
               <p className="text-[13px] text-gray-500 mt-1">Assign this subject to a naval engineering specialization branch.</p>
             </div>
             <div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setBranch("aeo")}
-                  className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
-                    branch === "aeo"
-                      ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600 shadow-2xs"
-                      : "border-gray-200 bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 text-[12px] font-extrabold ${
-                    branch === "aeo" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
-                  }`}>
-                    AEO
-                  </div>
-                  <div className="min-w-0">
-                    <p className={`text-[13px] font-bold ${branch === "aeo" ? "text-blue-950" : "text-gray-900"}`}>
-                      AEO Branch
-                    </p>
-                    <p className="text-[11px] text-gray-500 truncate">Air Engineer Officer</p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setBranch("alo")}
-                  className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
-                    branch === "alo"
-                      ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600 shadow-2xs"
-                      : "border-gray-200 bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 text-[12px] font-extrabold ${
-                    branch === "alo" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
-                  }`}>
-                    ALO
-                  </div>
-                  <div className="min-w-0">
-                    <p className={`text-[13px] font-bold ${branch === "alo" ? "text-blue-950" : "text-gray-900"}`}>
-                      ALO Branch
-                    </p>
-                    <p className="text-[11px] text-gray-500 truncate">Air Electrical Officer</p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setBranch("agniveer")}
-                  className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
-                    branch === "agniveer"
-                      ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600 shadow-2xs"
-                      : "border-gray-200 bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 text-[12px] font-extrabold ${
-                    branch === "agniveer" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
-                  }`}>
-                    AVR
-                  </div>
-                  <div className="min-w-0">
-                    <p className={`text-[13px] font-bold ${branch === "agniveer" ? "text-blue-950" : "text-gray-900"}`}>
-                      Agniveer Branch
-                    </p>
-                    <p className="text-[11px] text-gray-500 truncate">Agniveer Apprentice</p>
-                  </div>
-                </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                {SPECIALIZATION_BRANCHES.map((spec) => {
+                  const selected = branch === spec.id;
+                  return (
+                    <button
+                      key={spec.id}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => setBranch(spec.id)}
+                      className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
+                        selected
+                          ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600 shadow-2xs"
+                          : "border-gray-200 bg-white hover:bg-gray-50"
+                      }`}
+                    >
+                      <div
+                        className={`w-10 h-9 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-extrabold ${
+                          selected
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
+                      >
+                        {spec.shortCode}
+                      </div>
+                      <div className="min-w-0">
+                        <p
+                          className={`text-[13px] font-bold leading-tight ${
+                            selected ? "text-blue-950" : "text-gray-900"
+                          }`}
+                        >
+                          {spec.name}
+                        </p>
+                        <p className="text-[11px] text-gray-500 mt-0.5 line-clamp-1">
+                          {spec.description}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

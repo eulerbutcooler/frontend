@@ -46,9 +46,16 @@ export function MasterSyllabusCard({
       });
       if (result.status === "failed") {
         toast.error(result.error || "Topic extraction failed.");
+      } else if ((result.rows?.length ?? 0) === 0) {
+        toast.warning(
+          "Syllabus parsed, but no detailed syllabus rows were found. No lesson plans were queued."
+        );
       } else {
+        const lessonCount = result.rows.length;
         toast.success(
-          `Syllabus parsed: ${result.topics.length} topics extracted.`
+          `Syllabus parsed: ${lessonCount} lesson${
+            lessonCount === 1 ? "" : "s"
+          } queued for lesson-plan generation.`
         );
       }
     } catch (err) {
@@ -69,9 +76,9 @@ export function MasterSyllabusCard({
             Master Syllabus
           </h3>
           <p className="text-[12px] text-gray-500 mt-1 max-w-2xl">
-            Upload the master syllabus DOCX. We read only the curriculum
-            section, extract the lesson-plan topics, and use them to generate
-            slides and Q&amp;A.
+            Upload the subject syllabus DOCX. The parser reads the detailed
+            syllabus rows, creates one lesson per row, and queues a generated
+            lesson-plan PDF for each lesson.
           </p>
           <div className="mt-3 flex items-center gap-2">
             <label
@@ -156,6 +163,10 @@ export function MasterSyllabusCard({
                 <span className="text-gray-400">·</span>
                 <span className="text-gray-500">
                   {syllabus.topics.length} topics
+                </span>
+                <span className="text-gray-400">·</span>
+                <span className="text-gray-500">
+                  {syllabus.rows.length} syllabus rows
                 </span>
               </>
             )}

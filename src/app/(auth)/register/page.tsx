@@ -22,11 +22,6 @@ import Link from "next/link";
 import type { ApiEnvelope } from "@/types/api";
 import type { User } from "@/types/user";
 
-const ERROR_MAP: Record<string, string> = {
-  conflict: "This service number is already registered.",
-  bad_request: "Please check your input and try again.",
-};
-
 export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -48,41 +43,30 @@ export default function RegisterPage() {
   async function onSubmit(data: RegisterInput) {
     setLoading(true);
 
+    const payload = {
+      ...data,
+      name: data.name.trim(),
+      enrollment_id: data.enrollment_id.trim(),
+    };
+
     try {
       if (typeof window !== "undefined") {
         try {
-          localStorage.setItem(`aeromentor_user_rank_${data.enrollment_id.toLowerCase()}`, data.rank);
-          localStorage.setItem("aeromentor_current_user_rank", data.rank);
+          localStorage.setItem(`aeromentor_user_rank_${payload.enrollment_id.toLowerCase()}`, payload.rank);
+          localStorage.setItem("aeromentor_current_user_rank", payload.rank);
         } catch {}
       }
 
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
       
-      // Attempt registration with chosen rank
-      let res = await fetch(
+      const res = await fetch(
         `${apiUrl}/api/v1/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(payload),
         }
       );
-
-      // Defensive fallback if server was compiled before rank expansion
-      if (!res.ok) {
-        const cloned = res.clone();
-        const errJson = await cloned.json().catch(() => null);
-        if (errJson?.error?.message?.toLowerCase().includes("rank")) {
-          res = await fetch(
-            `${apiUrl}/api/v1/auth/register`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...data, rank: "officer" }),
-            }
-          );
-        }
-      }
 
       const envelope: ApiEnvelope<User> = await res.json();
 

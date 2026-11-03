@@ -5,7 +5,7 @@ export interface LessonFile {
   id: string;
   file_name: string;
   minio_key: string;
-  file_type: "docx" | "pptx" | "ppt" | "pdf";
+  file_type: "docx" | "pptx" | "ppt" | "pdf" | "video";
 }
 
 /** Lesson with its associated files, topics, and quiz */

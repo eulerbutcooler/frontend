@@ -67,6 +67,19 @@ export function DocViewer({ file }: DocViewerProps) {
     case "ppt":
     case "pptx":
       return <PptxViewer filePath={url} fileName={file.file_name} />;
+    case "video":
+      return (
+        <div className="w-full h-full bg-black flex items-center justify-center">
+          <video
+            src={url}
+            controls
+            className="max-w-full max-h-full"
+            preload="metadata"
+          >
+            Your browser does not support video playback.
+          </video>
+        </div>
+      );
     default:
       return (
         <div className="flex items-center justify-center h-full text-gray-400 text-[14px]">

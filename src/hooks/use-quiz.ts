@@ -5,12 +5,18 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { clientApi } from "@/lib/api-client.client";
-import type { Quiz, Attempt, Answer } from "@/types/quiz";
+import type { Quiz, Question, Attempt, Answer } from "@/types/quiz";
 import type { SubmitAnswerInput } from "@/lib/validations/quiz";
+
+interface QuizDetail {
+  quiz: Quiz;
+  questions: Question[];
+}
 
 interface AttemptResults {
   attempt: Attempt;
   answers: Answer[];
+  questions?: Question[];
 }
 
 export const quizListOptions = (courseId: string) =>
@@ -23,7 +29,7 @@ export const quizListOptions = (courseId: string) =>
 export const quizDetailOptions = (quizId: string) =>
   queryOptions({
     queryKey: ["quizzes", "detail", quizId],
-    queryFn: () => clientApi.get<Quiz>(`/api/v1/quizzes/${quizId}`),
+    queryFn: () => clientApi.get<QuizDetail>(`/api/v1/quizzes/${quizId}`),
     enabled: !!quizId,
   });
 

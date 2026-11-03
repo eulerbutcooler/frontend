@@ -18,7 +18,7 @@ export function MasterSyllabusImport() {
   const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [rank, setRank] = useState("officer");
+  const [rank, setRank] = useState("aeo");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<SyllabusImportResult | null>(null);
@@ -114,15 +114,18 @@ export function MasterSyllabusImport() {
 
           <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
             <label className="text-[12px] font-medium text-gray-700">
-              Rank
+              Curriculum group
               <select
                 value={rank}
                 onChange={(event) => setRank(event.target.value)}
                 className="mt-1 block h-9 px-3 text-[13px] bg-white border border-gray-200 rounded-lg outline-none focus:border-blue-500"
               >
-                <option value="officer">Officer</option>
-                <option value="apprentice">Apprentice</option>
-                <option value="cadet">Cadet</option>
+                <option value="aeo">AEO — Air Engineer Officer</option>
+                <option value="alo">ALO — Air Electrical Officer</option>
+                <option value="avr_al">Agniveer AVR AL</option>
+                <option value="avr_ae">Agniveer AVR AE</option>
+                <option value="avr_aw">Agniveer AVR AW</option>
+                <option value="avr_ar">Agniveer AVR AR</option>
               </select>
             </label>
 
@@ -184,6 +187,9 @@ export function MasterSyllabusImport() {
               const created = subject.status === "created";
               const updated = subject.status === "updated";
               const existing = subject.status === "existing";
+              const hasCourse =
+                !!subject.course_id &&
+                subject.course_id !== "00000000-0000-0000-0000-000000000000";
               return (
                 <div
                   key={`${subject.subject_code}-${subject.course_id}`}
@@ -212,7 +218,7 @@ export function MasterSyllabusImport() {
                       {subject.error ? ` · ${subject.error}` : ""}
                     </p>
                   </div>
-                  {subject.course_id && (
+                  {hasCourse && (
                     <div className="shrink-0 flex items-center gap-3">
                       <Link
                         href={`/courses/${subject.course_id}/edit`}

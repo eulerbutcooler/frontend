@@ -38,7 +38,10 @@ export function useUploadCourseSyllabus() {
         `/api/v1/courses/${courseId}/syllabus`,
         file,
         "syllabus",
-        subjectCode ? { subject_code: subjectCode } : undefined
+        {
+          generate: "true",
+          ...(subjectCode ? { subject_code: subjectCode } : {}),
+        }
       ),
     onSuccess: (_, { courseId }) => {
       qc.invalidateQueries({ queryKey: ["syllabus", courseId] });
