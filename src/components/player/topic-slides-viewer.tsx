@@ -45,7 +45,7 @@ export function TopicSlidesViewer({
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-12 text-center text-gray-400 h-full">
         <BookOpen className="w-12 h-12 text-gray-300 mb-3" />
-        <h3 className="text-base font-semibold text-gray-700">No AI Briefing Slides Available</h3>
+        <h3 className="text-base font-semibold text-gray-700">No Slides Available</h3>
         <p className="text-[13px] text-gray-400 max-w-sm mt-1">
           Briefing slides are generated automatically from course manuals. You can view reference files in the next tab.
         </p>

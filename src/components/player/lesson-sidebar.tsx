@@ -35,6 +35,7 @@ interface LessonSidebarProps {
   onTopicSelect?: (lessonIdx: number, topicIdx: number) => void;
   onFileSelect: (lessonIdx: number, fileIdx: number) => void;
   onQuizSelect: (lessonIdx: number) => void;
+  onLessonSelect?: (lessonIdx: number) => void;
   onCertificateSelect: () => void;
 }
 
@@ -65,6 +66,7 @@ export function LessonSidebar({
   onTopicSelect,
   onFileSelect,
   onQuizSelect,
+  onLessonSelect,
   onCertificateSelect,
 }: LessonSidebarProps) {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
@@ -132,7 +134,10 @@ export function LessonSidebar({
             <div key={lesson.id} className="border-b border-gray-100 last:border-b-0">
               {/* Lesson Header */}
               <button
-                onClick={() => toggleExpand(lesson.id)}
+                onClick={() => {
+                  toggleExpand(lesson.id);
+                  if (isUnlocked) onLessonSelect?.(lessonIdx);
+                }}
                 className={cn(
                   "w-full flex items-center gap-3 px-5 py-3.5 text-left transition-colors cursor-pointer",
                   !isUnlocked
@@ -202,13 +207,13 @@ export function LessonSidebar({
               {/* Expanded lesson content */}
               {isExpanded && (
                 <div className="pb-3 animate-in slide-in-from-top-1 duration-200 space-y-2">
-                  {/* 1. AI Topics Briefing */}
-                  {lesson.topics && lesson.topics.length > 0 && (
-                    <div>
-                      <div className="px-5 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-600 flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-blue-500" />
-                        <span>AI Briefing Topics</span>
-                      </div>
+                  {/* 1. Slides */}
+                  <div>
+                    <div className="px-5 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-600 flex items-center gap-1.5">
+                      <Sparkles className="w-3 h-3 text-blue-500" />
+                      <span>Slides</span>
+                    </div>
+                    {lesson.topics && lesson.topics.length > 0 ? (
                       <div className="mt-0.5 space-y-0.5">
                         {lesson.topics.map((topic, topicIdx) => {
                           const isCurrentTopic =
@@ -246,8 +251,12 @@ export function LessonSidebar({
                           );
                         })}
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <p className="pl-8 pr-5 py-1.5 text-[11px] text-gray-400">
+                        No slides generated
+                      </p>
+                    )}
+                  </div>
 
                   {/* 2. Quiz / Examination */}
                   {lesson.quiz && (

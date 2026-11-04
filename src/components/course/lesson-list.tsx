@@ -13,7 +13,6 @@ import {
   useUpdateLesson,
   useDeleteLesson,
 } from "@/hooks/use-courses";
-import { useCourseFiles } from "@/hooks/use-course-files";
 import type { Lesson } from "@/types/course";
 
 interface LessonListProps {
@@ -35,8 +34,6 @@ export function LessonList({ courseId, lessons, isInstructor, instructorId, publ
   const updateLesson = useUpdateLesson();
   const deleteLesson = useDeleteLesson();
   const router = useRouter();
-
-  const fileSummary = useCourseFiles(lessons);
 
   const handleAdd = async () => {
     if (!newTitle.trim()) return;

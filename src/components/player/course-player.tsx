@@ -12,8 +12,10 @@ import { QuizViewer } from "./quiz-viewer";
 import { CertificateViewer } from "./certificate-viewer";
 import { TopicSlidesViewer } from "./topic-slides-viewer";
 import { LessonSidebar } from "./lesson-sidebar";
+import { CourseReferenceMaterials } from "./course-reference-materials";
 import { useProgress } from "@/hooks/use-progress";
 import { clientApi } from "@/lib/api-client.client";
+import type { FileAsset } from "@/types/course";
 import type { LessonWithContent } from "@/types/progress";
 import type { LessonTopic } from "@/types/quiz";
 
@@ -24,6 +26,8 @@ interface CoursePlayerProps {
   initialLessonIdx?: number;
   initialFileIdx?: number;
   isInstructor?: boolean;
+  referenceFiles?: FileAsset[];
+  hasSyllabus?: boolean;
 }
 
 export function CoursePlayer({
@@ -34,6 +38,8 @@ export function CoursePlayer({
   initialLessonIdx = 0,
   initialFileIdx = 0,
   isInstructor = false,
+  referenceFiles = [],
+  hasSyllabus = false,
 }: CoursePlayerProps & { initialProgress: any }) {
   const {
     markFileViewed,
@@ -296,6 +302,36 @@ export function CoursePlayer({
     [setCurrentLessonIdx, isLessonUnlocked]
   );
 
+  // Clicking a lesson in the sidebar should open its first available content,
+  // preferring slides over the examination view.
+  const goToLesson = useCallback(
+    (lessonIdx: number) => {
+      if (!isLessonUnlocked(lessonIdx)) return;
+      const lesson = lessons[lessonIdx];
+      if (!lesson) return;
+
+      setCurrentLessonIdx(lessonIdx);
+      setCurrentTopicIdx(0);
+      setCurrentFileIdx(0);
+
+      const topics = topicsCache[lesson.id] || lesson.topics || [];
+      if (topics.length > 0) {
+        setViewState("slides");
+      } else if (lesson.files && lesson.files.length > 0) {
+        setViewState("file");
+      } else {
+        setViewState("slides");
+      }
+    },
+    [
+      lessons,
+      topicsCache,
+      isLessonUnlocked,
+      setCurrentLessonIdx,
+      setCurrentFileIdx,
+    ]
+  );
+
   const goToFile = useCallback(
     (lessonIdx: number, fileIdx: number) => {
       if (!isLessonUnlocked(lessonIdx)) return;
@@ -346,7 +382,7 @@ export function CoursePlayer({
                     : "text-gray-600 hover:text-gray-900"
                 )}
               >
-                AI Briefing
+                Slides
               </button>
 
               <button
@@ -432,8 +468,28 @@ export function CoursePlayer({
             />
           )}
 
-          {viewState === "file" && currentFile && (
-            <DocViewer key={`${currentLesson?.id}-${currentFile.id}`} file={currentFile} />
+          {viewState === "file" && (
+            <div className="flex h-full flex-col">
+              <CourseReferenceMaterials
+                courseId={courseId}
+                files={referenceFiles}
+                hasSyllabus={hasSyllabus}
+                isInstructor={isInstructor}
+              />
+              {currentFile ? (
+                <div className="min-h-0 flex-1">
+                  <DocViewer
+                    key={`${currentLesson?.id}-${currentFile.id}`}
+                    file={currentFile}
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-1 items-center justify-center p-6 text-center text-[12px] text-gray-400">
+                  Select a lesson document from the lesson outline, or use the
+                  subject material buttons above.
+                </div>
+              )}
+            </div>
           )}
 
           {viewState === "quiz" && currentLesson?.quiz && (
@@ -528,6 +584,7 @@ export function CoursePlayer({
         onTopicSelect={goToTopic}
         onFileSelect={goToFile}
         onQuizSelect={goToQuiz}
+        onLessonSelect={goToLesson}
         onCertificateSelect={goToCertificate}
       />
     </div>

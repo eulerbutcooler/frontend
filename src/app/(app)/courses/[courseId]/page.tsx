@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { api } from "@/lib/api-client";
+import { mapWithConcurrency } from "@/lib/concurrency";
 import Link from "next/link";
 import { ArrowRight, Pencil, ArrowLeft, Play, BookOpenCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -42,15 +43,18 @@ export default async function CourseDetailPage({ params }: PageProps) {
     ]);
     lessons = Array.isArray(lessons) ? lessons : [];
 
-    lessonsWithTopics = await Promise.all(
-      lessons.map(async (l) => {
+    lessonsWithTopics = await mapWithConcurrency(
+      lessons,
+      1,
+      async (l) => {
         try {
           const topics = await api.get<any[]>(`/api/v1/lessons/${l.id}/topics`);
           return { ...l, topics: Array.isArray(topics) ? topics : [] };
         } catch {
           return { ...l, topics: [] };
         }
-      })
+      },
+      20
     );
   } catch (e) {
     console.error("Failed to fetch course:", e);
@@ -130,17 +134,16 @@ export default async function CourseDetailPage({ params }: PageProps) {
             {cleanSubjectDescription(course.description)}
           </p>
 
-          {/* Start Learning is student-facing; instructors use the builder. */}
-          {!isInstructor && (
-            <Link
-              href={`/courses/${courseId}/learn`}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[14px] font-semibold rounded-lg transition-colors mb-8 shrink-0 w-fit shadow-xs hover:shadow-md cursor-pointer"
-            >
-              <Play className="h-4 w-4" fill="white" />
-              Start Learning
-            </Link>
-          )}
-          {isInstructor && <div className="mb-8" />}
+          {/* Instructors can open the same player students use without
+              switching accounts. Their preview is read-only for progress and
+              uses the instructor quiz preview. */}
+          <Link
+            href={`/courses/${courseId}/learn`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[14px] font-semibold rounded-lg transition-colors mb-8 shrink-0 w-fit shadow-xs hover:shadow-md cursor-pointer"
+          >
+            <Play className="h-4 w-4" fill="white" />
+            {isInstructor ? "Preview as Student" : "Start Learning"}
+          </Link>
 
           <div className="flex-1 min-h-0 pb-2 flex flex-col justify-start">
             {/* Lessons */}
