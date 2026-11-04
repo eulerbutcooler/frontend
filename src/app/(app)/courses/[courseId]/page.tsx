@@ -142,7 +142,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[14px] font-semibold rounded-lg transition-colors mb-8 shrink-0 w-fit shadow-xs hover:shadow-md cursor-pointer"
           >
             <Play className="h-4 w-4" fill="white" />
-            {isInstructor ? "Preview as Student" : "Start Learning"}
+            {isInstructor ? "Preview the subject" : "Start Learning"}
           </Link>
 
           <div className="flex-1 min-h-0 pb-2 flex flex-col justify-start">
