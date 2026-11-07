@@ -16,7 +16,6 @@ import type { Upload as TusUpload } from "tus-js-client";
 
 interface FileUploadZoneProps {
   lessonId: string;
-  instructorId: string;
   allowedFileType?: "pdf" | "ppt" | "docx" | "video";
 }
 
@@ -49,7 +48,6 @@ function getAllowedExtensions(
 
 export function FileUploadZone({
   lessonId,
-  instructorId,
   allowedFileType,
 }: FileUploadZoneProps) {
   const { data: session } = useSession();
@@ -94,7 +92,6 @@ export function FileUploadZone({
           {
             lessonId,
             fileType: mapExtensionToFileType(ext),
-            instructorId,
           },
           {
             onProgress: (pct) =>
@@ -166,7 +163,7 @@ export function FileUploadZone({
       activeUploadsRef.current.set(item.id, upload);
       upload.start();
     },
-    [instructorId, lessonId, queryClient, token]
+    [lessonId, queryClient, token]
   );
 
   // Keep at most MAX_CONCURRENT_UPLOADS in flight and start the next queued

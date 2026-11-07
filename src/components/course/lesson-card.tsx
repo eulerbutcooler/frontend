@@ -15,10 +15,9 @@ import { useSession } from "next-auth/react";
 interface LessonCardProps {
   lesson: Lesson;
   courseId: string;
-  instructorId: string;
 }
 
-export function LessonCard({ lesson, courseId, instructorId }: LessonCardProps) {
+export function LessonCard({ lesson, courseId }: LessonCardProps) {
   const { data: session } = useSession();
   const { mutate: updateLesson } = useUpdateLesson();
   const [isEditing, setIsEditing] = useState(false);
@@ -28,7 +27,15 @@ export function LessonCard({ lesson, courseId, instructorId }: LessonCardProps) 
   const { data: files = [] } = useQuery({
     queryKey: ["files", lesson.id],
     queryFn: () => clientApi.get<FileAsset[]>(`/api/v1/lessons/${lesson.id}/files`),
-    refetchInterval: 3000,
+    refetchInterval: (query: { state: { data?: FileAsset[] } }) => {
+      const current = query.state.data ?? [];
+      return current.some(
+        (file) =>
+          file.ingest_status === "pending" || file.ingest_status === "processing"
+      )
+        ? 3000
+        : false;
+    },
   });
 
   const [uploads, setUploads] = useState<Record<string, number>>({});
@@ -81,7 +88,6 @@ export function LessonCard({ lesson, courseId, instructorId }: LessonCardProps) 
           file_name: file.name,
           file_type: fileType,
           lesson_id: lesson.id,
-          instructor_id: instructorId,
         },
         onError: function (error) {
           console.log("Failed because: " + error);

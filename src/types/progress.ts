@@ -1,4 +1,5 @@
-import type { LessonTopic } from "./quiz";
+import type { LessonTopic, Quiz } from "./quiz";
+import type { FileAsset, Lesson } from "./course";
 
 /** File reference within a lesson for the course player */
 export interface LessonFile {
@@ -9,12 +10,10 @@ export interface LessonFile {
 }
 
 /** Lesson with its associated files, topics, and quiz */
-export interface LessonWithContent {
-  id: string;
-  title: string;
-  files: LessonFile[];
+export interface LessonWithContent extends Lesson {
+  files: FileAsset[];
   topics?: LessonTopic[];
-  quiz: any | null; // using any for now, could type Quiz later
+  quiz: Quiz | null;
 }
 
 export interface LessonProgressData {

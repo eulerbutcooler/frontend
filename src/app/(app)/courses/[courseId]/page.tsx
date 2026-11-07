@@ -3,7 +3,6 @@ import { redirect, notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { api } from "@/lib/api-client";
-import { mapWithConcurrency } from "@/lib/concurrency";
 import Link from "next/link";
 import { ArrowRight, Pencil, ArrowLeft, Play, BookOpenCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -12,8 +11,8 @@ import { LessonList } from "@/components/course/lesson-list";
 import { DeleteCourseButton } from "@/components/course/delete-course-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { capitalize } from "@/lib/utils";
-import type { Course, Lesson } from "@/types/course";
-import type { CourseProgressData } from "@/types/progress";
+import type { Course } from "@/types/course";
+import type { CourseProgressData, LessonWithContent } from "@/types/progress";
 import { SubjectSyllabusRoadmap, type LessonWithTopics } from "@/components/course/subject-syllabus-roadmap";
 import { cleanSubjectDescription } from "@/lib/course-utils";
 
@@ -29,33 +28,28 @@ export default async function CourseDetailPage({ params }: PageProps) {
   const isInstructor = session.user.role === "instructor";
 
   let course: Course;
-  let lessons: Lesson[] = [];
+  let lessons: LessonWithContent[] = [];
   let lessonsWithTopics: LessonWithTopics[] = [];
   let progress: CourseProgressData | null = null;
 
   try {
     [course, lessons, progress] = await Promise.all([
       api.get<Course>(`/api/v1/courses/${courseId}`),
-      api.get<Lesson[]>(`/api/v1/courses/${courseId}/lessons`),
+      api.get<LessonWithContent[]>(`/api/v1/courses/${courseId}/content`),
       api
         .get<CourseProgressData>(`/api/v1/courses/${courseId}/progress`)
         .catch(() => null),
     ]);
     lessons = Array.isArray(lessons) ? lessons : [];
-
-    lessonsWithTopics = await mapWithConcurrency(
-      lessons,
-      1,
-      async (l) => {
-        try {
-          const topics = await api.get<any[]>(`/api/v1/lessons/${l.id}/topics`);
-          return { ...l, topics: Array.isArray(topics) ? topics : [] };
-        } catch {
-          return { ...l, topics: [] };
-        }
-      },
-      20
-    );
+    lessonsWithTopics = lessons.map((lesson) => ({
+      ...lesson,
+      topics: (lesson.topics ?? []).map((topic) => ({
+        id: topic.id,
+        title: topic.title,
+        order_idx: topic.order_index,
+        slides: topic.slides,
+      })),
+    }));
   } catch (e) {
     console.error("Failed to fetch course:", e);
     notFound();

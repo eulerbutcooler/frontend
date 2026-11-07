@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 
 const RAG_URL = (
   process.env.RAG_URL ||
@@ -7,13 +8,25 @@ const RAG_URL = (
 ).replace(/\/+$/, "");
 
 export async function POST(req: Request) {
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const internalToken = process.env.INTERNAL_TOKEN;
+  if (!internalToken) {
+    return NextResponse.json(
+      { error: "Audio service is not configured" },
+      { status: 503 }
+    );
+  }
+
   try {
     const body = await req.json();
     const upstream = await fetch(`${RAG_URL}/api/v1/audio/speak`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Internal-Token": process.env.INTERNAL_TOKEN || "changeme-internal-token",
+        "X-Internal-Token": internalToken,
       },
       body: JSON.stringify(body),
     });

@@ -41,20 +41,8 @@ export function TopicSlidesViewer({
     setSlideIdx(0);
   }, [activeTopicIndex]);
 
-  if (!topics || topics.length === 0) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center p-12 text-center text-gray-400 h-full">
-        <BookOpen className="w-12 h-12 text-gray-300 mb-3" />
-        <h3 className="text-base font-semibold text-gray-700">No Slides Available</h3>
-        <p className="text-[13px] text-gray-400 max-w-sm mt-1">
-          Briefing slides are generated automatically from course manuals. You can view reference files in the next tab.
-        </p>
-      </div>
-    );
-  }
-
-  const currentTopic = topics[topicIdx] || topics[0];
-  const slides = currentTopic.slides || [];
+  const currentTopic = (topics?.[topicIdx] || topics?.[0])!;
+  const slides = currentTopic?.slides || [];
   const currentSlide: TopicSlide | undefined = slides[slideIdx];
   const totalSlides = slides.length;
 
@@ -91,6 +79,7 @@ export function TopicSlidesViewer({
 
   // Keyboard navigation for slides
   React.useEffect(() => {
+    if (!topics || topics.length === 0) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
         document.activeElement?.tagName === "INPUT" ||
@@ -110,6 +99,18 @@ export function TopicSlidesViewer({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [slideIdx, topicIdx, totalSlides, topics.length]);
+
+  if (!topics || topics.length === 0) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-12 text-center text-gray-400 h-full">
+        <BookOpen className="w-12 h-12 text-gray-300 mb-3" />
+        <h3 className="text-base font-semibold text-gray-700">No Slides Available</h3>
+        <p className="text-[13px] text-gray-400 max-w-sm mt-1">
+          Briefing slides are generated automatically from course manuals. You can view reference files in the next tab.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex flex-col h-full bg-white select-text">

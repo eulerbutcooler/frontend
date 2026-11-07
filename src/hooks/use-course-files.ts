@@ -1,6 +1,7 @@
-import { useQueries } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { clientApi } from "@/lib/api-client.client";
-import type { FileAsset, Lesson } from "@/types/course";
+import type { FileAsset } from "@/types/course";
+import type { LessonWithContent } from "@/types/progress";
 
 export interface CourseFilesSummary {
   total: number;
@@ -13,55 +14,71 @@ export interface CourseFilesSummary {
   busy: boolean;
 }
 
+function summarize(files: FileAsset[]): Omit<CourseFilesSummary, "allReady" | "busy"> {
+  return {
+    total: files.length,
+    ready: files.filter((f) => f.ingest_status === "ready").length,
+    failed: files.filter((f) => f.ingest_status === "failed").length,
+    processing: files.filter(
+      (f) => f.ingest_status === "pending" || f.ingest_status === "processing"
+    ).length,
+  };
+}
+
 /**
  * Aggregates ingest status across every file in every lesson of a course.
- * Polls quickly while any file is processing, and slowly while idle so the
- * publish bar still notices files created by the async upload hook.
+ *
+ * This uses the single course-content endpoint instead of one request per
+ * lesson. It polls only while something is processing; idle courses are not
+ * polled continuously.
  */
 export function useCourseFiles(
-  lessons: Lesson[],
+  courseId: string,
   extraLessonId?: string
 ): CourseFilesSummary {
-  const lessonIds = Array.from(
-    new Set([
-      ...lessons.map((lesson) => lesson.id),
-      ...(extraLessonId ? [extraLessonId] : []),
-    ])
-  );
-  const results = useQueries({
-    queries: lessonIds.map((lessonId) => ({
-      queryKey: ["files", lessonId],
-      queryFn: () =>
-        clientApi.get<FileAsset[]>(`/api/v1/lessons/${lessonId}/files`),
-      refetchInterval: (query: { state: { data?: FileAsset[] } }) => {
-        const files = query.state.data ?? [];
-        const busy = files.some(
-          (file) =>
-            file.ingest_status === "pending" || file.ingest_status === "processing"
-        );
-        // Slow idle poll catches files created by the async TUS completion
-        // hook even when no upload is currently in flight.
-        return busy ? 1500 : 10000;
-      },
-      refetchIntervalInBackground: true,
-      refetchOnWindowFocus: true,
-    })),
+  const contentQuery = useQuery({
+    queryKey: ["course-content", courseId],
+    queryFn: () =>
+      clientApi.get<LessonWithContent[]>(`/api/v1/courses/${courseId}/content`),
+    refetchInterval: (query: { state: { data?: LessonWithContent[] } }) => {
+      const lessons = query.state.data ?? [];
+      const files = lessons.flatMap((lesson) => lesson.files ?? []);
+      return files.some(
+        (file) =>
+          file.ingest_status === "pending" || file.ingest_status === "processing"
+      )
+        ? 1500
+        : 15000;
+    },
+    refetchOnWindowFocus: true,
   });
 
-  const files = results.flatMap((r) => r.data ?? []);
-  const total = files.length;
-  const ready = files.filter((f) => f.ingest_status === "ready").length;
-  const failed = files.filter((f) => f.ingest_status === "failed").length;
-  const processing = files.filter(
-    (f) => f.ingest_status === "pending" || f.ingest_status === "processing"
-  ).length;
+  const materialQuery = useQuery({
+    queryKey: ["files", extraLessonId],
+    queryFn: () =>
+      clientApi.get<FileAsset[]>(`/api/v1/lessons/${extraLessonId}/files`),
+    enabled: !!extraLessonId,
+    refetchInterval: (query: { state: { data?: FileAsset[] } }) => {
+      const files = query.state.data ?? [];
+      return files.some(
+        (file) =>
+          file.ingest_status === "pending" || file.ingest_status === "processing"
+      )
+        ? 1500
+        : 15000;
+    },
+    refetchOnWindowFocus: true,
+  });
+
+  const contentFiles = (contentQuery.data ?? []).flatMap(
+    (lesson) => lesson.files ?? []
+  );
+  const materialFiles = materialQuery.data ?? [];
+  const summary = summarize([...contentFiles, ...materialFiles]);
 
   return {
-    total,
-    ready,
-    processing,
-    failed,
-    allReady: total > 0 && ready === total,
-    busy: processing > 0,
+    ...summary,
+    allReady: summary.total > 0 && summary.ready === summary.total,
+    busy: summary.processing > 0,
   };
 }

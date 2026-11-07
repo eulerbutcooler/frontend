@@ -3,8 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { CoursePlayer } from "@/components/player/course-player";
 import { api } from "@/lib/api-client";
-import { mapWithConcurrency } from "@/lib/concurrency";
-import type { Course, CourseSyllabus, FileAsset, Lesson } from "@/types/course";
+import type { Course, CourseSyllabus, FileAsset } from "@/types/course";
 import type { LessonWithContent, CourseProgressData } from "@/types/progress";
 
 import { auth } from "@/lib/auth";
@@ -29,12 +28,11 @@ export default async function LearnPage({ params }: PageProps) {
   };
 
   try {
-    const [fetchedCourse, lessons, quizzes, progress, materials, syllabusData] =
+    const [fetchedCourse, content, progress, materials, syllabusData] =
       await Promise.all([
         api.get<Course>(`/api/v1/courses/${courseId}`),
-        api.get<Lesson[]>(`/api/v1/courses/${courseId}/lessons`),
-        api.get<any[]>(`/api/v1/courses/${courseId}/quizzes`),
-        api.get<CourseProgressData>(`/api/v1/courses/${courseId}/progress`).catch(() => initialProgress), // Default to empty if not found
+        api.get<LessonWithContent[]>(`/api/v1/courses/${courseId}/content`),
+        api.get<CourseProgressData>(`/api/v1/courses/${courseId}/progress`).catch(() => initialProgress),
         api.get<FileAsset[]>(`/api/v1/courses/${courseId}/materials`).catch(() => []),
         api.get<CourseSyllabus>(`/api/v1/courses/${courseId}/syllabus`).catch(() => null),
       ]);
@@ -43,28 +41,7 @@ export default async function LearnPage({ params }: PageProps) {
     if (!initialProgress.lessons) initialProgress.lessons = {};
     referenceFiles = Array.isArray(materials) ? materials : [];
     syllabus = syllabusData;
-
-    const safeLessons = Array.isArray(lessons) ? lessons : [];
-    const safeQuizzes = Array.isArray(quizzes) ? quizzes : [];
-
-    lessonsWithContent = await mapWithConcurrency(
-      safeLessons,
-      1,
-      async (lesson) => {
-        const files = await api
-          .get<any[]>(`/api/v1/lessons/${lesson.id}/files`)
-          .catch(() => []);
-        const topics = await api
-          .get<any[]>(`/api/v1/lessons/${lesson.id}/topics`)
-          .catch(() => []);
-        const safeFiles = Array.isArray(files) ? files : [];
-        const safeTopics = Array.isArray(topics) ? topics : [];
-        // Find quiz for this lesson
-        const quiz = safeQuizzes.find((q) => q.lesson_id === lesson.id) || null;
-        return { ...lesson, files: safeFiles, topics: safeTopics, quiz } as LessonWithContent;
-      },
-      20
-    );
+    lessonsWithContent = Array.isArray(content) ? content : [];
   } catch (e) {
     console.error("Failed to fetch data for learn page:", e);
     notFound();

@@ -356,11 +356,10 @@ export function CoursePlayer({
     setViewState("certificate");
   }, [allLessonsPassed]);
 
-  const handleMarkComplete = useCallback(() => {
-    if (currentLesson) {
-      markLessonComplete(currentLesson.id);
-      goNext();
-    }
+  const handleMarkComplete = useCallback(async () => {
+    if (!currentLesson) return;
+    const saved = await markLessonComplete(currentLesson.id);
+    if (saved) goNext();
   }, [currentLesson, markLessonComplete, goNext]);
 
   return (

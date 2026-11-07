@@ -284,7 +284,6 @@ export function FileList({
               {isInstructor && instructorId && (
                 <FileUploadZone
                   lessonId={lessonId}
-                  instructorId={instructorId}
                   allowedFileType={config.fileType}
                 />
               )}

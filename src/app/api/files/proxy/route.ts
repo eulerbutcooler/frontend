@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
+  const session = await auth();
+  if (!session) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
   const urlParam = request.nextUrl.searchParams.get("url");
   if (!urlParam) {
     return new NextResponse("Missing url parameter", { status: 400 });
@@ -48,16 +54,21 @@ export async function GET(request: NextRequest) {
     }
 
     const contentType = res.headers.get("content-type") || "application/octet-stream";
-    const contentDisposition = res.headers.get("content-disposition") || "inline";
     const contentLength = res.headers.get("content-length");
     const acceptRanges = res.headers.get("accept-ranges") || "bytes";
     const contentRange = res.headers.get("content-range");
+    const safeInline = /^(application\/pdf|image\/(png|jpe?g|webp|gif)|video\/)/i.test(
+      contentType
+    );
 
     const responseHeaders = new Headers();
     responseHeaders.set("Content-Type", contentType);
-    responseHeaders.set("Content-Disposition", contentDisposition);
+    responseHeaders.set(
+      "Content-Disposition",
+      safeInline ? "inline" : "attachment"
+    );
     responseHeaders.set("Accept-Ranges", acceptRanges);
-    responseHeaders.set("Access-Control-Allow-Origin", "*");
+    responseHeaders.set("X-Content-Type-Options", "nosniff");
     if (contentLength) responseHeaders.set("Content-Length", contentLength);
     if (contentRange) responseHeaders.set("Content-Range", contentRange);
 

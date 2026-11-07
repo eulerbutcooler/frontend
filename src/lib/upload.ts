@@ -10,7 +10,6 @@ const TUS_ENDPOINT = `${API_BASE}/api/v1/files/tus/`;
 interface UploadMetadata {
   lessonId: string;
   fileType: string;
-  instructorId: string;
 }
 
 export function createUpload(
@@ -30,7 +29,6 @@ export function createUpload(
       lesson_id: metadata.lessonId,
       file_name: file.name,
       file_type: metadata.fileType,
-      instructor_id: metadata.instructorId,
     },
     headers: { Authorization: `Bearer ${token}` },
     onProgress: (bytesUploaded, bytesTotal) =>

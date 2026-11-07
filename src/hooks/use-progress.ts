@@ -1,14 +1,20 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { toast } from "sonner";
 import type { CourseProgressData } from "@/types/progress";
 import { clientApi } from "@/lib/api-client.client";
 
 export function useProgress(courseId: string, totalLessons: number, initialProgress: CourseProgressData) {
   const [progress, setProgress] = useState<CourseProgressData>(initialProgress);
+  const progressRef = useRef(progress);
 
-  const markFileViewed = useCallback((lessonId: string, fileId: string) => {
-    // Optimistic update
+  useEffect(() => {
+    progressRef.current = progress;
+  }, [progress]);
+
+  const markFileViewed = useCallback(async (lessonId: string, fileId: string) => {
+    const snapshot = progressRef.current;
     setProgress((prev) => {
       const lesson = prev.lessons[lessonId] ?? {
         is_completed: false,
@@ -27,12 +33,17 @@ export function useProgress(courseId: string, totalLessons: number, initialProgr
       };
     });
 
-    // Call backend API (fire and forget)
-    clientApi.post(`/api/v1/progress/file/${fileId}`).catch(console.error);
+    try {
+      await clientApi.post(`/api/v1/progress/file/${fileId}`);
+      return true;
+    } catch {
+      setProgress(snapshot);
+      return false;
+    }
   }, []);
 
-  const markLessonComplete = useCallback((lessonId: string) => {
-    // Optimistic update
+  const markLessonComplete = useCallback(async (lessonId: string) => {
+    const snapshot = progressRef.current;
     setProgress((prev) => {
       const lesson = prev.lessons[lessonId] ?? {
         viewed_files: {},
@@ -52,17 +63,37 @@ export function useProgress(courseId: string, totalLessons: number, initialProgr
       };
     });
 
-    // Call backend API
-    clientApi.post(`/api/v1/progress/lesson/${lessonId}`).catch(console.error);
+    try {
+      await clientApi.post(`/api/v1/progress/lesson/${lessonId}`);
+      return true;
+    } catch (err) {
+      setProgress(snapshot);
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Could not save lesson progress. Complete the previous lesson first."
+      );
+      return false;
+    }
   }, []);
 
-  const markCourseComplete = useCallback(() => {
+  const markCourseComplete = useCallback(async () => {
+    const snapshot = progressRef.current;
     setProgress((prev) => ({
       ...prev,
       is_completed: true,
       completed_at: new Date().toISOString()
     }));
-    clientApi.post(`/api/v1/progress/course/${courseId}`).catch(console.error);
+    try {
+      await clientApi.post(`/api/v1/progress/course/${courseId}`);
+      return true;
+    } catch (err) {
+      setProgress(snapshot);
+      toast.error(
+        err instanceof Error ? err.message : "Could not save course progress."
+      );
+      return false;
+    }
   }, [courseId]);
 
   const isLessonComplete = useCallback(

@@ -48,7 +48,7 @@ export default function EditCoursePage() {
 
   // Polling summary of all file ingests across all lessons plus subject-level
   // supporting material.
-  const fileSummary = useCourseFiles(lessons, materialsLesson?.id);
+  const fileSummary = useCourseFiles(courseId, materialsLesson?.id);
 
   const { data: quizzes = [] } = useQuery({
     ...quizListOptions(courseId),
@@ -334,7 +334,6 @@ export default function EditCoursePage() {
                     key={lesson.id} 
                     lesson={lesson} 
                     courseId={courseId} 
-                    instructorId={effectiveCourse.instructor_id} 
                   />
                 ))}
 

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, useId } from "react";
 import mermaid from "mermaid";
+import DOMPurify from "dompurify";
 import { Loader2 } from "lucide-react";
 
 interface MermaidDiagramProps {
@@ -34,9 +35,14 @@ function sanitizeMermaidCode(raw: string): string {
   const lines = clean.split("\n");
   const processedLines = lines.map((line) => {
     const trimmed = line.trim();
+    // Mermaid click directives can attach JavaScript handlers to nodes. They
+    // are never needed for generated slides, so drop them entirely.
+    if (/^click\b/i.test(trimmed)) {
+      return "";
+    }
     if (
       !trimmed ||
-      /^(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram|erDiagram|gantt|pie|gitGraph|mindmap|timeline|subgraph|end|style|classDef|click)\b/i.test(
+      /^(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram|erDiagram|gantt|pie|gitGraph|mindmap|timeline|subgraph|end|style|classDef)\b/i.test(
         trimmed
       )
     ) {
@@ -143,9 +149,10 @@ export function MermaidDiagram({ code, className }: MermaidDiagramProps) {
     mermaid.initialize({
       startOnLoad: false,
       theme: "neutral",
-      securityLevel: "loose",
+      securityLevel: "strict",
       fontFamily: "inherit",
       suppressErrorRendering: true,
+      flowchart: { htmlLabels: false },
     });
 
     const cleanCode = sanitizeMermaidCode(code);
@@ -162,7 +169,11 @@ export function MermaidDiagram({ code, className }: MermaidDiagramProps) {
       .render(diagramId, cleanCode)
       .then(({ svg }) => {
         if (!cancelled) {
-          setSvgHtml(svg);
+          setSvgHtml(
+            DOMPurify.sanitize(svg, {
+              USE_PROFILES: { svg: true, svgFilters: true },
+            })
+          );
           setLoading(false);
         }
       })
