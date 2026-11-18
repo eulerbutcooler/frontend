@@ -13,6 +13,10 @@ export interface Citation {
   file_name: string;
   file_id: string;
   score: number | null;
+  kind?: string;
+  figure_id?: string;
+  caption?: string;
+  url?: string;
 }
 
 /** Matches backend domain.Message */

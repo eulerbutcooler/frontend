@@ -48,10 +48,10 @@ export function SourceCitation({
               <div
                 key={`${citation.file_id}-${i}`}
                 className="group/source flex min-w-0 items-center gap-2 rounded-md px-1 py-0.5 text-xs text-ink/80 hover:bg-surface-soft"
-                title={citation.file_name}
+                title={citation.caption ?? citation.file_name}
               >
-                <FileText className="h-3 w-3 shrink-0 text-surface-tint" />
-                <SourceName name={citation.file_name} />
+                <CitationIcon citation={citation} />
+                <CitationLabel citation={citation} />
                 {citation.score != null && (
                   <span className="text-[10px] text-outline shrink-0">
                     {Math.round(citation.score * 100)}%
@@ -86,10 +86,10 @@ export function SourceCitation({
             <div
               key={`${citation.file_id}-${i}`}
               className="group/source flex min-w-0 items-center gap-2 text-sm text-ink/80"
-              title={citation.file_name}
+              title={citation.caption ?? citation.file_name}
             >
-              <FileText className="h-3.5 w-3.5 shrink-0" />
-              <SourceName name={citation.file_name} />
+              <CitationIcon citation={citation} />
+              <CitationLabel citation={citation} />
               {citation.score != null && (
                 <span className="text-[11px] text-outline ml-auto shrink-0">
                   {Math.round(citation.score * 100)}% match
@@ -102,6 +102,37 @@ export function SourceCitation({
     </div>
   );
 }
+function CitationIcon({ citation }: { citation: Citation }) {
+  if (citation.kind === "figure" && citation.url) {
+    return (
+      <a
+        href={citation.url}
+        target="_blank"
+        rel="noreferrer"
+        className="shrink-0"
+        aria-label="Open figure"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={citation.url}
+          alt={citation.caption ?? "Referenced figure"}
+          loading="lazy"
+          className="h-9 w-9 rounded-md border border-hairline object-cover"
+        />
+      </a>
+    );
+  }
+  return <FileText className="h-3 w-3 shrink-0 text-surface-tint" />;
+}
+
+function CitationLabel({ citation }: { citation: Citation }) {
+  const label =
+    citation.kind === "figure"
+      ? citation.caption ?? citation.file_name
+      : citation.file_name;
+  return <SourceName name={label} />;
+}
+
 function SourceName({ name }: { name: string }) {
   return (
     <span className="min-w-0 truncate" title={name}>
