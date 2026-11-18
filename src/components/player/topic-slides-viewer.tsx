@@ -12,6 +12,8 @@ import { Logo } from "@/components/icons/Logo";
 import { MermaidDiagram } from "./mermaid-diagram";
 import { MathEquation } from "./math-equation";
 import { WingmanDrawer } from "./wingman-drawer";
+import { FigureImage } from "@/components/course/figure-image";
+import { useCourseFigures } from "@/hooks/use-course-figures";
 import type { LessonTopic, TopicSlide } from "@/types/quiz";
 
 interface TopicSlidesViewerProps {
@@ -45,6 +47,15 @@ export function TopicSlidesViewer({
   const slides = currentTopic?.slides || [];
   const currentSlide: TopicSlide | undefined = slides[slideIdx];
   const totalSlides = slides.length;
+
+  const { data: figures = [] } = useCourseFigures(courseId);
+  const figuresById = React.useMemo(
+    () => new Map(figures.map((figure) => [figure.id, figure])),
+    [figures]
+  );
+  const slideFigure = currentSlide?.figure_id
+    ? figuresById.get(currentSlide.figure_id)
+    : undefined;
 
   const goToSlide = (newSlideIdx: number) => {
     if (newSlideIdx >= 0 && newSlideIdx < totalSlides) {
@@ -217,6 +228,13 @@ export function TopicSlidesViewer({
                 {currentSlide.diagram_mermaid && (
                   <div className="my-6 p-4 rounded-xl border border-gray-100 bg-slate-50/50">
                     <MermaidDiagram code={currentSlide.diagram_mermaid} />
+                  </div>
+                )}
+
+                {/* Extracted figure with caption */}
+                {slideFigure && (
+                  <div className="my-6">
+                    <FigureImage figure={slideFigure} />
                   </div>
                 )}
 

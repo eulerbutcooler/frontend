@@ -34,7 +34,7 @@ interface UploadItem {
  * progress card and only restored it after the file finished ingesting, which
  * forced instructors to upload large courses one document at a time.
  */
-const MAX_CONCURRENT_UPLOADS = 2;
+const MAX_CONCURRENT_UPLOADS = 4;
 
 function getAllowedExtensions(
   allowedFileType?: FileUploadZoneProps["allowedFileType"]

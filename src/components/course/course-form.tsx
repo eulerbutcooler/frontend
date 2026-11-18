@@ -18,7 +18,7 @@ import {
   useUploadCourseThumbnail,
 } from "@/hooks/use-courses";
 import { toFileProxyUrl } from "@/lib/file-url";
-import { cleanSubjectDescription, getCourseBranch, getSpecializationMeta, isSpecializationBranch, SPECIALIZATION_BRANCHES, type SpecializationBranch } from "@/lib/course-utils";
+import { cleanSubjectDescription, getCourseBranch, getCourseBranches, getSpecializationMeta, isSpecializationBranch, SPECIALIZATION_BRANCHES, type SpecializationBranch } from "@/lib/course-utils";
 import type { Course } from "@/types/course";
 import { useEffect, useState } from "react";
 import { ImagePlus } from "lucide-react";
@@ -50,8 +50,25 @@ export function CourseForm({ initialData }: CourseFormProps) {
         ? paramBranch
         : "aeo";
 
-  const [branch, setBranch] = useState<SpecializationBranch>(initialBranch);
+  const initialBranches: SpecializationBranch[] = initialData
+    ? getCourseBranches(initialData)
+    : [initialBranch];
 
+  // A subject can appear in several catalogues (for example Basic Electrical
+  // is shared by AVR AL, AE and AW). The first selection is the primary
+  // branch and still drives the legacy description tag.
+  const [selectedBranches, setSelectedBranches] =
+    useState<SpecializationBranch[]>(initialBranches);
+  const branch = selectedBranches[0] ?? initialBranch;
+
+  const toggleBranch = (id: SpecializationBranch) => {
+    setSelectedBranches((prev) => {
+      if (prev.includes(id)) {
+        return prev.length === 1 ? prev : prev.filter((item) => item !== id);
+      }
+      return [...prev, id];
+    });
+  };
   const {
     register,
     handleSubmit,
@@ -115,6 +132,7 @@ export function CourseForm({ initialData }: CourseFormProps) {
           ? "apprentice"
           : data.rank || initialData?.rank || "officer",
         description: taggedDescription,
+        branches: selectedBranches,
       };
 
       let courseId: string;
@@ -179,18 +197,19 @@ export function CourseForm({ initialData }: CourseFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-8">
             <div>
               <Label className="text-[14px] font-semibold text-gray-900 block">Specialization Branch</Label>
-              <p className="text-[13px] text-gray-500 mt-1">Assign this subject to a naval engineering specialization branch.</p>
+              <p className="text-[13px] text-gray-500 mt-1">Select every specialization branch that shares this subject. Shared subjects are stored and generated once.</p>
             </div>
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                 {SPECIALIZATION_BRANCHES.map((spec) => {
-                  const selected = branch === spec.id;
+                  const selected = selectedBranches.includes(spec.id);
+                  const isPrimary = branch === spec.id;
                   return (
                     <button
                       key={spec.id}
                       type="button"
                       aria-pressed={selected}
-                      onClick={() => setBranch(spec.id)}
+                      onClick={() => toggleBranch(spec.id)}
                       className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
                         selected
                           ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600 shadow-2xs"
@@ -213,6 +232,11 @@ export function CourseForm({ initialData }: CourseFormProps) {
                           }`}
                         >
                           {spec.name}
+                          {isPrimary && (
+                            <span className="ml-2 align-middle text-[9px] font-extrabold uppercase tracking-wide text-blue-700 bg-blue-100 border border-blue-200 px-1.5 py-0.5 rounded">
+                              Primary
+                            </span>
+                          )}
                         </p>
                         <p className="text-[11px] text-gray-500 mt-0.5 line-clamp-1">
                           {spec.description}

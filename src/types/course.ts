@@ -4,11 +4,26 @@ export interface Course {
   title: string;
   description: string;
   rank: string;
+  /** Specialization catalogues this subject appears in. */
+  branches?: string[];
   instructor_id: string;
   published: boolean;
   thumbnail_url?: string;
   created_at: string;
   updated_at: string;
+}
+
+/** Figure extracted from a source PDF/PPT, with a vision-generated caption. */
+export interface CourseFigure {
+  id: string;
+  course_id: string;
+  lesson_id?: string | null;
+  file_id: string;
+  page_no?: number | null;
+  width?: number | null;
+  height?: number | null;
+  caption: string;
+  url?: string;
 }
 
 /** Matches backend domain.Lesson */

@@ -32,6 +32,8 @@ export interface Question {
   explanation?: string;
   difficulty?: "easy" | "medium" | "hard";
   topic_phrase?: string;
+  /** Extracted figure this question refers to, if any. */
+  figure_id?: string;
 }
 
 export type QuestionType = "mcq" | "open_ended";
@@ -44,6 +46,8 @@ export interface TopicSlide {
   formula_or_rule?: string;
   diagram_mermaid?: string;
   warning?: string;
+  /** Extracted figure this slide should display, if any. */
+  figure_id?: string;
 }
 
 export interface LessonTopic {

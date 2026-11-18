@@ -2,13 +2,16 @@
 
 import { cn } from "@/lib/utils";
 import { useQuizStore } from "@/stores/quiz-store";
+import { FigureImage } from "@/components/course/figure-image";
+import type { CourseFigure } from "@/types/course";
 import type { Question } from "@/types/quiz";
 
 interface QuizQuestionProps {
   question: Question;
+  figure?: CourseFigure | null;
 }
 
-export function QuizQuestion({ question }: QuizQuestionProps) {
+export function QuizQuestion({ question, figure }: QuizQuestionProps) {
   const { answers, setAnswer } = useQuizStore();
   const selectedAnswer = answers[question.id] ?? "";
 
@@ -31,6 +34,7 @@ export function QuizQuestion({ question }: QuizQuestionProps) {
         <h2 className="text-[19px] font-bold text-gray-900 leading-snug">
           {question.question}
         </h2>
+        {figure && <FigureImage figure={figure} />}
         <div className="flex flex-col gap-3">
           {choices.map((choice) => {
             const isSelected = selectedAnswer === choice.label;
@@ -101,6 +105,7 @@ export function QuizQuestion({ question }: QuizQuestionProps) {
       <h2 className="text-[19px] font-bold text-gray-900 leading-snug">
         {question.question}
       </h2>
+      {figure && <FigureImage figure={figure} />}
       <textarea
         rows={5}
         aria-label="Your answer"

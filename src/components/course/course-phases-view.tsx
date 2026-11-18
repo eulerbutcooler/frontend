@@ -6,6 +6,7 @@ import Link from "next/link";
 import { CourseGrid } from "./course-grid";
 import {
   getCourseBranch,
+  getCourseBranches,
   getSpecializationMeta,
   SPECIALIZATION_BRANCHES,
   type SpecializationBranch,
@@ -25,7 +26,7 @@ export function CoursePhasesView({ courses, isInstructor }: CoursePhasesViewProp
   const coursesByBranch = SPECIALIZATION_BRANCHES.reduce(
     (grouped, spec) => {
       grouped[spec.id] = safeCourses.filter(
-        (course) => getCourseBranch(course) === spec.id
+        (course) => getCourseBranches(course).includes(spec.id)
       );
       return grouped;
     },

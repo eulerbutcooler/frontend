@@ -12,6 +12,8 @@ import {
 } from "@/hooks/use-quiz";
 import { useQuizStore } from "@/stores/quiz-store";
 import { Logo } from "@/components/icons/Logo";
+import { FigureImage } from "@/components/course/figure-image";
+import { useCourseFigures } from "@/hooks/use-course-figures";
 import type { Quiz, Question } from "@/types/quiz";
 
 interface QuizDetail {
@@ -47,6 +49,12 @@ export function QuizViewer({ quiz, onPass, isInstructor }: QuizViewerProps) {
   const startAttempt = useStartAttempt();
   const submitAnswer = useSubmitAnswer();
   const finishAttempt = useFinishAttempt();
+
+  const { data: figures = [] } = useCourseFigures(quiz.course_id);
+  const figuresById = React.useMemo(
+    () => new Map(figures.map((item) => [item.id, item])),
+    [figures]
+  );
 
   const { data: quizDetail, isLoading: isLoadingDetail } = useQuery({
     queryKey: ["quizzes", "detail", quiz.id],
@@ -179,6 +187,12 @@ export function QuizViewer({ quiz, onPass, isInstructor }: QuizViewerProps) {
                   {question.difficulty || quiz.difficulty}
                 </span>
               </div>
+
+              {question.figure_id && figuresById.get(question.figure_id) && (
+                <div className="mt-2.5">
+                  <FigureImage figure={figuresById.get(question.figure_id)} />
+                </div>
+              )}
 
               {question.choices && question.choices.length > 0 ? (
                 <div className="mt-2.5 grid grid-cols-1 gap-1.5">
@@ -314,6 +328,10 @@ export function QuizViewer({ quiz, onPass, isInstructor }: QuizViewerProps) {
           <h2 className="text-[15px] font-semibold text-gray-900 leading-snug">
             {current.question}
           </h2>
+
+          {current.figure_id && figuresById.get(current.figure_id) && (
+            <FigureImage figure={figuresById.get(current.figure_id)} />
+          )}
 
           <div className="flex flex-col gap-2">
             {isOpenEnded ? (

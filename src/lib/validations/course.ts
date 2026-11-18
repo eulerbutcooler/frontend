@@ -5,6 +5,7 @@ export const createCourseSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters"),
   description: z.string().min(1, "Description is required"),
   rank: z.string(),
+  branches: z.array(z.string()).optional(),
 });
 
 export type CreateCourseInput = z.infer<typeof createCourseSchema>;

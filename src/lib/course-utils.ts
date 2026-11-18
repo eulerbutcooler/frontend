@@ -198,6 +198,18 @@ export function getCourseBranch(course: Course): SpecializationBranch {
 }
 
 /**
+ * Every catalogue a subject belongs to. Shared subjects store an explicit
+ * branches array; legacy rows fall back to the single description tag.
+ */
+export function getCourseBranches(course: Course): SpecializationBranch[] {
+  const stored = (course.branches ?? []).filter(isSpecializationBranch);
+  if (stored.length > 0) {
+    return Array.from(new Set(stored));
+  }
+  return [getCourseBranch(course)];
+}
+
+/**
  * Strips the [AEO] / [ALO] / [AGNIVEER] / [AVR-AL] prefix from a description.
  */
 export function cleanSubjectDescription(desc?: string): string {
