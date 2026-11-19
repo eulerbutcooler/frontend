@@ -198,7 +198,7 @@ export default function EditCoursePage() {
   }
 
   let effectiveCourse = course;
-  let effectiveLessons = lessons;
+  let effectiveLessons = lessons.filter((lesson) => lesson.order_idx >= 0);
 
   return (
     <div className="h-[calc(100vh-4rem)] -mx-6 -my-6 flex flex-col font-sans bg-[#f3f4f6] p-6">
