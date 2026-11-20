@@ -6,6 +6,8 @@ export interface Course {
   rank: string;
   /** Specialization catalogues this subject appears in. */
   branches?: string[];
+  /** True when the requesting instructor associated this course. */
+  associated?: boolean;
   instructor_id: string;
   published: boolean;
   thumbnail_url?: string;

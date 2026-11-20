@@ -205,3 +205,37 @@ export function useFinalizeCourse() {
     },
   });
 }
+
+export function useInstructorCatalog() {
+  return useQuery({
+    queryKey: ["instructor-catalog"],
+    queryFn: () => clientApi.get<Course[]>("/api/v1/instructor/catalog"),
+  });
+}
+
+export function useAssociateCourse() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (courseId: string) =>
+      clientApi.post<{ status: string }>(
+        `/api/v1/courses/${courseId}/associate`,
+        {}
+      ),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["instructor-catalog"] });
+      qc.invalidateQueries({ queryKey: ["courses"] });
+    },
+  });
+}
+
+export function useDisassociateCourse() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (courseId: string) =>
+      clientApi.del(`/api/v1/courses/${courseId}/associate`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["instructor-catalog"] });
+      qc.invalidateQueries({ queryKey: ["courses"] });
+    },
+  });
+}
