@@ -13,6 +13,7 @@ import {
   Trash2,
   Loader2,
   Link2,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { IconButton } from "@/components/ui/icon-button";
@@ -86,6 +87,7 @@ export function FileList({
   const [viewingFile, setViewingFile] = useState<FileAsset | null>(null);
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const [linkOpen, setLinkOpen] = useState(false);
+  const [retryingId, setRetryingId] = useState<string | null>(null);
 
   const { data: files = [] } = useQuery({
     queryKey: ["files", lessonId],
@@ -139,6 +141,24 @@ export function FileList({
         next.delete(file.id);
         return next;
       });
+    }
+  };
+
+  const handleRetry = async (file: FileAsset) => {
+    setRetryingId(file.id);
+    try {
+      await clientApi.post(`/api/v1/files/${file.id}/retry`, {});
+      toast.success(`Re-queued ${file.file_name}`);
+      queryClient.invalidateQueries({ queryKey: ["files", lessonId] });
+      if (courseId) {
+        queryClient.invalidateQueries({ queryKey: ["course-content", courseId] });
+      }
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to retry ingestion"
+      );
+    } finally {
+      setRetryingId(null);
     }
   };
 
@@ -230,6 +250,26 @@ export function FileList({
             >
               <Eye className="h-3.5 w-3.5" />
               <span>View</span>
+            </IconButton>
+          )}
+
+          {isInstructor && file.ingest_status === "failed" && (
+            <IconButton
+              label={`Retry ${file.file_name}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                void handleRetry(file);
+              }}
+              disabled={retryingId === file.id}
+              className="h-7 px-2.5 flex items-center gap-1 text-[12px] font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors cursor-pointer"
+              title="Re-queue ingestion"
+            >
+              {retryingId === file.id ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <RefreshCw className="h-3.5 w-3.5" />
+              )}
+              <span>Retry</span>
             </IconButton>
           )}
 
