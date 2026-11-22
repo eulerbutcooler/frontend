@@ -12,12 +12,14 @@ import {
   Eye,
   Trash2,
   Loader2,
+  Link2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { IconButton } from "@/components/ui/icon-button";
 import { IngestStatusBadge } from "./ingest-status-badge";
 import { FileViewer } from "./file-viewer";
 import { FileUploadZone } from "./file-upload-zone";
+import { LinkFileDialog } from "./link-file-dialog";
 import type { FileAsset, FileType } from "@/types/course";
 
 export const FILE_ICONS: Record<FileType, React.ElementType> = {
@@ -69,16 +71,21 @@ interface FileListProps {
   lessonId: string;
   isInstructor: boolean;
   instructorId?: string;
+  courseId?: string;
+  allowLinking?: boolean;
 }
 
 export function FileList({
   lessonId,
   isInstructor,
   instructorId,
+  courseId,
+  allowLinking = false,
 }: FileListProps) {
   const queryClient = useQueryClient();
   const [viewingFile, setViewingFile] = useState<FileAsset | null>(null);
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
+  const [linkOpen, setLinkOpen] = useState(false);
 
   const { data: files = [] } = useQuery({
     queryKey: ["files", lessonId],
@@ -107,9 +114,11 @@ export function FileList({
   const handleDelete = async (file: FileAsset) => {
     const stillProcessing =
       file.ingest_status === "pending" || file.ingest_status === "processing";
-    const message = stillProcessing
-      ? `Delete "${file.file_name}"? It is still being processed; the ingest job may finish in the background. Its search index will be cleaned up.`
-      : `Delete "${file.file_name}"? Its uploaded file and search index will also be removed.`;
+    const message = file.source_file_id
+      ? `Remove "${file.file_name}" from this subject? The original file and the subject it came from are not affected.`
+      : stillProcessing
+        ? `Delete "${file.file_name}"? It is still being processed; the ingest job may finish in the background. Its search index will be cleaned up.`
+        : `Delete "${file.file_name}"? Its uploaded file and search index will also be removed.`;
 
     if (!window.confirm(message)) {
       return;
@@ -194,8 +203,13 @@ export function FileList({
             <Icon className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <span className="text-[13px] text-gray-900 font-medium truncate block group-hover:text-blue-600 transition-colors">
-              {file.file_name}
+            <span className="flex items-center gap-1.5 text-[13px] text-gray-900 font-medium truncate group-hover:text-blue-600 transition-colors">
+              <span className="truncate">{file.file_name}</span>
+              {file.source_file_id && (
+                <span className="shrink-0 rounded border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-blue-700">
+                  Shared
+                </span>
+              )}
             </span>
           </div>
           {file.ingest_status !== "ready" && (
@@ -245,6 +259,19 @@ export function FileList({
   return (
     <>
       <div className="space-y-5">
+        {allowLinking && courseId && isInstructor && (
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setLinkOpen(true)}
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 bg-white text-[12px] font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Link2 className="h-3.5 w-3.5" />
+              Link from another subject
+            </button>
+          </div>
+        )}
+
         {Object.entries(CATEGORY_CONFIG).map(([key, config]) => {
           const groupFiles = groupMap[key] ?? [];
           const CategoryIcon = config.icon;
@@ -291,6 +318,15 @@ export function FileList({
           );
         })}
       </div>
+
+      {allowLinking && courseId && (
+        <LinkFileDialog
+          courseId={courseId}
+          lessonId={lessonId}
+          open={linkOpen}
+          onClose={() => setLinkOpen(false)}
+        />
+      )}
 
       {/* File Viewer Modal */}
       {viewingFile && (

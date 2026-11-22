@@ -7,11 +7,13 @@ import type { Lesson } from "@/types/course";
 interface SubjectMaterialCardProps {
   lesson: Lesson;
   instructorId: string;
+  courseId: string;
 }
 
 export function SubjectMaterialCard({
   lesson,
   instructorId,
+  courseId,
 }: SubjectMaterialCardProps) {
   return (
     <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
@@ -37,6 +39,8 @@ export function SubjectMaterialCard({
           lessonId={lesson.id}
           isInstructor
           instructorId={instructorId}
+          courseId={courseId}
+          allowLinking
         />
       </div>
     </div>

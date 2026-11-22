@@ -323,6 +323,7 @@ export default function EditCoursePage() {
                   <SubjectMaterialCard
                     lesson={materialsLesson}
                     instructorId={effectiveCourse.instructor_id}
+                    courseId={courseId}
                   />
                 )}
                 <MasterSyllabusCard

@@ -52,8 +52,18 @@ export interface FileAsset {
   file_type: FileType;
   minio_key: string;
   ingest_status: IngestStatus;
+  /** Set when this file was linked from another subject. */
+  source_file_id?: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface LinkableFile {
+  file_id: string;
+  file_name: string;
+  file_type: FileType;
+  course_id: string;
+  course_title: string;
 }
 
 export type FileType = "pdf" | "ppt" | "pptx" | "docx" | "video";
