@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
+import { toFileProxyUrl } from "@/lib/file-url";
+
 interface FigureImageProps {
   figure?: { url?: string; caption?: string } | null;
   className?: string;
@@ -15,7 +17,8 @@ interface FigureImageProps {
 export function FigureImage({ figure, className }: FigureImageProps) {
   const [open, setOpen] = useState(false);
 
-  if (!figure?.url) return null;
+  const imageUrl = toFileProxyUrl(figure?.url);
+  if (!imageUrl) return null;
 
   return (
     <>
@@ -28,14 +31,14 @@ export function FigureImage({ figure, className }: FigureImageProps) {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={figure.url}
-            alt={figure.caption || "Figure"}
+            src={imageUrl}
+            alt={figure?.caption || "Figure"}
             loading="lazy"
             className="w-full max-h-[320px] object-contain"
           />
         </button>
         <figcaption className="mt-2 text-[12px] leading-relaxed text-gray-500">
-          {figure.caption}
+          {figure?.caption}
         </figcaption>
       </figure>
 
@@ -56,8 +59,8 @@ export function FigureImage({ figure, className }: FigureImageProps) {
           </button>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={figure.url}
-            alt={figure.caption || "Figure"}
+            src={imageUrl}
+            alt={figure?.caption || "Figure"}
             className="max-h-full max-w-full object-contain rounded-lg"
             onClick={(event) => event.stopPropagation()}
           />

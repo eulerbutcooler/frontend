@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, FileText } from "lucide-react";
 import type { Citation } from "@/types/chat";
+import { toFileProxyUrl } from "@/lib/file-url";
 
 interface SourceCitationProps {
   citations: Citation[];
@@ -103,10 +104,11 @@ export function SourceCitation({
   );
 }
 function CitationIcon({ citation }: { citation: Citation }) {
-  if (citation.kind === "figure" && citation.url) {
+  const imageUrl = toFileProxyUrl(citation.url);
+  if (citation.kind === "figure" && imageUrl) {
     return (
       <a
-        href={citation.url}
+        href={imageUrl}
         target="_blank"
         rel="noreferrer"
         className="shrink-0"
@@ -114,7 +116,7 @@ function CitationIcon({ citation }: { citation: Citation }) {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={citation.url}
+          src={imageUrl}
           alt={citation.caption ?? "Referenced figure"}
           loading="lazy"
           className="h-9 w-9 rounded-md border border-hairline object-cover"
