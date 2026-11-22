@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn, capitalize } from "@/lib/utils";
-import { toFileProxyUrl } from "@/lib/file-url";
 import { cleanSubjectDescription, getCourseBranch, getSpecializationMeta } from "@/lib/course-utils";
 import type { Course } from "@/types/course";
 
@@ -28,10 +27,11 @@ export const getCourseImage = (id: string) => {
 };
 
 export function CourseCard({ course, index }: CourseCardProps) {
-  // Presigned MinIO URLs point at localhost:9000, which a remote browser
-  // cannot reach. Route thumbnails through the same-origin storage proxy.
-  const bgImage =
-    toFileProxyUrl(course.thumbnail_url) || getCourseImage(course.id);
+  // Thumbnails are streamed by the app server, so the browser never sees the
+  // storage host or a presigned URL.
+  const bgImage = course.thumbnail_url
+    ? `/api/courses/${course.id}/thumbnail`
+    : getCourseImage(course.id);
   const branchId = getCourseBranch(course);
   const branch = getSpecializationMeta(branchId).badge;
 

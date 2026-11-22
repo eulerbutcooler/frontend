@@ -17,7 +17,6 @@ import {
   useUpdateCourse,
   useUploadCourseThumbnail,
 } from "@/hooks/use-courses";
-import { toFileProxyUrl } from "@/lib/file-url";
 import { cleanSubjectDescription, getCourseBranch, getCourseBranches, getSpecializationMeta, isSpecializationBranch, SPECIALIZATION_BRANCHES, type SpecializationBranch } from "@/lib/course-utils";
 import type { Course } from "@/types/course";
 import { useEffect, useState } from "react";
@@ -37,7 +36,9 @@ export function CourseForm({ initialData }: CourseFormProps) {
   const [serverError, setServerError] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(
-    toFileProxyUrl(initialData?.thumbnail_url) ?? null
+    initialData?.thumbnail_url
+      ? `/api/courses/${initialData.id}/thumbnail`
+      : null
   );
   const [thumbnailError, setThumbnailError] = useState("");
 
