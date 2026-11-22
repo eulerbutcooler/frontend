@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 import { toFileProxyUrl } from "@/lib/file-url";
 
 interface FigureImageProps {
-  figure?: { url?: string; caption?: string } | null;
+  figure?: { id?: string; url?: string; caption?: string } | null;
   className?: string;
 }
 
@@ -17,7 +17,9 @@ interface FigureImageProps {
 export function FigureImage({ figure, className }: FigureImageProps) {
   const [open, setOpen] = useState(false);
 
-  const imageUrl = toFileProxyUrl(figure?.url);
+  const imageUrl = figure?.id
+    ? `/api/figures/${figure.id}/content`
+    : toFileProxyUrl(figure?.url);
   if (!imageUrl) return null;
 
   return (

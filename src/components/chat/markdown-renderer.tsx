@@ -117,6 +117,7 @@ export function MarkdownRenderer({ content, figures }: MarkdownRendererProps) {
               return (
                 <FigureImage
                   figure={{
+                    id: figure.figure_id,
                     url: figure.url,
                     caption: caption.replace(/^\s*figure:\s*/i, ""),
                   }}

@@ -104,7 +104,9 @@ export function SourceCitation({
   );
 }
 function CitationIcon({ citation }: { citation: Citation }) {
-  const imageUrl = toFileProxyUrl(citation.url);
+  const imageUrl = citation.figure_id
+    ? `/api/figures/${citation.figure_id}/content`
+    : toFileProxyUrl(citation.url);
   if (citation.kind === "figure" && imageUrl) {
     return (
       <a

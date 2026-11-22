@@ -1,11 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useFileViewUrl } from "@/hooks/use-file-url";
-import { toFileProxyUrl } from "@/lib/file-url";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Download, X, FileText, ExternalLink, Sparkles } from "lucide-react";
+import { Download, X, FileText, ExternalLink } from "lucide-react";
 import { FILE_ICONS } from "./file-list";
 import type { FileType } from "@/types/course";
 
@@ -22,28 +19,12 @@ export function FileViewer({
   fileType,
   onClose,
 }: FileViewerProps) {
-  const { data, isLoading } = useFileViewUrl(fileId);
   const [iframeError, setIframeError] = useState(false);
   const Icon = FILE_ICONS[fileType] ?? FileText;
-  const viewUrl = toFileProxyUrl(data?.url);
-  const officeUrl =
-    viewUrl && typeof window !== "undefined"
-      ? new URL(viewUrl, window.location.origin).toString()
-      : viewUrl;
-
-  /* Office Online viewer only works with publicly accessible URLs.
-     For local dev (localhost/127.0.0.1), fall back to download. */
-  const isLocalUrl =
-    data?.url &&
-    (data.url.includes("localhost") || data.url.includes("127.0.0.1"));
+  const viewUrl = fileId ? `/api/files/${fileId}/content` : undefined;
 
   const canPreviewPdf = fileType === "pdf" && !!viewUrl && !iframeError;
   const canPreviewVideo = fileType === "video" && !!viewUrl;
-  const canPreviewOffice =
-    (fileType === "ppt" || fileType === "docx") &&
-    !!officeUrl &&
-    !iframeError &&
-    !isLocalUrl;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -95,9 +76,7 @@ export function FileViewer({
 
         {/* Content */}
         <div className="flex-1 overflow-auto p-6 bg-slate-50/50">
-          {isLoading ? (
-            <Skeleton className="w-full h-[65vh] rounded-xl bg-gray-200" />
-          ) : canPreviewVideo ? (
+          {canPreviewVideo ? (
             <div className="w-full h-[68vh] rounded-xl overflow-hidden border border-gray-200 bg-black shadow-xs">
               <video
                 src={viewUrl}
@@ -115,15 +94,6 @@ export function FileViewer({
                 onError={() => setIframeError(true)}
               />
             </div>
-          ) : canPreviewOffice ? (
-            <div className="w-full h-[68vh] rounded-xl overflow-hidden border border-gray-200 bg-white shadow-xs">
-              <iframe
-                src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(officeUrl!)}`}
-                className="w-full h-full"
-                title={fileName}
-                onError={() => setIframeError(true)}
-              />
-            </div>
           ) : (
             /* Fallback: Document Details & Instant Access */
             <div className="flex flex-col items-center justify-center h-[50vh] text-center max-w-md mx-auto">
@@ -136,7 +106,7 @@ export function FileViewer({
               <p className="text-[13px] text-gray-500 mb-6 leading-relaxed">
                 {iframeError
                   ? "Inline browser preview unavailable for this file format. You can open it in a new window or download it directly."
-                  : isLocalUrl && (fileType === "ppt" || fileType === "docx")
+                  : (fileType === "ppt" || fileType === "docx")
                     ? "This document has been ingested into AeroMentor's AI Flight Briefing engine. You can download the original copy or inspect its AI synthesized slides."
                     : `Direct preview is not available for .${fileType} files.`}
               </p>
