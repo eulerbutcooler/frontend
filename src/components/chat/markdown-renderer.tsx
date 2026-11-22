@@ -2,11 +2,84 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import { FigureImage } from "@/components/course/figure-image";
+import type { Citation } from "@/types/chat";
+
 interface MarkdownRendererProps {
   content: string;
+  /** Figure citations that can be shown in place of "Figure:" captions. */
+  figures?: Citation[];
 }
 
-export function MarkdownRenderer({ content }: MarkdownRendererProps) {
+const FIGURE_STOP_WORDS = new Set([
+  "about", "above", "after", "again", "against", "along", "also", "among",
+  "and", "another", "are", "because", "been", "before", "being", "below",
+  "between", "both", "cannot", "could", "depicts", "diagram", "displays",
+  "does", "down", "during", "each", "figure", "from", "further", "have",
+  "having", "here", "illustrates", "image", "into", "its", "itself", "just",
+  "more", "most", "other", "over", "same", "shows", "some", "such", "than",
+  "that", "their", "them", "then", "there", "these", "they", "this", "those",
+  "through", "under", "until", "very", "was", "were", "what", "when", "where",
+  "which", "while", "will", "with", "would", "your",
+]);
+
+function textOf(node: React.ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+  if (Array.isArray(node)) {
+    return node.map(textOf).join(" ");
+  }
+  if (React.isValidElement<{ children?: React.ReactNode }>(node)) {
+    return textOf(node.props.children);
+  }
+  return "";
+}
+
+function significantWords(text: string): Set<string> {
+  return new Set(
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .split(/\s+/)
+      .filter((word) => word.length > 3 && !FIGURE_STOP_WORDS.has(word))
+  );
+}
+
+function matchFigure(
+  text: string,
+  figures: Citation[] | undefined
+): Citation | undefined {
+  if (!figures?.length || !/\b(figure|diagram|illustration|image)\b/i.test(text)) {
+    return undefined;
+  }
+
+  const words = significantWords(text);
+  if (words.size < 2) return undefined;
+
+  let best: Citation | undefined;
+  let bestScore = 0;
+
+  for (const figure of figures) {
+    if (!figure.url || (!figure.kind && !figure.figure_id)) continue;
+    const captionWords = significantWords(figure.caption ?? "");
+    if (captionWords.size < 2) continue;
+
+    let shared = 0;
+    for (const word of words) {
+      if (captionWords.has(word)) shared += 1;
+    }
+    const score = shared / Math.min(words.size, captionWords.size);
+    if (score > bestScore) {
+      bestScore = score;
+      best = figure;
+    }
+  }
+
+  return bestScore >= 0.4 ? best : undefined;
+}
+
+export function MarkdownRenderer({ content, figures }: MarkdownRendererProps) {
   return (
     <div className="prose prose-slate max-w-none text-[15px] leading-relaxed break-words text-gray-800">
       <ReactMarkdown
@@ -37,11 +110,26 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             <ol className="list-decimal pl-5 mb-2.5 space-y-1 text-gray-800">{children}</ol>
           ),
           li: ({ children }) => <li className="leading-relaxed pl-0.5">{children}</li>,
-          blockquote: ({ children }) => (
-            <blockquote className="border-l-3 border-blue-500 pl-3.5 py-1 my-2.5 text-gray-700 bg-blue-50/50 rounded-r-md text-[14px]">
-              {children}
-            </blockquote>
-          ),
+          blockquote: ({ children }) => {
+            const caption = textOf(children).trim();
+            const figure = matchFigure(caption, figures);
+            if (figure?.url) {
+              return (
+                <FigureImage
+                  figure={{
+                    url: figure.url,
+                    caption: caption.replace(/^\s*figure:\s*/i, ""),
+                  }}
+                  className="my-3"
+                />
+              );
+            }
+            return (
+              <blockquote className="border-l-3 border-blue-500 pl-3.5 py-1 my-2.5 text-gray-700 bg-blue-50/50 rounded-r-md text-[14px]">
+                {children}
+              </blockquote>
+            );
+          },
           code({ inline, className, children, ...props }: any) {
             if (inline) {
               return (

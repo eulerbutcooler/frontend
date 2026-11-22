@@ -803,7 +803,10 @@ export function ChatView({ initialSessionId }: ChatViewProps) {
                       {msg.role === "user" ? (
                         <div className="whitespace-pre-wrap">{msg.content}</div>
                       ) : (
-                        <MarkdownRenderer content={msg.content} />
+                        <MarkdownRenderer
+                          content={msg.content}
+                          figures={msg.citations}
+                        />
                       )}
 
                       {/* Action buttons on completed assistant response */}

@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
-import type { CourseFigure } from "@/types/course";
-
 interface FigureImageProps {
-  figure?: CourseFigure | null;
+  figure?: { url?: string; caption?: string } | null;
   className?: string;
 }
 

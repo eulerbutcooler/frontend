@@ -110,7 +110,7 @@ export function MessageBubble({
           {isUser ? (
             content
           ) : (
-            <MarkdownRenderer content={content} />
+            <MarkdownRenderer content={content} figures={citations} />
           )}
           {isStreaming && !content && (
             <span className="inline-flex gap-1">
