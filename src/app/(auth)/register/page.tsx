@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
@@ -24,6 +25,7 @@ import type { User } from "@/types/user";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -50,13 +52,6 @@ export default function RegisterPage() {
     };
 
     try {
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.setItem(`aeromentor_user_rank_${payload.enrollment_id.toLowerCase()}`, payload.rank);
-          localStorage.setItem("aeromentor_current_user_rank", payload.rank);
-        } catch {}
-      }
-
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
       
       const res = await fetch(
@@ -80,6 +75,12 @@ export default function RegisterPage() {
         return;
       }
 
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(`aeromentor_user_rank_${payload.enrollment_id.toLowerCase()}`, payload.rank);
+        } catch {}
+      }
+
       router.push("/login?registered=1");
     } catch {
       toast.error("An unexpected error occurred. Please try again.");
@@ -90,6 +91,19 @@ export default function RegisterPage() {
 
   return (
     <>
+      {session?.user && (
+        <div className="mb-6 rounded-md border border-blue-200 bg-blue-50/70 px-4 py-3 text-body-sm text-gray-700">
+          Currently signed in as{" "}
+          <span className="font-semibold text-gray-900">
+            {session.user.name || session.user.enrollment_id || "current user"}
+          </span>
+          . You can still create a new account below, or{" "}
+          <Link href="/dashboard" className="font-semibold text-blue-700 underline underline-offset-4">
+            go to Dashboard
+          </Link>
+          .
+        </div>
+      )}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
           <Label htmlFor="name">Full Name</Label>

@@ -2,8 +2,9 @@
 
 import { Suspense, useState } from "react";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
@@ -13,7 +14,8 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 function LoginForm() {
-  const router = useRouter();
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered");
   const [loading, setLoading] = useState(false);
@@ -47,8 +49,11 @@ function LoginForm() {
         return;
       }
 
-      router.push("/dashboard");
-      router.refresh();
+      queryClient.clear();
+      try {
+        localStorage.removeItem("aeromentor_current_user_rank");
+      } catch {}
+      window.location.assign("/dashboard");
     } catch {
       toast.error("An unexpected error occurred. Please try again.");
     } finally {
@@ -58,7 +63,19 @@ function LoginForm() {
 
   return (
     <>
-
+      {session?.user && (
+        <div className="mb-6 rounded-md border border-blue-200 bg-blue-50/70 px-4 py-3 text-body-sm text-gray-700">
+          Currently signed in as{" "}
+          <span className="font-semibold text-gray-900">
+            {session.user.name || session.user.enrollment_id || "current user"}
+          </span>
+          . Sign in below to switch accounts, or{" "}
+          <Link href="/dashboard" className="font-semibold text-blue-700 underline underline-offset-4">
+            go to Dashboard
+          </Link>
+          .
+        </div>
+      )}
 
       {registered && (
         <div className="mb-6 rounded-md border border-success/30 bg-success/5 px-4 py-3">

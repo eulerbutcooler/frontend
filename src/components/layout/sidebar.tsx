@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { clientApi } from "@/lib/api-client.client";
 import {
   LogOut,
@@ -49,6 +49,7 @@ interface SidebarProps {
 
 export function Sidebar({ user, className }: SidebarProps) {
   const pathname = usePathname();
+  const queryClient = useQueryClient();
 
   // Fallback to /api/v1/users/me if serviceNumber is not directly in user object
   const { data: me } = useQuery({
@@ -113,12 +114,16 @@ export function Sidebar({ user, className }: SidebarProps) {
       )}
     >
       {/* Brand Header */}
-      <div className="h-14 flex items-center gap-2.5 px-6 shrink-0 mb-4">
+      <Link
+        href="/"
+        className="h-14 flex items-center gap-2.5 px-6 shrink-0 mb-4 hover:opacity-80 transition-opacity"
+        title="Home"
+      >
         <Logo className="h-4 w-auto" />
         <h1 className="text-[16px] font-extrabold text-gray-900 font-display tracking-tight">
           AeroMentor
         </h1>
-      </div>
+      </Link>
 
       {/* Nav List */}
       <nav className="flex-1 overflow-y-auto px-4 scrollbar-hide pb-6">
@@ -148,7 +153,13 @@ export function Sidebar({ user, className }: SidebarProps) {
           {/* Grey color logout button on the right end */}
           <button
             type="button"
-            onClick={() => signOut({ callbackUrl: "/login" })}
+            onClick={() => {
+              queryClient.clear();
+              try {
+                localStorage.removeItem("aeromentor_current_user_rank");
+              } catch {}
+              signOut({ callbackUrl: "/login" });
+            }}
             className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors shrink-0 shadow-none cursor-pointer"
             title="Log out"
             aria-label="Log out"
