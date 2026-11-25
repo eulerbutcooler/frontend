@@ -16,8 +16,6 @@ import {
   AlertCircle,
   Volume2,
   VolumeX,
-  Mic,
-  Square,
   Loader2,
   Trash2,
 } from "lucide-react";
@@ -118,13 +116,6 @@ export function ChatView({ initialSessionId }: ChatViewProps) {
   const ttsAbortControllerRef = useRef<AbortController | null>(null);
   const audioQueueRef = useRef<{ id: number; audio: HTMLAudioElement; url: string }[]>([]);
   const isPlayingQueueRef = useRef<boolean>(false);
-
-  // Audio / STT State
-  const [isRecording, setIsRecording] = useState(false);
-  const [isTranscribing, setIsTranscribing] = useState(false);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
-  const speechRecognitionRef = useRef<any>(null);
 
   const stopSpeaking = useCallback(() => {
     if (ttsAbortControllerRef.current) {
@@ -298,126 +289,9 @@ export function ChatView({ initialSessionId }: ChatViewProps) {
     }
   };
 
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioChunksRef.current = [];
-
-      let mimeType = "audio/webm";
-      if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
-        mimeType = "audio/webm;codecs=opus";
-      } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
-        mimeType = "audio/mp4";
-      }
-
-      const mediaRecorder = new MediaRecorder(stream, { mimeType });
-      mediaRecorderRef.current = mediaRecorder;
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = async () => {
-        stream.getTracks().forEach((track) => track.stop());
-
-        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-        if (audioBlob.size === 0) return;
-
-        setIsTranscribing(true);
-        try {
-          const formData = new FormData();
-          const ext = mimeType.includes("mp4") ? "mp4" : "webm";
-          formData.append("file", audioBlob, `speech.${ext}`);
-
-          const res = await fetch("/api/audio/transcribe", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (!res.ok) {
-            throw new Error("STT failed");
-          }
-
-          const data = await res.json();
-          if (data.text) {
-            setInputStr((prev) => {
-              const trimmed = prev.trim();
-              return trimmed ? `${trimmed} ${data.text.trim()}` : data.text.trim();
-            });
-          }
-        } catch (err) {
-          console.error("Transcribe failed:", err);
-        } finally {
-          setIsTranscribing(false);
-          inputRef.current?.focus();
-        }
-      };
-
-      mediaRecorder.start(250);
-      setIsRecording(true);
-
-      // Start Web Speech API in parallel for live streaming feedback if available
-      const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        try {
-          const recognition = new SpeechRecognition();
-          recognition.continuous = true;
-          recognition.interimResults = true;
-          recognition.lang = "en-US";
-          recognition.onresult = (event: any) => {
-            let interim = "";
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-              interim += event.results[i][0].transcript;
-            }
-            if (interim.trim()) {
-              setInputStr(interim.trim());
-            }
-          };
-          recognition.start();
-          speechRecognitionRef.current = recognition;
-        } catch (e) {}
-      }
-    } catch (err) {
-      console.error("Microphone access error:", err);
-      alert("Microphone permission was denied or is not supported in this browser.");
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      mediaRecorderRef.current.stop();
-    }
-    if (speechRecognitionRef.current) {
-      try {
-        speechRecognitionRef.current.stop();
-      } catch (e) {}
-      speechRecognitionRef.current = null;
-    }
-    setIsRecording(false);
-  };
-
-  const handleToggleRecord = () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
-    }
-  };
-
   useEffect(() => {
     return () => {
       stopSpeaking();
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-        mediaRecorderRef.current.stop();
-      }
-      if (speechRecognitionRef.current) {
-        try {
-          speechRecognitionRef.current.stop();
-        } catch (e) {}
-      }
     };
   }, [stopSpeaking]);
 
@@ -933,26 +807,14 @@ export function ChatView({ initialSessionId }: ChatViewProps) {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder={
-                    isTranscribing
-                      ? "Transcribing with Whisper..."
-                      : isRecording
-                      ? "Listening... Speak your message now..."
-                      : "Enter your message..."
-                  }
+                  placeholder="Enter your message..."
                   value={inputStr}
                   onChange={(e) => setInputStr(e.target.value)}
-                  disabled={isStreaming || isTranscribing}
-                  className={cn(
-                    "w-full bg-transparent text-[15px] placeholder-gray-400 outline-none border-none py-2 px-3 pb-10 disabled:opacity-60",
-                    isRecording ? "text-red-600 font-medium placeholder-red-400" : "text-gray-900"
-                  )}
+                  disabled={isStreaming}
+                  className="w-full bg-transparent text-[15px] placeholder-gray-400 outline-none border-none py-2 px-3 pb-10 disabled:opacity-60 text-gray-900"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
-                      if (isRecording) {
-                        stopRecording();
-                      }
                       handleSendMessage();
                     }
                   }}
@@ -967,55 +829,14 @@ export function ChatView({ initialSessionId }: ChatViewProps) {
                       <Plus className="h-4 w-4" />
                       Add context
                     </button>
-                    {isRecording && (
-                      <span className="flex items-center gap-1.5 text-xs font-semibold text-red-600 animate-pulse bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-600"></span>
-                        Recording audio...
-                      </span>
-                    )}
                   </div>
 
                   <div className="flex items-center gap-1.5">
-                    {/* Mic button just left of send arrow */}
-                    <button
-                      type="button"
-                      onClick={handleToggleRecord}
-                      disabled={isStreaming || isTranscribing}
-                      className={cn(
-                        "w-[32px] h-[32px] rounded-full flex items-center justify-center transition-all shadow-none cursor-pointer",
-                        isRecording
-                          ? "bg-red-500 text-white shadow-md ring-4 ring-red-100 animate-pulse"
-                          : isTranscribing
-                          ? "bg-blue-50 text-blue-600"
-                          : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
-                      )}
-                      title={
-                        isTranscribing
-                          ? "Transcribing..."
-                          : isRecording
-                          ? "Stop recording"
-                          : "Speak message (Speech to Text)"
-                      }
-                    >
-                      {isTranscribing ? (
-                        <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                      ) : isRecording ? (
-                        <Square className="h-3 w-3 fill-current" />
-                      ) : (
-                        <Mic className="h-4 w-4" />
-                      )}
-                    </button>
-
                     {/* Send arrow button */}
                     <button
                       type="button"
-                      onClick={() => {
-                        if (isRecording) {
-                          stopRecording();
-                        }
-                        handleSendMessage();
-                      }}
-                      disabled={isStreaming || !inputStr.trim() || isRecording || isTranscribing}
+                      onClick={handleSendMessage}
+                      disabled={isStreaming || !inputStr.trim()}
                       className="w-[32px] h-[32px] rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-none cursor-pointer"
                       title="Send message"
                     >
