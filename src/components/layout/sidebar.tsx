@@ -12,16 +12,18 @@ import {
   ListTodo,
   MessageSquare,
   BarChart,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/icons/Logo";
-import type { User } from "@/types/user";
+import { isAdminUser, type User } from "@/types/user";
 
 interface NavItem {
   label: string;
   href: string;
   icon: any;
   instructorOnly?: boolean;
+  adminOnly?: boolean;
 }
 
 const OVERVIEW_ITEMS: NavItem[] = [
@@ -35,11 +37,16 @@ const ANALYTICS_ITEMS: NavItem[] = [
   { label: "User Insights", href: "/analytics", icon: BarChart, instructorOnly: true },
 ];
 
+const ADMIN_ITEMS: NavItem[] = [
+  { label: "Users Directory", href: "/users", icon: Users, adminOnly: true },
+];
+
 interface SidebarUser {
   name?: string | null;
   role: string;
   rank: string;
   serviceNumber?: string | null;
+  isMaster?: boolean;
 }
 
 interface SidebarProps {
@@ -52,20 +59,29 @@ export function Sidebar({ user, className }: SidebarProps) {
   const queryClient = useQueryClient();
 
   // Fallback to /api/v1/users/me if serviceNumber is not directly in user object
+  // or if an instructor session was minted before isMaster was added to the JWT.
   const { data: me } = useQuery({
     queryKey: ["users-me"],
     queryFn: () => clientApi.get<User>("/api/v1/users/me"),
-    enabled: !user.serviceNumber,
+    enabled: !user.serviceNumber || (user.role === "instructor" && user.isMaster === undefined),
   });
 
   const rawServiceNumber = user.serviceNumber || me?.enrollment_id || "";
   const displayServiceNumber = rawServiceNumber ? rawServiceNumber.toUpperCase() : "";
+  const isAdmin = isAdminUser({
+    role: user.role,
+    isMaster: user.isMaster ?? me?.is_master,
+    serviceNumber: rawServiceNumber,
+  });
 
   const visibleOverview = OVERVIEW_ITEMS.filter(
-    (item) => !item.instructorOnly || user.role === "instructor"
+    (item) => (!item.instructorOnly || user.role === "instructor") && (!item.adminOnly || isAdmin)
   );
   const visibleAnalytics = ANALYTICS_ITEMS.filter(
-    (item) => !item.instructorOnly || user.role === "instructor"
+    (item) => (!item.instructorOnly || user.role === "instructor") && (!item.adminOnly || isAdmin)
+  );
+  const visibleAdmin = ADMIN_ITEMS.filter(
+    (item) => !item.adminOnly || isAdmin
   );
 
   const NavGroup = ({ title, items }: { title: string; items: NavItem[] }) => {
@@ -129,6 +145,7 @@ export function Sidebar({ user, className }: SidebarProps) {
       <nav className="flex-1 overflow-y-auto px-4 scrollbar-hide pb-6">
         <NavGroup title="Overview" items={visibleOverview} />
         <NavGroup title="Analytics" items={visibleAnalytics} />
+        <NavGroup title="Admin" items={visibleAdmin} />
       </nav>
 
       {/* Bottom User Profile Card with Grey Logout Button */}

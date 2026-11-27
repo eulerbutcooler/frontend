@@ -7,6 +7,7 @@ import type { Course } from "@/types/course";
 interface CourseCardProps {
   course: Course;
   index: number;
+  showAssociatedBadge?: boolean;
 }
 
 export const IMAGES = [
@@ -26,7 +27,7 @@ export const getCourseImage = (id: string) => {
   return IMAGES[Math.abs(hash) % IMAGES.length];
 };
 
-export function CourseCard({ course, index }: CourseCardProps) {
+export function CourseCard({ course, index, showAssociatedBadge }: CourseCardProps) {
   // Thumbnails are streamed by the app server, so the browser never sees the
   // storage host or a presigned URL.
   const bgImage = course.thumbnail_url
@@ -50,6 +51,11 @@ export function CourseCard({ course, index }: CourseCardProps) {
             unoptimized={!!course.thumbnail_url}
             className="object-cover object-center scale-[1.15] group-hover:scale-[1.22] group-hover:-translate-y-2 transition-transform duration-300 ease-out"
           />
+          {showAssociatedBadge && course.associated && (
+            <span className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-600/90 text-white shadow-xs backdrop-blur-xs">
+              Associated
+            </span>
+          )}
         </div>
 
         {/* Bottom Info Card - Slides up on hover */}

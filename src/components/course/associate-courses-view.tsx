@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, BookOpen, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -14,6 +15,7 @@ import { getCourseBranches, getSpecializationMeta } from "@/lib/course-utils";
 import type { Course } from "@/types/course";
 
 export function AssociateCoursesView() {
+  const router = useRouter();
   const { data: courses = [], isLoading } = useInstructorCatalog();
   const associate = useAssociateCourse();
   const disassociate = useDisassociateCourse();
@@ -28,6 +30,7 @@ export function AssociateCoursesView() {
       } else {
         await associate.mutateAsync(course.id);
       }
+      router.refresh();
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Could not update association."

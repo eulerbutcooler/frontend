@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import type { Quiz } from "@/types/quiz";
 import type { Course } from "@/types/course";
 
+export const dynamic = "force-dynamic";
+
 interface CourseQuizRow {
   course: Course;
   basicQuiz?: Quiz;
@@ -159,7 +161,7 @@ function renderQuizBox(
 
   const isReady = quiz.status === "ready";
   const isGenerating = quiz.status === "generating";
-  const questionCount = quiz.question_count ?? (isBasic ? 20 : 15);
+  const questionCount = quiz.question_count ?? 0;
   const lastScore = quiz.last_score;
   const isAttempted = quiz.is_attempted;
 
@@ -178,7 +180,7 @@ function renderQuizBox(
             {isBasic ? "Basic Assessment" : "Advanced Assessment"}
           </span>
           <div className="flex items-center gap-2 text-[11px] text-gray-500 font-medium">
-            <span>{questionCount} Questions</span>
+            <span>{questionCount} {questionCount === 1 ? "Question" : "Questions"}</span>
             <span>&bull;</span>
             <span className="flex items-center gap-1 font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">
               <Timer className="w-3 h-3 text-amber-600" />

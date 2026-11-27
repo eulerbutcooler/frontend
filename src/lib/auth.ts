@@ -87,6 +87,7 @@ const nextAuthResult = NextAuth({
           rank: result.user.rank,
           enrollment_id: result.user.enrollment_id,
           serviceNumber: result.user.enrollment_id,
+          isMaster: Boolean(result.user.is_master),
           accessToken: result.tokens.access_token,
           refreshToken: result.tokens.refresh_token,
         };
@@ -101,6 +102,7 @@ const nextAuthResult = NextAuth({
         token.rank = (user as Record<string, unknown>).rank as string;
         token.enrollment_id = (user as Record<string, unknown>).enrollment_id as string;
         token.serviceNumber = (user as Record<string, unknown>).serviceNumber as string;
+        token.isMaster = Boolean((user as Record<string, unknown>).isMaster);
         token.accessToken = (user as Record<string, unknown>).accessToken as string;
         token.refreshToken = (user as Record<string, unknown>).refreshToken as string;
       }
@@ -122,6 +124,7 @@ const nextAuthResult = NextAuth({
       session.user.rank = (token.rank as string) ?? "";
       session.user.enrollment_id = (token.enrollment_id as string) ?? "";
       session.user.serviceNumber = (token.serviceNumber as string) ?? (token.enrollment_id as string) ?? "";
+      session.user.isMaster = Boolean(token.isMaster);
       session.user.accessToken = token.accessToken as string;
       return session;
     },

@@ -1,11 +1,12 @@
 import { auth } from "@/lib/auth";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { api } from "@/lib/api-client";
 import { CoursePhasesView } from "@/components/course/course-phases-view";
 import type { Course } from "@/types/course";
 import Link from "next/link";
 import { CheckSquare, Plus, Upload } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default async function CoursesPage() {
   const session = await auth();

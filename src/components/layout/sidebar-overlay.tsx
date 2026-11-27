@@ -11,6 +11,7 @@ interface SidebarOverlayProps {
     role: string;
     rank: string;
     serviceNumber?: string | null;
+    isMaster?: boolean;
   };
 }
 

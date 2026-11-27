@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { CourseCard } from "./course-card";
@@ -8,11 +9,37 @@ interface CourseGridProps {
   isInstructor?: boolean;
   newSubjectHref?: string;
   emptyBranchName?: string;
+  showAssociatedBadge?: boolean;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  emptyActionHref?: string;
+  emptyActionLabel?: string;
+  emptySecondaryAction?: ReactNode;
 }
 
-export function CourseGrid({ courses, isInstructor, newSubjectHref, emptyBranchName }: CourseGridProps) {
+export function CourseGrid({
+  courses,
+  isInstructor,
+  newSubjectHref,
+  emptyBranchName,
+  showAssociatedBadge,
+  emptyTitle,
+  emptyDescription,
+  emptyActionHref,
+  emptyActionLabel,
+  emptySecondaryAction,
+}: CourseGridProps) {
   const safeCourses = courses || [];
   if (safeCourses.length === 0) {
+    const resolvedTitle = emptyTitle ?? "No courses available";
+    const resolvedDescription =
+      emptyDescription ??
+      (isInstructor
+        ? `Your curriculum is empty. Start building your first course module ${emptyBranchName ? `in ${emptyBranchName}` : ""} to get trainees onboard.`
+        : "Check back soon, new courses are currently being prepared.");
+    const resolvedHref = emptyActionHref ?? newSubjectHref ?? "/courses/new";
+    const resolvedLabel = emptyActionLabel ?? "Create Course";
+
     return (
       <div className="flex flex-col items-center justify-center h-full w-full pointer-events-none pt-20">
         <div className="w-[48px] h-[48px] rounded-[14px] bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-5">
@@ -21,22 +48,23 @@ export function CourseGrid({ courses, isInstructor, newSubjectHref, emptyBranchN
             <path d="M1.82839 4.36056L8.39633 10.9842H-0.00646973V14.5328H10.8843V23.999H14.403V13.728C14.403 12.637 13.9723 11.5894 13.2069 10.8175L4.31635 1.85147L1.82839 4.36056Z" fill="#2563eb" stroke="#2563eb" strokeWidth="0.5"></path>
           </svg>
         </div>
-        <h2 className="text-[16px] font-bold text-gray-900 tracking-tight mb-2">No courses available</h2>
+        <h2 className="text-[16px] font-bold text-gray-900 tracking-tight mb-2">{resolvedTitle}</h2>
         <p className="text-[13px] text-gray-500 max-w-sm text-center mb-6">
-          {isInstructor
-            ? `Your curriculum is empty. Start building your first course module ${emptyBranchName ? `in ${emptyBranchName}` : ""} to get trainees onboard.`
-            : "Check back soon, new courses are currently being prepared."}
+          {resolvedDescription}
         </p>
 
-        {isInstructor && (
-          <Link
-            href={newSubjectHref || "/courses/new"}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-[13px] font-medium rounded-lg transition-colors pointer-events-auto cursor-pointer shadow-2xs"
-          >
-            <Plus className="h-4 w-4 text-gray-500" />
-            Create Course
-          </Link>
-        )}
+        <div className="flex flex-wrap items-center justify-center gap-2 pointer-events-auto">
+          {(isInstructor || emptyActionHref) && (
+            <Link
+              href={resolvedHref}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-[13px] font-medium rounded-lg transition-colors cursor-pointer shadow-2xs"
+            >
+              {!emptyActionLabel && <Plus className="h-4 w-4 text-gray-500" />}
+              {resolvedLabel}
+            </Link>
+          )}
+          {emptySecondaryAction}
+        </div>
       </div>
     );
   }
@@ -44,7 +72,12 @@ export function CourseGrid({ courses, isInstructor, newSubjectHref, emptyBranchN
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {safeCourses.map((course, i) => (
-        <CourseCard key={course.id || i} course={course} index={i} />
+        <CourseCard
+          key={course.id || i}
+          course={course}
+          index={i}
+          showAssociatedBadge={showAssociatedBadge}
+        />
       ))}
     </div>
   );

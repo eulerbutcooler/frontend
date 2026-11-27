@@ -8,6 +8,7 @@ declare module "next-auth" {
       rank: string;
       enrollment_id?: string;
       serviceNumber?: string;
+      isMaster?: boolean;
       accessToken: string;
     } & DefaultSession["user"];
   }
@@ -20,6 +21,7 @@ declare module "next-auth/jwt" {
     rank: string;
     enrollment_id?: string;
     serviceNumber?: string;
+    isMaster?: boolean;
     accessToken: string;
     refreshToken: string;
   }
