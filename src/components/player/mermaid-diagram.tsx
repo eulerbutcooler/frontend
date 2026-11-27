@@ -152,6 +152,7 @@ export function MermaidDiagram({ code, className }: MermaidDiagramProps) {
       securityLevel: "strict",
       fontFamily: "inherit",
       suppressErrorRendering: true,
+      htmlLabels: false,
       flowchart: { htmlLabels: false },
     });
 

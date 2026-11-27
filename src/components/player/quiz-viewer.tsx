@@ -248,7 +248,7 @@ export function QuizViewer({ quiz, onPass, isInstructor }: QuizViewerProps) {
       </div>
 
       <h2 className="text-xl font-bold text-gray-900 mb-1">
-        {quiz.lesson_id ? "Flight Lesson Examination" : "Comprehensive Naval Flight Assessment"}
+        {quiz.lesson_id ? "Lesson Examination" : "Comprehensive Naval Flight Assessment"}
       </h2>
       <p className="text-[13px] text-gray-500 max-w-sm mb-6 leading-relaxed">
         {quiz.lesson_id

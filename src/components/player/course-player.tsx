@@ -437,7 +437,7 @@ export function CoursePlayer({
 
               {viewState === "quiz" && (
                 <span className="text-[12px] font-semibold text-purple-900 bg-purple-50 px-2.5 py-1 rounded-md border border-purple-100">
-                  Cadet Timed Knowledge Assessment
+                  Trainee Timed Assessment
                 </span>
               )}
             </div>
