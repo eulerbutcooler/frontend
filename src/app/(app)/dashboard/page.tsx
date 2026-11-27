@@ -8,6 +8,8 @@ import { getUserNavalRank } from "@/lib/course-utils";
 import type { Course } from "@/types/course";
 import type { StudentAnalytics, InstructorAnalytics } from "@/types/analytics";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user) {

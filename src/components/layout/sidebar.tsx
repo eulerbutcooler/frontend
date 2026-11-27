@@ -13,6 +13,7 @@ import {
   MessageSquare,
   BarChart,
   Users,
+  UserCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/icons/Logo";
@@ -39,6 +40,10 @@ const ANALYTICS_ITEMS: NavItem[] = [
 
 const ADMIN_ITEMS: NavItem[] = [
   { label: "Users Directory", href: "/users", icon: Users, adminOnly: true },
+];
+
+const ACCOUNT_ITEMS: NavItem[] = [
+  { label: "Profile", href: "/profile", icon: UserCircle },
 ];
 
 interface SidebarUser {
@@ -146,12 +151,17 @@ export function Sidebar({ user, className }: SidebarProps) {
         <NavGroup title="Overview" items={visibleOverview} />
         <NavGroup title="Analytics" items={visibleAnalytics} />
         <NavGroup title="Admin" items={visibleAdmin} />
+        <NavGroup title="Account" items={ACCOUNT_ITEMS} />
       </nav>
 
       {/* Bottom User Profile Card with Grey Logout Button */}
       <div className="mt-auto p-4 bg-[#f3f4f6]">
         <div className="border border-gray-200 rounded-xl p-2 bg-white flex items-center justify-between gap-2 shadow-none">
-          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <Link
+            href="/profile"
+            className="flex items-center gap-2.5 min-w-0 flex-1 rounded-lg hover:bg-gray-50 p-0.5 -m-0.5 transition-colors"
+            title="View Profile & Change Rank"
+          >
             <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 text-[13px] font-semibold border border-gray-200 shrink-0">
               {user.name?.charAt(0)?.toUpperCase() ?? "U"}
             </div>
@@ -165,7 +175,7 @@ export function Sidebar({ user, className }: SidebarProps) {
                 </p>
               )}
             </div>
-          </div>
+          </Link>
 
           {/* Grey color logout button on the right end */}
           <button

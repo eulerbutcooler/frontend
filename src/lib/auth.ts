@@ -95,7 +95,7 @@ const nextAuthResult = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id!;
         token.role = (user as Record<string, unknown>).role as string;
@@ -105,6 +105,16 @@ const nextAuthResult = NextAuth({
         token.isMaster = Boolean((user as Record<string, unknown>).isMaster);
         token.accessToken = (user as Record<string, unknown>).accessToken as string;
         token.refreshToken = (user as Record<string, unknown>).refreshToken as string;
+      }
+
+      if (trigger === "update" && session) {
+        const updated = session as Record<string, unknown>;
+        if (typeof updated.rank === "string" && updated.rank.trim()) {
+          token.rank = updated.rank.trim();
+        }
+        if (typeof updated.accessToken === "string" && updated.accessToken) {
+          token.accessToken = updated.accessToken;
+        }
       }
 
       if (token.accessToken && isTokenExpired(token.accessToken as string)) {

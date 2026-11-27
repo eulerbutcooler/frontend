@@ -226,6 +226,11 @@ export function cleanSubjectDescription(desc?: string): string {
  * Resolves the user's Indian Navy rank.
  */
 export function getUserNavalRank(rank?: string | null, enrollmentId?: string | null): string {
+  const trimmed = rank?.trim();
+  const normalized = trimmed?.toLowerCase();
+  if (trimmed && normalized !== "officer" && normalized !== "agniveer") {
+    return trimmed;
+  }
   if (typeof window !== "undefined") {
     if (enrollmentId) {
       const stored = localStorage.getItem(`aeromentor_user_rank_${enrollmentId.toLowerCase()}`);
@@ -233,9 +238,6 @@ export function getUserNavalRank(rank?: string | null, enrollmentId?: string | n
     }
     const current = localStorage.getItem("aeromentor_current_user_rank");
     if (current) return current;
-  }
-  if (rank && rank !== "officer" && rank !== "agniveer") {
-    return rank;
   }
   return "Sub Lieutenant";
 }
